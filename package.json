@@ -1,0 +1,20 @@
+{
+  "name": "ai-nutration",
+  "private": true,
+  "version": "1.0.0",
+  "description": "NutriAI — AI-powered nutrition tracking. Monorepo: frontend (React/Vite) + backend (NestJS).",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "npm run start:dev --workspace backend",
+    "build:frontend": "npm run build --workspace frontend",
+    "build:backend": "npm run build --workspace backend",
+    "typecheck:frontend": "npm run typecheck --workspace frontend",
+    "typecheck:backend": "npm run typecheck --workspace backend",
+    "lint:frontend": "npm run lint --workspace frontend",
+    "lint:backend": "npm run lint --workspace backend"
+  }
+}

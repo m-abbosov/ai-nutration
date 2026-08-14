@@ -1,0 +1,175 @@
+// NutriAI backend — Prisma schema (Phase 1)
+// Normalized, minimal-duplication schema. Daily/weekly nutrition totals are computed
+// on demand from Meal rows rather than stored redundantly (see DESIGN_MAPPING.md).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ActivityLevel {
+  SEDENTARY // x1.2
+  LIGHT // x1.375
+  MODERATE // x1.55
+  ACTIVE // x1.725
+}
+
+enum Goal {
+  LOSE
+  MAINTAIN
+  GAIN
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  SNACK
+  DINNER
+}
+
+enum MealSource {
+  MANUAL
+  AI
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum Language {
+  UZ
+  RU
+  EN
+}
+
+enum Theme {
+  LIGHT
+  DARK
+}
+
+model User {
+  id        String  @id @default(cuid())
+  telegramId String? @unique
+  googleId   String? @unique
+  email      String? @unique
+  name       String
+  avatarUrl  String?
+
+  // Onboarding / profile
+  age                Int?
+  heightCm           Float?
+  weightKg           Float?
+  goalWeightKg        Float?
+  gender             Gender?
+  activityLevel      ActivityLevel?
+  goal               Goal?
+  dailyCalorieTarget Int?
+  proteinTargetG     Int?
+  carbsTargetG       Int?
+  fatTargetG         Int?
+  onboardingCompletedAt DateTime?
+
+  // Preferences
+  language Language @default(UZ)
+  theme    Theme    @default(DARK)
+
+  // Notification preference flags (Phase 1: stored only, no delivery mechanism yet)
+  notifyDaily  Boolean @default(true)
+  notifyWeekly Boolean @default(true)
+  notifyAiTips Boolean @default(false)
+
+  refreshTokenHash String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  meals         Meal[]
+  conversations Conversation[]
+
+  @@map("users")
+}
+
+model Meal {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date     DateTime @db.Date // local calendar day the meal belongs to
+  mealType MealType
+  name     String
+  emoji    String?
+
+  calories Int
+  protein  Float
+  carbs    Float
+  fat      Float
+  servingSize String?
+
+  source MealSource @default(MANUAL)
+
+  items MealItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, date])
+  @@map("meals")
+}
+
+model MealItem {
+  id     String @id @default(cuid())
+  mealId String
+  meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
+
+  name     String
+  quantity String
+  calories Int
+  protein  Float
+  carbs    Float
+  fat      Float
+
+  @@map("meal_items")
+}
+
+model Conversation {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title String @default("New chat")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages ChatMessage[]
+
+  @@index([userId, updatedAt])
+  @@map("conversations")
+}
+
+model ChatMessage {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  role    MessageRole
+  content String      @db.Text
+  // Structured AI payload when applicable: { kind: "nutrition_card"|"recommendations", data: {...} }
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId, createdAt])
+  @@map("chat_messages")
+}
