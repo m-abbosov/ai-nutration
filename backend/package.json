@@ -4,6 +4,7 @@
   "private": true,
   "description": "NutriAI backend — NestJS API (Phase 1)",
   "scripts": {
+    "postinstall": "prisma generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
