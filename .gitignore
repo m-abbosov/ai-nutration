@@ -23,5 +23,8 @@ npm-debug.log*
 .vscode/
 .idea/
 
+# Local agent worktree scratch space (not project content)
+.claude/
+
 # Testing
 coverage/
