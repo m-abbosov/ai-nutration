@@ -78,3 +78,10 @@ pills with dark (`#04120e`) text, secondary buttons are outlined with `--line2`.
   delivery mechanism (push/email/telegram) — that is a future phase.
 - Weight trend multi-point chart, detailed analytics, and social/streak gamification
   beyond the simple day-streak counter are out of scope (see `docs/PHASE_1.md`).
+- `NutritionWeeklyPointDto` carries only `{date,label,consumed,target}` (no per-day
+  macro breakdown), so the Progress screen's "avg protein" stat and macro-consistency
+  card use *today's* real macros rather than a fabricated multi-day average — see
+  `frontend/src/entities/meal/lib/weekly-stats.ts`.
+- The Meals "Quick Add from recent foods" option shown in the mock's add-meal menu was
+  dropped — there's no "recent foods" endpoint in the API contract. AI Chat and Manual
+  Entry remain as the two ways to add a meal.
