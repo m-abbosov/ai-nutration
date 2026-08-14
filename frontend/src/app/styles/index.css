@@ -1,0 +1,45 @@
+@import 'tailwindcss';
+@import '@fontsource/instrument-sans/400.css';
+@import '@fontsource/instrument-sans/500.css';
+@import '@fontsource/instrument-sans/600.css';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import './theme.css';
+
+@theme inline {
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-surf: var(--surf);
+  --color-surf2: var(--surf2);
+  --color-surfH: var(--surfH);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+  --color-tx: var(--tx);
+  --color-tx2: var(--tx2);
+  --color-tx3: var(--tx3);
+  --color-acc: var(--acc);
+  --color-accD: var(--accD);
+  --color-accT: var(--accT);
+  --color-accG: var(--accG);
+  --color-pro: var(--pro);
+  --color-proT: var(--proT);
+  --color-carb: var(--carb);
+  --color-carbT: var(--carbT);
+  --color-fat: var(--fat);
+  --color-fatT: var(--fatT);
+  --color-glass: var(--glass);
+
+  --shadow-card: var(--sh);
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+}

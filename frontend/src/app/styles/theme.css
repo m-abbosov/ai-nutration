@@ -1,0 +1,273 @@
+/* Design tokens ported verbatim from docs/design-reference/NutriAI.dc.html */
+
+:root {
+  --bg: #0b0d0c;
+  --bg2: #0f1211;
+  --surf: #151918;
+  --surf2: #1b201e;
+  --surfH: #232927;
+  --line: rgba(255, 255, 255, 0.075);
+  --line2: rgba(255, 255, 255, 0.15);
+  --tx: #e9ede9;
+  --tx2: #99a49f;
+  --tx3: #69736e;
+  --acc: oklch(0.76 0.13 172);
+  --accD: oklch(0.6 0.115 172);
+  --accT: oklch(0.76 0.13 172 / 0.13);
+  --accG: oklch(0.76 0.13 172 / 0.38);
+  --pro: oklch(0.72 0.12 288);
+  --proT: oklch(0.72 0.12 288 / 0.15);
+  --carb: oklch(0.79 0.13 72);
+  --carbT: oklch(0.79 0.13 72 / 0.15);
+  --fat: oklch(0.72 0.13 18);
+  --fatT: oklch(0.72 0.13 18 / 0.15);
+  --sh: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 40px -24px rgba(0, 0, 0, 0.85);
+  --glass: rgba(17, 21, 20, 0.76);
+  color-scheme: dark;
+}
+
+/* Light theme: explicit choice via data-theme="light" */
+:root[data-theme='light'] {
+  --bg: #f3f1ec;
+  --bg2: #edeae3;
+  --surf: #fbfaf7;
+  --surf2: #ffffff;
+  --surfH: #f1efe9;
+  --line: rgba(23, 32, 28, 0.09);
+  --line2: rgba(23, 32, 28, 0.18);
+  --tx: #171c1a;
+  --tx2: #5b6661;
+  --tx3: #8a948e;
+  --acc: oklch(0.56 0.115 172);
+  --accD: oklch(0.45 0.1 172);
+  --accT: oklch(0.56 0.115 172 / 0.1);
+  --accG: oklch(0.56 0.115 172 / 0.2);
+  --pro: oklch(0.5 0.14 288);
+  --proT: oklch(0.5 0.14 288 / 0.1);
+  --carb: oklch(0.58 0.13 62);
+  --carbT: oklch(0.58 0.13 62 / 0.11);
+  --fat: oklch(0.55 0.15 18);
+  --fatT: oklch(0.55 0.15 18 / 0.1);
+  --sh: 0 1px 2px rgba(23, 32, 28, 0.05), 0 16px 34px -20px rgba(23, 32, 28, 0.2);
+  --glass: rgba(251, 250, 247, 0.8);
+  color-scheme: light;
+}
+
+/* System default: no explicit data-theme -> follow prefers-color-scheme */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f3f1ec;
+    --bg2: #edeae3;
+    --surf: #fbfaf7;
+    --surf2: #ffffff;
+    --surfH: #f1efe9;
+    --line: rgba(23, 32, 28, 0.09);
+    --line2: rgba(23, 32, 28, 0.18);
+    --tx: #171c1a;
+    --tx2: #5b6661;
+    --tx3: #8a948e;
+    --acc: oklch(0.56 0.115 172);
+    --accD: oklch(0.45 0.1 172);
+    --accT: oklch(0.56 0.115 172 / 0.1);
+    --accG: oklch(0.56 0.115 172 / 0.2);
+    --pro: oklch(0.5 0.14 288);
+    --proT: oklch(0.5 0.14 288 / 0.1);
+    --carb: oklch(0.58 0.13 62);
+    --carbT: oklch(0.58 0.13 62 / 0.11);
+    --fat: oklch(0.55 0.15 18);
+    --fatT: oklch(0.55 0.15 18 / 0.1);
+    --sh: 0 1px 2px rgba(23, 32, 28, 0.05), 0 16px 34px -20px rgba(23, 32, 28, 0.2);
+    --glass: rgba(251, 250, 247, 0.8);
+    color-scheme: light;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0b0d0c;
+  --bg2: #0f1211;
+  --surf: #151918;
+  --surf2: #1b201e;
+  --surfH: #232927;
+  --line: rgba(255, 255, 255, 0.075);
+  --line2: rgba(255, 255, 255, 0.15);
+  --tx: #e9ede9;
+  --tx2: #99a49f;
+  --tx3: #69736e;
+  --acc: oklch(0.76 0.13 172);
+  --accD: oklch(0.6 0.115 172);
+  --accT: oklch(0.76 0.13 172 / 0.13);
+  --accG: oklch(0.76 0.13 172 / 0.38);
+  --pro: oklch(0.72 0.12 288);
+  --proT: oklch(0.72 0.12 288 / 0.15);
+  --carb: oklch(0.79 0.13 72);
+  --carbT: oklch(0.79 0.13 72 / 0.15);
+  --fat: oklch(0.72 0.13 18);
+  --fatT: oklch(0.72 0.13 18 / 0.15);
+  --sh: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 40px -24px rgba(0, 0, 0, 0.85);
+  --glass: rgba(17, 21, 20, 0.76);
+  color-scheme: dark;
+}
+
+/* Layered (not plain global) so Tailwind utility classes — emitted in
+ * @layer utilities — can still win over these resets. A plain, un-layered
+ * rule always beats a layered one regardless of specificity/order, which
+ * would otherwise make e.g. `text-[#04120e]` on a <Link> lose to this `a`
+ * color reset. */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    background: var(--bg);
+    color: var(--tx);
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.35s ease, color 0.35s ease;
+    overflow-x: hidden;
+  }
+  a {
+    color: var(--acc);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--tx);
+  }
+  button {
+    font: inherit;
+    color: inherit;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line2);
+  border-radius: 9px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.font-mono-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+.font-serif-hero {
+  font-family: 'Instrument Serif', serif;
+}
+
+@keyframes fu {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fi {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(6px, -7px) scale(1.06);
+  }
+  66% {
+    transform: translate(-5px, 5px) scale(0.96);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+@keyframes halo {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.82);
+  }
+}
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(220%);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fu {
+  animation: fu 0.4s ease both;
+}
+.animate-fi {
+  animation: fi 0.3s ease both;
+}
+.animate-halo {
+  animation: halo 5s ease-in-out infinite;
+}
+.animate-drift {
+  animation: drift 14s ease-in-out infinite;
+}
+.animate-pulse-soft {
+  animation: pulse 2.2s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: spin 26s linear infinite;
+}
