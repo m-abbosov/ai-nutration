@@ -97,6 +97,64 @@ npm run lint:frontend       npm run lint:backend
 npx prisma migrate dev      npx prisma studio        npm run seed
 ```
 
+## CI/CD
+
+`.github/workflows/`:
+
+- **`ci.yml`** — runs on every push/PR to any branch: `npm ci`, Prisma generate,
+  typecheck, lint, unit tests, and build, for both `backend/` and `frontend/`
+  independently. No secrets required.
+- **`deploy-backend.yml`** — on push to `main`/`claude/ai-nutrition-phase-1-i5yhp8`
+  touching `backend/**` (or manual `workflow_dispatch`): re-verifies the build, then
+  deploys to **Railway** via `railway up` using `backend/railway.json`
+  (Nixpacks build, `npx prisma migrate deploy` runs automatically before every boot,
+  health check on `/api/health`).
+- **`deploy-frontend.yml`** — same triggers for `frontend/**`: builds and deploys to
+  **Vercel** via the Vercel CLI (`vercel pull` → `vercel build` → `vercel deploy
+  --prebuilt`), using `frontend/vercel.json` (Vite framework preset + a SPA rewrite so
+  client-side routes like `/chat` or `/settings` don't 404 on refresh).
+
+### One-time setup
+
+**Railway (backend):**
+1. Create a project at [railway.app](https://railway.app), add a **PostgreSQL**
+   plugin to it (this gives you a `DATABASE_URL`), and add an **empty service**
+   (name it e.g. `backend` — the CLI creates/targets it on first deploy).
+2. In that service's **Variables**, set: `DATABASE_URL` (reference the Postgres
+   plugin, e.g. `${{Postgres.DATABASE_URL}}`), `JWT_SECRET`, `JWT_ACCESS_TTL`,
+   `JWT_REFRESH_TTL`, and whichever of `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`/
+   `GOOGLE_CALLBACK_URL`, `TELEGRAM_BOT_TOKEN`, `GEMINI_API_KEY`/`GEMINI_MODEL` you
+   have (all optional — see the table above, missing ones degrade gracefully).
+   Leave `FRONTEND_URL` for step 4.
+3. Service **Settings → Networking → Generate Domain** to get a public backend URL.
+4. Service **Settings → Tokens** (or account-level Project Token) → create a token →
+   this is `RAILWAY_TOKEN`. If the project has more than one service, also note the
+   service name for the `RAILWAY_SERVICE` repo **variable** (not secret).
+
+**Vercel (frontend):**
+1. Create a project at [vercel.com](https://vercel.com) importing this repo, with
+   **Root Directory = `frontend`**. Since deploys are driven by GitHub Actions here,
+   disable Vercel's own Git auto-deploy in **Project Settings → Git** to avoid
+   duplicate deployments (the Action calls `vercel deploy` directly).
+2. Project **Settings → Environment Variables** (Production): `VITE_API_URL` =
+   `https://<your-railway-domain>/api`, and `VITE_TELEGRAM_BOT_USERNAME` if using
+   Telegram login.
+3. Account **Settings → Tokens** → create `VERCEL_TOKEN`.
+4. `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`: run `vercel link` once inside `frontend/`
+   locally, then read them from the generated `.vercel/project.json` — or find them
+   in the project's **Settings → General**.
+5. Back on Railway, set `FRONTEND_URL` to this Vercel URL (and, if using Google auth,
+   add `https://<railway-domain>/api/auth/google/callback` as an authorized redirect
+   URI in the Google Cloud Console) and redeploy.
+
+**GitHub repo** (Settings → Secrets and variables → Actions):
+- Secrets: `RAILWAY_TOKEN`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+- Variables (optional): `RAILWAY_SERVICE` if the Railway project has multiple services.
+
+Once these are set, every push to `main` (or `claude/ai-nutrition-phase-1-i5yhp8`
+today) that touches `backend/` or `frontend/` redeploys that side automatically;
+`ci.yml` runs on every branch/PR regardless of secrets.
+
 ## Production build
 
 ```bash

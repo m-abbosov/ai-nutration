@@ -1,0 +1,47 @@
+name: Deploy backend (Railway)
+
+on:
+  push:
+    branches: [main, claude/ai-nutrition-phase-1-i5yhp8]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    name: Deploy to Railway
+    runs-on: ubuntu-latest
+    # Requires the RAILWAY_TOKEN secret (Railway project token) — see README.md "Deployment".
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify backend builds before deploying
+        run: |
+          npm ci
+          npx prisma generate
+          npm run typecheck
+          npm run build
+        working-directory: backend
+
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+
+      - name: Deploy to Railway
+        working-directory: backend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "::error::RAILWAY_TOKEN secret is not set. See README.md 'Deployment' for setup steps."
+            exit 1
+          fi
+          if [ -n "${{ vars.RAILWAY_SERVICE }}" ]; then
+            railway up --service "${{ vars.RAILWAY_SERVICE }}" --detach
+          else
+            railway up --detach
+          fi
