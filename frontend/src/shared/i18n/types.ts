@@ -62,6 +62,7 @@ export interface Dict {
   chartTarget: string
   days: string[]
   dayFull: string[]
+  monthFull: string[]
   overT: string
   underT: string
   onT: string

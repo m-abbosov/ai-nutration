@@ -11,17 +11,25 @@ export function AppHeader() {
   const { user } = useAuth()
 
   const dateLabel = useMemo(() => {
+    const now = new Date()
+    // Browsers' Intl data for uz-UZ is missing full month/weekday names (falls back to
+    // e.g. "M08"/"Sat"), so Uzbek is spelled out manually from the translation dictionary
+    // instead of trusting Intl.DateTimeFormat here. RU/EN have complete Intl coverage.
+    if (lang === 'UZ') {
+      const weekdayIdx = (now.getDay() + 6) % 7
+      return `${t.dayFull[weekdayIdx]}, ${now.getDate()}-${t.monthFull[now.getMonth()]}, ${now.getFullYear()}`
+    }
     try {
       return new Intl.DateTimeFormat(localeTags[lang], {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
         weekday: 'long',
-      }).format(new Date())
+      }).format(now)
     } catch {
-      return new Date().toDateString()
+      return now.toDateString()
     }
-  }, [lang])
+  }, [lang, t])
 
   return (
     <header className="z-30 flex flex-none flex-wrap items-end gap-5 border-b border-line bg-glass px-[22px] py-[18px] pt-[26px] backdrop-blur-[14px] md:px-[34px]">
