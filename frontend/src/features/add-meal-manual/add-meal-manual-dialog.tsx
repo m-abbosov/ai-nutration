@@ -1,10 +1,11 @@
 import { useTranslation } from '@/shared/i18n'
-import { useAddMeal } from '@/shared/api/meals'
+import { useAddMeal, useMeals } from '@/shared/api/meals'
 import { MealFormDialog } from '@/features/add-meal-manual/meal-form-dialog'
 
 export function AddMealManualDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { t } = useTranslation()
   const addMeal = useAddMeal()
+  const { data: previousMeals } = useMeals()
 
   return (
     <MealFormDialog
@@ -13,6 +14,7 @@ export function AddMealManualDialog({ open, onOpenChange }: { open: boolean; onO
       title={t.app.manualEntryTitle}
       description={t.app.manualEntrySub}
       isSubmitting={addMeal.isPending}
+      previousMeals={previousMeals}
       onSubmit={(values) =>
         addMeal.mutate(
           {

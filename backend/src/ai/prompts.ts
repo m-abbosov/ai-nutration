@@ -49,13 +49,18 @@ Current date/time: ${now.toISOString()}
 export function buildChatPrompt(
   context: AiContext,
   userMessage: string,
+  isFirstMessage: boolean,
 ): string {
   const language = LANGUAGE_NAME[context.profile.language];
+  const greetingRule = isFirstMessage
+    ? `- This is the FIRST message in this conversation — start "reply" with the greeting "Assalomu alaykum" (keep it in this exact form regardless of ${language}), then continue the rest of the reply in ${language}.`
+    : `- This is NOT the first message in this conversation — do NOT greet the user again (no "Assalomu alaykum", "hello", "salom" or similar opener). Go straight to answering.`;
 
   return `
 You are NutriAI, a friendly, knowledgeable nutrition coach assistant embedded in a
-nutrition-tracking app. Respond ONLY in ${language}. Respond with ONLY strict JSON
-matching exactly this shape, no markdown, no code fences, no commentary outside the JSON:
+nutrition-tracking app. Respond ONLY in ${language} (except the greeting rule below).
+Respond with ONLY strict JSON matching exactly this shape, no markdown, no code fences,
+no commentary outside the JSON:
 
 {
   "reply": string,
@@ -69,6 +74,7 @@ matching exactly this shape, no markdown, no code fences, no commentary outside 
 }
 
 Rules:
+${greetingRule}
 - If the user described a meal/food they ate (e.g. "I had two eggs and toast"), analyze it and
   populate "mealAnalysis" with realistic nutrition estimates. Otherwise "mealAnalysis" must be null.
 - If the user is asking what to eat / for food suggestions, populate "recommendations" with AT LEAST 3

@@ -9,7 +9,7 @@ import type { Language } from '@/shared/api/types'
 const LANGS: Language[] = ['UZ', 'RU', 'EN']
 
 /** Sidebar variant: a button that opens an upward flyout, matching the design. */
-export function LanguageSwitchFlyout() {
+export function LanguageSwitchFlyout({ compact }: { compact?: boolean } = {}) {
   const { lang, setLang } = useTranslation()
   const { isAuthenticated } = useAuth()
   const updateMe = useUpdateMe()
@@ -25,14 +25,27 @@ export function LanguageSwitchFlyout() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-[11px] rounded-[11px] px-2.5 py-2.5 text-left text-tx2 transition-colors hover:bg-surf2"
+        title={langName[lang]}
+        className={cn(
+          'flex w-full items-center gap-[11px] rounded-[11px] text-left text-tx2 transition-colors hover:bg-surf2',
+          compact ? 'justify-center px-0 py-2.5' : 'px-2.5 py-2.5',
+        )}
       >
         <span className="w-4 text-center text-[13px]">{langFlag[lang]}</span>
-        <span className="flex-1 text-[13.5px] font-medium">{langName[lang]}</span>
-        <ChevronUp className={cn('h-2.5 w-2.5 opacity-60 transition-transform', open && 'rotate-180')} />
+        {!compact && (
+          <>
+            <span className="flex-1 text-[13.5px] font-medium">{langName[lang]}</span>
+            <ChevronUp className={cn('h-2.5 w-2.5 opacity-60 transition-transform', open && 'rotate-180')} />
+          </>
+        )}
       </button>
       {open && (
-        <div className="absolute inset-x-0 bottom-[calc(100%+6px)] z-40 animate-fu rounded-[13px] border border-line2 bg-surf2 p-1.5 shadow-card">
+        <div
+          className={cn(
+            'absolute bottom-[calc(100%+6px)] z-40 animate-fu rounded-[13px] border border-line2 bg-surf2 p-1.5 shadow-card',
+            compact ? 'left-0 w-[168px]' : 'inset-x-0',
+          )}
+        >
           {LANGS.map((l) => (
             <button
               key={l}

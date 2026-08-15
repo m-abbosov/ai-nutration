@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
@@ -8,6 +8,7 @@ import { useTranslation } from '@/shared/i18n'
 import { fmtNumber } from '@/shared/lib/format'
 import { LogoMark } from '@/shared/ui/nav-icons'
 import { Button } from '@/shared/ui/button'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
 import { cn } from '@/shared/lib/cn'
 import { useSubmitOnboarding } from '@/shared/api/users'
 import { previewTargets } from '@/entities/user/lib/helpers'
@@ -36,6 +37,7 @@ export function OnboardingWizard() {
 
   const {
     register,
+    control,
     watch,
     setValue,
     trigger,
@@ -186,16 +188,26 @@ export function OnboardingWizard() {
                     />
                   </MetricRow>
                   <MetricRow label={t.app.genderOptional}>
-                    <select
-                      className="bg-transparent text-right text-[13px] font-medium outline-none"
-                      {...register('gender')}
-                      defaultValue=""
-                    >
-                      <option value="">—</option>
-                      <option value="MALE">{t.genderLabel.MALE}</option>
-                      <option value="FEMALE">{t.genderLabel.FEMALE}</option>
-                      <option value="OTHER">{t.genderLabel.OTHER}</option>
-                    </select>
+                    <Controller
+                      name="gender"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          value={field.value ?? 'NONE'}
+                          onValueChange={(v) => field.onChange(v === 'NONE' ? undefined : v)}
+                        >
+                          <SelectTrigger className="w-auto border-none bg-transparent p-0 text-right text-[13px] font-medium hover:border-none">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="NONE">—</SelectItem>
+                            <SelectItem value="MALE">{t.genderLabel.MALE}</SelectItem>
+                            <SelectItem value="FEMALE">{t.genderLabel.FEMALE}</SelectItem>
+                            <SelectItem value="OTHER">{t.genderLabel.OTHER}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
                   </MetricRow>
                   <MetricRow label={t.app.goalWeightLabel}>
                     <input

@@ -1,10 +1,11 @@
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from '@/shared/i18n'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/dialog'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Button } from '@/shared/ui/button'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
 import { useUpdateMe } from '@/shared/api/users'
 import { editProfileSchema } from '@/features/edit-profile/schema'
 import type { EditProfileFormValues } from '@/features/edit-profile/schema'
@@ -21,7 +22,7 @@ export function EditProfileDialog({
 }) {
   const { t } = useTranslation()
   const updateMe = useUpdateMe()
-  const { register, handleSubmit } = useForm<EditProfileFormValues>({
+  const { register, control, handleSubmit } = useForm<EditProfileFormValues>({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
       age: user.age ?? undefined,
@@ -78,42 +79,66 @@ export function EditProfileDialog({
             </div>
             <div>
               <Label htmlFor="gender">{t.app.genderOptional}</Label>
-              <select
-                id="gender"
-                {...register('gender')}
-                className="w-full rounded-xl border border-line2 bg-surf px-3.5 py-3 text-[13.5px] outline-none focus:border-acc"
-              >
-                <option value="">—</option>
-                <option value="MALE">{t.genderLabel.MALE}</option>
-                <option value="FEMALE">{t.genderLabel.FEMALE}</option>
-                <option value="OTHER">{t.genderLabel.OTHER}</option>
-              </select>
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? 'NONE'}
+                    onValueChange={(v) => field.onChange(v === 'NONE' ? undefined : v)}
+                  >
+                    <SelectTrigger id="gender">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NONE">—</SelectItem>
+                      <SelectItem value="MALE">{t.genderLabel.MALE}</SelectItem>
+                      <SelectItem value="FEMALE">{t.genderLabel.FEMALE}</SelectItem>
+                      <SelectItem value="OTHER">{t.genderLabel.OTHER}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
           <div>
             <Label htmlFor="goal">{t.prGoal}</Label>
-            <select
-              id="goal"
-              {...register('goal')}
-              className="w-full rounded-xl border border-line2 bg-surf px-3.5 py-3 text-[13.5px] outline-none focus:border-acc"
-            >
-              <option value="LOSE">{t.goalLabel.LOSE}</option>
-              <option value="MAINTAIN">{t.goalLabel.MAINTAIN}</option>
-              <option value="GAIN">{t.goalLabel.GAIN}</option>
-            </select>
+            <Controller
+              name="goal"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="goal">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="LOSE">{t.goalLabel.LOSE}</SelectItem>
+                    <SelectItem value="MAINTAIN">{t.goalLabel.MAINTAIN}</SelectItem>
+                    <SelectItem value="GAIN">{t.goalLabel.GAIN}</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           <div>
             <Label htmlFor="activityLevel">{t.prAct}</Label>
-            <select
-              id="activityLevel"
-              {...register('activityLevel')}
-              className="w-full rounded-xl border border-line2 bg-surf px-3.5 py-3 text-[13.5px] outline-none focus:border-acc"
-            >
-              <option value="SEDENTARY">{t.activityLabel.SEDENTARY}</option>
-              <option value="LIGHT">{t.activityLabel.LIGHT}</option>
-              <option value="MODERATE">{t.activityLabel.MODERATE}</option>
-              <option value="ACTIVE">{t.activityLabel.ACTIVE}</option>
-            </select>
+            <Controller
+              name="activityLevel"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="activityLevel">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SEDENTARY">{t.activityLabel.SEDENTARY}</SelectItem>
+                    <SelectItem value="LIGHT">{t.activityLabel.LIGHT}</SelectItem>
+                    <SelectItem value="MODERATE">{t.activityLabel.MODERATE}</SelectItem>
+                    <SelectItem value="ACTIVE">{t.activityLabel.ACTIVE}</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           <div className="mt-2 flex justify-end gap-2.5">
             <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>

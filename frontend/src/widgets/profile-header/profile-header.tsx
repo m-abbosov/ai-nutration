@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from '@/shared/i18n'
-import { userInitial } from '@/entities/user/lib/helpers'
 import { EditProfileDialog } from '@/features/edit-profile/edit-profile-dialog'
 import { Button } from '@/shared/ui/button'
+import { Avatar } from '@/shared/ui/avatar'
 import type { UserDto } from '@/shared/api/types'
 
 export function ProfileHeader({ user, streakDays, dayPct }: { user: UserDto; streakDays: number; dayPct: number }) {
@@ -32,9 +32,7 @@ export function ProfileHeader({ user, streakDays, dayPct }: { user: UserDto; str
               transform="rotate(-90 37 37)"
             />
           </svg>
-          <div className="absolute inset-1.5 grid place-items-center rounded-full border border-line2 bg-accT text-[25px] font-medium text-acc">
-            {userInitial(user)}
-          </div>
+          <Avatar user={user} className="absolute inset-1.5 h-[62px] w-[62px] font-medium" textClassName="text-[25px]" />
         </div>
         <div className="min-w-[190px] flex-1">
           <h2 className="m-0 text-[22px] font-medium tracking-[-.02em]">{user.name}</h2>

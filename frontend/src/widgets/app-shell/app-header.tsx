@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { Bell } from 'lucide-react'
 import { useTranslation, localeTags } from '@/shared/i18n'
 import { useAuth } from '@/app/providers/auth-provider'
 import { ThemeToggle } from '@/features/theme-toggle/theme-toggle'
-import { userInitial } from '@/entities/user/lib/helpers'
+import { Avatar } from '@/shared/ui/avatar'
 
 export function AppHeader() {
   const { t, lang } = useTranslation()
@@ -14,6 +15,7 @@ export function AppHeader() {
       return new Intl.DateTimeFormat(localeTags[lang], {
         day: 'numeric',
         month: 'long',
+        year: 'numeric',
         weekday: 'long',
       }).format(new Date())
     } catch {
@@ -39,9 +41,9 @@ export function AppHeader() {
         <button className="grid h-[34px] w-[34px] place-items-center rounded-[10px] border border-line text-tx2 transition-colors hover:bg-surf2 hover:text-tx">
           <Bell className="h-[15px] w-[15px]" />
         </button>
-        <div className="grid h-[34px] w-[34px] place-items-center rounded-full border border-line2 bg-accT text-[13px] font-semibold text-acc">
-          {userInitial(user)}
-        </div>
+        <Link to="/profile" title={t.navProf}>
+          <Avatar user={user} className="h-[34px] w-[34px]" textClassName="text-[13px]" />
+        </Link>
       </div>
     </header>
   )

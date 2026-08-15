@@ -41,6 +41,26 @@ export function useSendMessage() {
   return useMutation({
     mutationFn: ({ conversationId, content }: { conversationId: string; content: string }) =>
       api.post<SendMessageResult>(`/chat/conversations/${conversationId}/messages`, { content }),
+    // Echo the user's own message immediately instead of waiting for the AI
+    // round-trip — otherwise the typing indicator appears before the message
+    // the user just sent, which reads as if their input vanished.
+    onMutate: async ({ conversationId, content }) => {
+      const key = queryKeys.messages(conversationId)
+      await qc.cancelQueries({ queryKey: key })
+      const previous = qc.getQueryData<ChatMessageDto[]>(key)
+      const optimisticMessage: ChatMessageDto = {
+        id: `optimistic-${Date.now()}`,
+        role: 'USER',
+        content,
+        createdAt: new Date().toISOString(),
+        metadata: null,
+      }
+      qc.setQueryData<ChatMessageDto[]>(key, (old) => [...(old ?? []), optimisticMessage])
+      return { previous, key }
+    },
+    onError: (_err, _variables, context) => {
+      if (context) qc.setQueryData(context.key, context.previous)
+    },
     onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: queryKeys.messages(variables.conversationId) })
       qc.invalidateQueries({ queryKey: queryKeys.conversations })

@@ -246,5 +246,11 @@ export const en: Dict = {
     profileUpdated: 'Profile updated',
     addedToMeals: "Added to today's meals",
     perWeek: 'week',
+    collapseSidebar: 'Collapse sidebar',
+    expandSidebar: 'Expand sidebar',
+    confirmDeleteMealTitle: 'Delete meal',
+    selectPreviousMeal: 'Pick from a previous meal',
+    selectPreviousMealPh: 'Choose from the list (optional)',
+    noPreviousMeals: 'No previous meals found',
   },
 }

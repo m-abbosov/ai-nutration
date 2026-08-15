@@ -247,5 +247,11 @@ export const uz: Dict = {
     profileUpdated: 'Profil yangilandi',
     addedToMeals: "Ovqatlarga qo'shildi",
     perWeek: 'hafta',
+    collapseSidebar: 'Panelni yig’ish',
+    expandSidebar: 'Panelni yoyish',
+    confirmDeleteMealTitle: "Ovqatni o'chirish",
+    selectPreviousMeal: 'Oldingi ovqatdan tanlash',
+    selectPreviousMealPh: 'Ro’yxatdan tanlang (ixtiyoriy)',
+    noPreviousMeals: "Oldingi ovqatlar topilmadi",
   },
 }

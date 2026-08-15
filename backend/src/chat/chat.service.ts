@@ -87,6 +87,8 @@ export class ChatService {
       conversationId,
     );
 
+    const isFirstMessage = conversation.title === 'New chat';
+
     const userMessage = await this.prisma.chatMessage.create({
       data: {
         conversationId,
@@ -102,7 +104,11 @@ export class ChatService {
     ]);
 
     const context = buildAiContext(user, daily);
-    const generation = await this.aiService.generateChatReply(context, content);
+    const generation = await this.aiService.generateChatReply(
+      context,
+      content,
+      isFirstMessage,
+    );
 
     let assistantContent: string;
     let metadata: Prisma.InputJsonValue | typeof Prisma.JsonNull =
@@ -134,7 +140,6 @@ export class ChatService {
       },
     });
 
-    const isFirstMessage = conversation.title === 'New chat';
     await this.prisma.conversation.update({
       where: { id: conversationId },
       data: {

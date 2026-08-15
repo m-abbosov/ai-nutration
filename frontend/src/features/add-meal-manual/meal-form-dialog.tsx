@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useTranslation } from '@/shared/i18n'
@@ -6,9 +6,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Button } from '@/shared/ui/button'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
 import { mealTypeLabel, MEAL_TYPE_ORDER } from '@/entities/meal/lib/helpers'
 import { manualMealSchema } from '@/features/add-meal-manual/schema'
 import type { ManualMealFormValues } from '@/features/add-meal-manual/schema'
+import type { MealDto } from '@/shared/api/types'
 
 export function MealFormDialog({
   open,
@@ -18,6 +20,7 @@ export function MealFormDialog({
   defaultValues,
   onSubmit,
   isSubmitting,
+  previousMeals,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -26,10 +29,13 @@ export function MealFormDialog({
   defaultValues?: Partial<ManualMealFormValues>
   onSubmit: (values: ManualMealFormValues) => void
   isSubmitting?: boolean
+  /** When provided (non-empty), shows a picker to prefill the form from an earlier logged meal. */
+  previousMeals?: MealDto[]
 }) {
   const { t } = useTranslation()
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -43,6 +49,20 @@ export function MealFormDialog({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
+  const applyPreviousMeal = (mealId: string) => {
+    const meal = previousMeals?.find((m) => m.id === mealId)
+    if (!meal) return
+    reset({
+      mealType: meal.mealType,
+      name: meal.name,
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      fat: meal.fat,
+      servingSize: meal.servingSize ?? undefined,
+    })
+  }
+
   const submit = handleSubmit((values) => onSubmit(values))
 
   return (
@@ -53,19 +73,43 @@ export function MealFormDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="flex flex-col gap-3.5">
+          {previousMeals && previousMeals.length > 0 && (
+            <div>
+              <Label htmlFor="previousMeal">{t.app.selectPreviousMeal}</Label>
+              <Select onValueChange={applyPreviousMeal}>
+                <SelectTrigger id="previousMeal">
+                  <SelectValue placeholder={t.app.selectPreviousMealPh} />
+                </SelectTrigger>
+                <SelectContent>
+                  {previousMeals.map((meal) => (
+                    <SelectItem key={meal.id} value={meal.id}>
+                      {meal.name} · {meal.calories} {t.kcal}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div>
             <Label htmlFor="mealType">{t.app.mealTypeLabel}</Label>
-            <select
-              id="mealType"
-              {...register('mealType')}
-              className="w-full rounded-xl border border-line2 bg-surf px-3.5 py-3 text-[13.5px] outline-none focus:border-acc"
-            >
-              {MEAL_TYPE_ORDER.map((mt) => (
-                <option key={mt} value={mt}>
-                  {mealTypeLabel(mt, t)}
-                </option>
-              ))}
-            </select>
+            <Controller
+              name="mealType"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="mealType">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MEAL_TYPE_ORDER.map((mt) => (
+                      <SelectItem key={mt} value={mt}>
+                        {mealTypeLabel(mt, t)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           <div>
             <Label htmlFor="name">{t.app.mealNameLabel}</Label>

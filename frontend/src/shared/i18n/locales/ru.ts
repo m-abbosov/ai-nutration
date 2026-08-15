@@ -245,5 +245,11 @@ export const ru: Dict = {
     profileUpdated: 'Профиль обновлён',
     addedToMeals: 'Добавлено в приёмы пищи',
     perWeek: 'неделя',
+    collapseSidebar: 'Свернуть панель',
+    expandSidebar: 'Развернуть панель',
+    confirmDeleteMealTitle: 'Удалить приём пищи',
+    selectPreviousMeal: 'Выбрать из прошлых приёмов пищи',
+    selectPreviousMealPh: 'Выберите из списка (необязательно)',
+    noPreviousMeals: 'Прошлые приёмы пищи не найдены',
   },
 }

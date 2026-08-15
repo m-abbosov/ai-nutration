@@ -46,10 +46,11 @@ export class AiService {
   async generateChatReply(
     context: AiContext,
     userMessage: string,
+    isFirstMessage: boolean,
   ): Promise<ChatGenerationResult> {
     if (!this.gemini.isConfigured()) throw new AiNotConfiguredException();
 
-    const prompt = buildChatPrompt(context, userMessage);
+    const prompt = buildChatPrompt(context, userMessage, isFirstMessage);
 
     const first = await this.tryGenerateChat(prompt);
     if (first) return { ok: true, data: first };

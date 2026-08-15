@@ -260,5 +260,11 @@ export interface Dict {
     profileUpdated: string
     addedToMeals: string
     perWeek: string
+    collapseSidebar: string
+    expandSidebar: string
+    confirmDeleteMealTitle: string
+    selectPreviousMeal: string
+    selectPreviousMealPh: string
+    noPreviousMeals: string
   }
 }
