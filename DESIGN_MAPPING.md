@@ -39,11 +39,11 @@ pills with dark (`#04120e`) text, secondary buttons are outlined with `--line2`.
 | 1 | **Login** (`isAuth`) | `/login` | `pages/login` → `AuthCard` (quote+stats panel + `GoogleSignInButton`, `TelegramLoginWidget` features/auth). Password fields from the mockup are **dropped** — Phase 1 auth is Google + Telegram only per spec. | `GET /auth/google`, `GET /auth/google/callback`, `POST /auth/telegram`, `POST /auth/refresh`, `GET /auth/me` |
 | 2 | **Onboarding** (`isOnb`, 4 steps: goal → body metrics → activity → done) | `/onboarding` | `pages/onboarding` → `features/onboarding-wizard` (`GoalStep`, `BodyMetricsStep`, `ActivityStep`, `ResultStep`) using RHF+Zod, stepper dots widget | `POST /users/onboarding` → persists profile, computes & returns `dailyCalorieTarget` + macro split |
 | 3 | **Dashboard** (`page.dash`) | `/` (index, inside `AppShell`) | `widgets/dashboard-hero` (calorie ring + status/remaining/meals/streak stat row + day-flow dots), `widgets/macro-overview` (3 macro cards), `widgets/todays-meals` (timeline), `widgets/ai-insight-card`, `widgets/weekly-chart` (SVG bar chart) | `GET /dashboard` (composed: today totals + meals + 7-day chart + latest AI insight) |
-| 4 | **AI Chat / Coach** (`page.coach`) | `/chat` and `/chat/:conversationId` | `widgets/chat-sidebar` (`New chat` + history grouped Today/Yesterday/Previous 7 days/Older), `widgets/chat-window` (`ChatMessage`, `NutritionResultCard` with "Add to today's meals", typing indicator, empty-state quick actions, suggestion chips), `features/send-chat-message`, `features/add-meal-from-ai` | `GET /chat/conversations`, `POST /chat/conversations`, `GET /chat/conversations/:id/messages`, `POST /chat/conversations/:id/messages` (→ Gemini via backend), `POST /meals` (add analyzed card) |
+| 4 | **AI Chat / Coach** (`page.coach`) | `/chat` and `/chat/:conversationId` | `widgets/chat-sidebar` (`New chat` + history grouped Today/Yesterday/Previous 7 days/Older), `widgets/chat-window` (`ChatMessage`, `NutritionResultCard` with "Add to today's meals", typing indicator, empty-state quick actions, suggestion chips), `features/send-chat-message`, `features/add-meal-from-ai` | `GET /chat/conversations`, `POST /chat/conversations`, `GET /chat/conversations/:id/messages`, `POST /chat/conversations/:id/messages` (→ the user's own configured AI provider via backend), `POST /meals` (add analyzed card) |
 | 5 | **Meals** (`page.meals`) | `/meals` | `widgets/meals-summary` (today's total + macro pills + progress bar), `widgets/meal-timeline` (`MealCard` expand/collapse, edit/delete), `features/add-meal` dropdown (AI chat / quick add / manual entry dialog with RHF+Zod) | `GET /meals?date=`, `POST /meals`, `PATCH /meals/:id`, `DELETE /meals/:id` |
 | 6 | **Progress** (`page.prog`) | `/progress` | `widgets/calorie-trend-chart` (SVG line+area, range tabs 7/30/90d), stat cards (avg calories, avg protein, adherence ring, successful-days dots), `widgets/weight-card` (current vs goal weight — single-point, no historical chart in Phase 1: multi-point weight tracking is a **future phase**), `widgets/macro-consistency-card` | `GET /nutrition/weekly?days=` (real, from `Meal` aggregation) for the trend chart; weight/goal come from `User` profile fields |
 | 7 | **Profile** (`page.prof`) | `/profile` | `widgets/profile-header` (avatar ring, goal/streak chips), `widgets/profile-body-metrics`, `widgets/profile-goal-card` (goal/activity/rate/target), `widgets/macro-split-bar` | `GET /users/me`; edit reuses onboarding form fields via `PATCH /users/me` |
-| 8 | **Settings** (`page.set`) | `/settings` | `widgets/settings-appearance` (theme toggle, language select — shadcn `Select`), `widgets/settings-ai` (Gemini connection status, **read-only**, key never sent to client), `widgets/settings-notifications` (3 toggles — UI-only stub in Phase 1, no backend notification delivery), `widgets/settings-account` (sign out) | `PATCH /users/me` (theme/language persisted per user); `GET /health/gemini` for connection badge |
+| 8 | **Settings** (`page.set`) | `/settings` | `widgets/settings-appearance` (theme toggle, language select — shadcn `Select`), `widgets/settings-ai` (bring-your-own-key: pick a provider, paste a key, see a masked status badge — provider + last 4 chars + status only, the raw key never round-trips to the client after saving), `widgets/settings-notifications` (3 toggles — UI-only stub in Phase 1, no backend notification delivery), `widgets/settings-account` (sign out) | `PATCH /users/me` (theme/language persisted per user); `POST /users/me/ai-key`, `DELETE /users/me/ai-key` |
 | — | **Mobile** (`showMobile`, responsive duplicate w/ bottom tab bar) | same routes, responsive | `widgets/mobile-bottom-nav` (Home/AI/Meals/Progress/Me), `widgets/mobile-add-sheet` — **not a separate route**, it's the `<768px` responsive layout of the above pages (`AppShell` switches sidebar↔bottom-nav by breakpoint) | same endpoints as above |
 
 ## Interaction/state notes carried over from `class Component`
@@ -66,14 +66,18 @@ pills with dark (`#04120e`) text, secondary buttons are outlined with `--line2`.
 - Language toggle persists `uz|ru|en`; UI strings live in `shared/i18n/locales/*.ts`
   transcribed from the prototype's `T`/`C`/`M`/`S`/`MB` dictionaries (lines 1587–1705 of
   `NutriAI.dc.html`). AI-generated chat/recommendation content is **not** run through the
-  UI i18n system — the backend asks Gemini to answer in the user's selected language
+  UI i18n system — the backend asks the configured AI provider to answer in the user's selected language
   directly.
 
 ## Deliberate deviations from the mock (Phase 1 scope discipline)
 
 - Login form's password fields removed (Google + Telegram only — see Step 7 of the spec).
-- Settings "Replace key" control is disabled/hidden — Gemini key is server-only env config,
-  never editable or visible from the client beyond a masked "Connected" badge.
+- AI is bring-your-own-key (changed after initial Phase 1 build): each user supplies
+  their own Gemini/OpenAI/Claude API key from Settings instead of the app using one
+  shared server-side key. Keys are encrypted at rest (`AI_KEY_ENCRYPTION_SECRET`) and
+  the client only ever sees provider + last 4 chars + status, never the raw key. AI
+  features (chat analysis, recommendations) stay off with an in-app prompt until a
+  user adds their own key; nothing else in the app is gated by it.
 - Notification toggles are persisted as user preference flags but do not yet trigger any
   delivery mechanism (push/email/telegram) — that is a future phase.
 - Weight trend multi-point chart, detailed analytics, and social/streak gamification
