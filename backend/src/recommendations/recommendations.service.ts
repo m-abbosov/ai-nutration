@@ -4,11 +4,13 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AiService } from '../ai/ai.service';
 import { buildAiContext } from '../ai/context.util';
 import { UserAiCredentialsService } from '../ai/user-ai-credentials.service';
+import { FeatureFlagsService } from '../common/feature-flags/feature-flags.service';
 import { PrismaService } from '../database/prisma.service';
 import { NutritionService } from '../nutrition/nutrition.service';
 import { CreateRecommendationDto } from './dto/create-recommendation.dto';
@@ -21,12 +23,22 @@ export class RecommendationsService {
     private readonly nutritionService: NutritionService,
     private readonly aiService: AiService,
     private readonly userAiCredentials: UserAiCredentialsService,
+    private readonly featureFlags: FeatureFlagsService,
   ) {}
 
   async generate(
     userId: string,
     dto: CreateRecommendationDto,
   ): Promise<RecommendationsResponseDto> {
+    const recommendationsEnabled = await this.featureFlags.isEnabled(
+      'RECOMMENDATIONS_ENABLED',
+    );
+    if (!recommendationsEnabled) {
+      throw new ServiceUnavailableException(
+        'AI recommendations are currently disabled',
+      );
+    }
+
     const [user, daily] = await Promise.all([
       this.prisma.user.findUniqueOrThrow({ where: { id: userId } }),
       this.nutritionService.getDaily(userId),
@@ -44,6 +56,7 @@ export class RecommendationsService {
       context,
       credentials.provider,
       credentials.apiKey,
+      userId,
       dto.mealType,
     );
 

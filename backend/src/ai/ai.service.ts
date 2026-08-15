@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AiProvider, MealType } from '@prisma/client';
+import { AiEndpoint, AiProvider, MealType } from '@prisma/client';
+import { AiRequestLogService } from './ai-request-log.service';
 import { ProviderFactory } from './providers/provider.factory';
 import {
+  AiProviderClient,
   ProviderCallError,
   ProviderErrorReason,
 } from './providers/provider.types';
@@ -38,10 +40,15 @@ function extractJsonText(raw: string): string {
 export class AiService {
   private readonly logger = new Logger(AiService.name);
 
-  constructor(private readonly providerFactory: ProviderFactory) {}
+  constructor(
+    private readonly providerFactory: ProviderFactory,
+    private readonly aiRequestLogService: AiRequestLogService,
+  ) {}
 
   /** Cheap live check used when a user saves a new API key in Settings —
-   * confirms the key actually works before it's persisted. */
+   * confirms the key actually works before it's persisted. Not logged to
+   * AiRequestLog — it's a key-validation probe, not a chat/recommendation
+   * generation attempt. */
   async testKey(
     provider: AiProvider,
     apiKey: string,
@@ -73,14 +80,17 @@ export class AiService {
     isFirstMessage: boolean,
     provider: AiProvider,
     apiKey: string,
+    userId: string,
   ): Promise<ChatGenerationResult> {
     const client = this.providerFactory.create(provider, apiKey);
     const prompt = buildChatPrompt(context, userMessage, isFirstMessage);
+    const logCtx = { userId, endpoint: 'CHAT' as AiEndpoint, provider };
 
     const first = await this.tryGenerate(
       client,
       prompt,
       GeminiChatResponseSchema,
+      logCtx,
     );
     if (first.ok) return { ok: true, data: first.data };
     if (first.reason !== 'GENERATION_FAILED')
@@ -94,6 +104,7 @@ export class AiService {
       client,
       retryPrompt,
       GeminiChatResponseSchema,
+      logCtx,
     );
     if (second.ok) return { ok: true, data: second.data };
 
@@ -113,15 +124,22 @@ export class AiService {
     context: AiContext,
     provider: AiProvider,
     apiKey: string,
+    userId: string,
     mealTypeHint?: MealType,
   ): Promise<RecommendationsGenerationResult> {
     const client = this.providerFactory.create(provider, apiKey);
     const prompt = buildRecommendationsPrompt(context, mealTypeHint);
+    const logCtx = {
+      userId,
+      endpoint: 'RECOMMENDATION' as AiEndpoint,
+      provider,
+    };
 
     const first = await this.tryGenerate(
       client,
       prompt,
       GeminiRecommendationsResponseSchema,
+      logCtx,
     );
     if (first.ok) return { ok: true, data: first.data };
     if (first.reason !== 'GENERATION_FAILED')
@@ -135,6 +153,7 @@ export class AiService {
       client,
       retryPrompt,
       GeminiRecommendationsResponseSchema,
+      logCtx,
     );
     if (second.ok) return { ok: true, data: second.data };
 
@@ -144,22 +163,60 @@ export class AiService {
     return { ok: false, reason: second.reason };
   }
 
+  /**
+   * Runs one provider call attempt (an initial try or a schema-validation
+   * retry are each a separate call to this method) and writes exactly one
+   * `AiRequestLog` row for it, timed end-to-end including JSON parse/schema
+   * validation. Logging never throws — a failure to write the log row must
+   * not turn a successful (or already-failed) generation into a 500.
+   */
   private async tryGenerate<T>(
-    client: ReturnType<ProviderFactory['create']>,
+    client: AiProviderClient,
     prompt: string,
     schema: { safeParse: (v: unknown) => { success: boolean; data?: T } },
+    logCtx: { userId: string; endpoint: AiEndpoint; provider: AiProvider },
   ): Promise<
     | { ok: true; data: T }
     | { ok: false; reason: ProviderErrorReason | 'GENERATION_FAILED' }
   > {
+    const startedAt = Date.now();
     try {
-      const raw = await client.generateJson(prompt);
-      const parsed = JSON.parse(extractJsonText(raw));
+      const { text, usage } = await client.generateJson(prompt);
+      const responseTimeMs = Date.now() - startedAt;
+      const parsed = JSON.parse(extractJsonText(text));
       const result = schema.safeParse(parsed);
-      if (result.success && result.data !== undefined)
+      if (result.success && result.data !== undefined) {
+        await this.aiRequestLogService.record({
+          ...logCtx,
+          model: client.model,
+          status: 'SUCCESS',
+          errorReason: null,
+          responseTimeMs,
+          usage,
+        });
         return { ok: true, data: result.data };
+      }
+      await this.aiRequestLogService.record({
+        ...logCtx,
+        model: client.model,
+        status: 'ERROR',
+        errorReason: 'GENERATION_FAILED',
+        responseTimeMs,
+        usage,
+      });
       return { ok: false, reason: 'GENERATION_FAILED' };
     } catch (err) {
+      const responseTimeMs = Date.now() - startedAt;
+      const reason =
+        err instanceof ProviderCallError ? err.reason : 'GENERATION_FAILED';
+      await this.aiRequestLogService.record({
+        ...logCtx,
+        model: client.model,
+        status: 'ERROR',
+        errorReason: reason,
+        responseTimeMs,
+        usage: null,
+      });
       if (err instanceof ProviderCallError) {
         this.logger.warn(
           `AI generation attempt failed (${err.reason}): ${err.message}`,

@@ -8,12 +8,163 @@
  * Run with: npm run seed  (wraps `ts-node prisma/seed.ts`, also wired as
  * `prisma.seed` in package.json so `npx prisma db seed` works too).
  */
-import { PrismaClient } from '@prisma/client';
+import { AdminPermissionKey, AdminRoleName, PrismaClient } from '@prisma/client';
 import { calculateCalorieTargets } from '../src/users/calorie.util';
 
 const prisma = new PrismaClient();
 
 const DEV_USER_EMAIL = 'dev@nutriai.local';
+
+// ── Admin panel (Phase 2) seed data ─────────────────────────────────────
+// Fixed, seeded role set (docs/ADMIN_PANEL.md, "RBAC model"). Every key in
+// AdminPermissionKey must appear exactly once across these descriptions so
+// the idempotent upsert below stays exhaustive as the enum grows.
+const ADMIN_PERMISSIONS: Record<AdminPermissionKey, string> = {
+  DASHBOARD_READ: 'View the admin dashboard overview',
+  USERS_READ: 'View regular user accounts and their detail pages',
+  USERS_UPDATE: 'Edit regular user account fields',
+  USERS_DISABLE: "Disable/re-enable a regular user's account",
+  NUTRITION_READ: 'View aggregate nutrition analytics',
+  AI_READ: 'View AI usage overview/analytics',
+  AI_LOGS_READ: 'View individual AI request logs',
+  CONVERSATIONS_READ: "View a user's chat conversation content",
+  ANALYTICS_READ: 'View the analytics dashboard',
+  SYSTEM_READ: 'View system health and error logs',
+  ADMIN_USERS_READ: 'View admin team members and their roles',
+  ADMIN_USERS_MANAGE: "Promote users to admin and manage admins' roles/access",
+  SETTINGS_MANAGE: 'Change app settings and toggle feature flags',
+  AUDIT_LOGS_READ: 'View the full admin audit log',
+};
+
+// Permission → role seed matrix (docs/ADMIN_PANEL.md). Data, not hardcoded
+// logic — a SUPER_ADMIN could in principle extend this by seeding a new
+// custom role row without a code change (per-admin overrides beyond these
+// four roles are a deliberate follow-up, not built in Phase 2).
+const ROLE_PERMISSIONS: Record<AdminRoleName, AdminPermissionKey[]> = {
+  SUPER_ADMIN: Object.keys(ADMIN_PERMISSIONS) as AdminPermissionKey[],
+  ADMIN: [
+    'DASHBOARD_READ',
+    'USERS_READ',
+    'USERS_UPDATE',
+    'USERS_DISABLE',
+    'NUTRITION_READ',
+    'AI_READ',
+    'AI_LOGS_READ',
+    'CONVERSATIONS_READ',
+    'ANALYTICS_READ',
+    'SYSTEM_READ',
+  ],
+  MODERATOR: ['DASHBOARD_READ', 'USERS_READ', 'USERS_UPDATE', 'NUTRITION_READ'],
+  SUPPORT: ['DASHBOARD_READ', 'USERS_READ'],
+};
+
+const FEATURE_FLAGS: {
+  key: string;
+  enabled: boolean;
+  description: string;
+}[] = [
+  {
+    key: 'AI_CHAT_ENABLED',
+    enabled: true,
+    description: 'Whether the AI chat (nutrition coach) feature is available to users',
+  },
+  {
+    key: 'RECOMMENDATIONS_ENABLED',
+    enabled: true,
+    description: 'Whether AI meal recommendations can be requested',
+  },
+  {
+    key: 'GOOGLE_AUTH_ENABLED',
+    enabled: true,
+    description: 'Whether sign-in with Google is available',
+  },
+  {
+    key: 'TELEGRAM_AUTH_ENABLED',
+    enabled: true,
+    description: 'Whether sign-in with the Telegram widget is available',
+  },
+  {
+    key: 'MAINTENANCE_MODE',
+    enabled: false,
+    description: 'When on, blocks regular user-facing endpoints with a 503 while admin/auth/health stay reachable',
+  },
+];
+
+/** Idempotent — safe to re-run against a database that already has Phase 1
+ * (or previously-seeded Phase 2) data, including production, per
+ * docs/ADMIN_PANEL.md. Upserts on the unique AdminPermissionKey/
+ * AdminRoleName/FeatureFlag.key. */
+async function seedAdminPanel(devUserId: string): Promise<void> {
+  console.log('Seeding admin panel roles/permissions/feature flags...');
+
+  const permissionByKey = new Map<AdminPermissionKey, string>();
+  for (const [key, description] of Object.entries(ADMIN_PERMISSIONS) as [
+    AdminPermissionKey,
+    string,
+  ][]) {
+    const permission = await prisma.adminPermission.upsert({
+      where: { key },
+      update: { description },
+      create: { key, description },
+    });
+    permissionByKey.set(key, permission.id);
+  }
+
+  for (const [roleName, permissionKeys] of Object.entries(ROLE_PERMISSIONS) as [
+    AdminRoleName,
+    AdminPermissionKey[],
+  ][]) {
+    const role = await prisma.adminRole.upsert({
+      where: { name: roleName },
+      update: { isSystem: true },
+      create: { name: roleName, isSystem: true },
+    });
+
+    // Rewrite the role's permission set to exactly match ROLE_PERMISSIONS —
+    // makes re-running the seed after a matrix change converge instead of
+    // only ever adding grants.
+    const currentGrants = await prisma.adminRolePermission.findMany({
+      where: { roleId: role.id },
+      select: { permissionId: true },
+    });
+    const desiredPermissionIds = new Set(
+      permissionKeys.map((key) => permissionByKey.get(key)!),
+    );
+    const currentPermissionIds = new Set(currentGrants.map((g) => g.permissionId));
+
+    const toAdd = [...desiredPermissionIds].filter((id) => !currentPermissionIds.has(id));
+    const toRemove = [...currentPermissionIds].filter((id) => !desiredPermissionIds.has(id));
+
+    if (toAdd.length) {
+      await prisma.adminRolePermission.createMany({
+        data: toAdd.map((permissionId) => ({ roleId: role.id, permissionId })),
+        skipDuplicates: true,
+      });
+    }
+    if (toRemove.length) {
+      await prisma.adminRolePermission.deleteMany({
+        where: { roleId: role.id, permissionId: { in: toRemove } },
+      });
+    }
+
+    if (roleName === 'SUPER_ADMIN') {
+      await prisma.user.update({
+        where: { id: devUserId },
+        data: { adminRoleId: role.id, adminActive: true },
+      });
+    }
+  }
+
+  for (const flag of FEATURE_FLAGS) {
+    await prisma.featureFlag.upsert({
+      where: { key: flag.key },
+      update: { description: flag.description },
+      create: { key: flag.key, enabled: flag.enabled, description: flag.description },
+    });
+  }
+
+  console.log('Seeded admin roles, permissions, feature flags; promoted dev user to SUPER_ADMIN.');
+}
 
 interface SeedMealItem {
   name: string;
@@ -175,6 +326,8 @@ async function main() {
 
   const mealCount = await prisma.meal.count({ where: { userId: user.id } });
   console.log(`Seeded user ${user.email} (${user.id}) with ${mealCount} meals across ${DAYS_OF_HISTORY} days.`);
+
+  await seedAdminPanel(user.id);
 }
 
 main()

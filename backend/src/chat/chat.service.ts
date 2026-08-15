@@ -2,12 +2,14 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { AiService } from '../ai/ai.service';
 import { buildAiContext } from '../ai/context.util';
 import { fallbackMessageFor } from '../ai/ai-fallback-messages';
 import { UserAiCredentialsService } from '../ai/user-ai-credentials.service';
+import { FeatureFlagsService } from '../common/feature-flags/feature-flags.service';
 import { PrismaService } from '../database/prisma.service';
 import { NutritionService } from '../nutrition/nutrition.service';
 import {
@@ -29,6 +31,7 @@ export class ChatService {
     private readonly nutritionService: NutritionService,
     private readonly aiService: AiService,
     private readonly userAiCredentials: UserAiCredentialsService,
+    private readonly featureFlags: FeatureFlagsService,
   ) {}
 
   async listConversations(userId: string): Promise<ConversationResponseDto[]> {
@@ -76,6 +79,11 @@ export class ChatService {
     conversationId: string,
     content: string,
   ): Promise<SendMessageResponseDto> {
+    const chatEnabled = await this.featureFlags.isEnabled('AI_CHAT_ENABLED');
+    if (!chatEnabled) {
+      throw new ServiceUnavailableException('AI chat is currently disabled');
+    }
+
     const conversation = await this.findOwnedConversationOrThrow(
       userId,
       conversationId,
@@ -113,6 +121,7 @@ export class ChatService {
         isFirstMessage,
         credentials.provider,
         credentials.apiKey,
+        userId,
       );
 
       if (generation.ok) {

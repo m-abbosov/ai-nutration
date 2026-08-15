@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
+import { AuditLogService } from '../audit/audit-log.service';
 import { EnvConfig } from '../config/env.validation';
 import { UserResponseDto } from '../users/dto/user-response.dto';
 import { AuthService } from './auth.service';
@@ -28,10 +29,13 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService<EnvConfig, true>,
+    private readonly auditLogService: AuditLogService,
   ) {}
 
   // Initiates the Google OAuth consent flow. GoogleConfiguredGuard both
-  // gates on config and, when configured, hands off to passport's redirect.
+  // gates on config/GOOGLE_AUTH_ENABLED and, when configured, hands off to
+  // passport's redirect — forwarding `?state=admin` through to Google when
+  // present (see GoogleConfiguredGuard.getAuthenticateOptions).
   @Get('google')
   @UseGuards(GoogleConfiguredGuard)
   googleAuth(): void {
@@ -45,6 +49,18 @@ export class AuthController {
     @Res() res: Response,
   ): Promise<void> {
     const profile = req.user as GoogleProfilePayload;
+    const state =
+      typeof req.query.state === 'string' ? req.query.state : undefined;
+
+    // Admin panel login (docs/ADMIN_API_CONTRACT.md, "Auth"). Kept as an
+    // isolated branch so the code path below — Phase 1's regular login —
+    // is untouched byte-for-byte for every request where `state` is absent
+    // or anything other than exactly `'admin'`.
+    if (state === 'admin') {
+      await this.handleAdminGoogleCallback(profile, req, res);
+      return;
+    }
+
     const { accessToken, refreshToken } =
       await this.authService.loginWithGoogle(profile);
 
@@ -52,6 +68,44 @@ export class AuthController {
       infer: true,
     });
     const redirectUrl = new URL('/auth/callback', frontendUrl);
+    redirectUrl.searchParams.set('token', accessToken);
+    redirectUrl.searchParams.set('refresh', refreshToken);
+    res.redirect(redirectUrl.toString());
+  }
+
+  private async handleAdminGoogleCallback(
+    profile: GoogleProfilePayload,
+    req: Request,
+    res: Response,
+  ): Promise<void> {
+    const frontendUrl = this.configService.get('FRONTEND_URL', {
+      infer: true,
+    });
+    const redirectUrl = new URL('/admin/auth/callback', frontendUrl);
+
+    const user = await this.authService.resolveAdminGoogleUser(profile);
+    const isAdmin = user.adminRoleId != null && user.adminActive;
+
+    if (!isAdmin) {
+      await this.auditLogService.record({
+        adminId: user.id,
+        action: 'ADMIN_LOGIN_DENIED',
+        targetType: 'User',
+        targetId: user.id,
+        ipAddress: req.ip,
+      });
+      redirectUrl.searchParams.set('error', 'not_admin');
+      res.redirect(redirectUrl.toString());
+      return;
+    }
+
+    const { accessToken, refreshToken } =
+      await this.authService.issueAdminSession(user.id);
+    await this.auditLogService.record({
+      adminId: user.id,
+      action: 'ADMIN_LOGIN',
+      ipAddress: req.ip,
+    });
     redirectUrl.searchParams.set('token', accessToken);
     redirectUrl.searchParams.set('refresh', refreshToken);
     res.redirect(redirectUrl.toString());

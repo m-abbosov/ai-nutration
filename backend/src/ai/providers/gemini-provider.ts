@@ -2,15 +2,21 @@ import {
   GoogleGenerativeAI,
   GoogleGenerativeAIFetchError,
 } from '@google/generative-ai';
-import { AiProviderClient, ProviderCallError } from './provider.types';
+import {
+  AiProviderClient,
+  ProviderCallError,
+  ProviderUsage,
+} from './provider.types';
 
 export class GeminiProvider implements AiProviderClient {
   constructor(
     private readonly apiKey: string,
-    private readonly model: string,
+    public readonly model: string,
   ) {}
 
-  async generateJson(prompt: string): Promise<string> {
+  async generateJson(
+    prompt: string,
+  ): Promise<{ text: string; usage: ProviderUsage | null }> {
     try {
       const client = new GoogleGenerativeAI(this.apiKey);
       const model = client.getGenerativeModel({
@@ -18,7 +24,15 @@ export class GeminiProvider implements AiProviderClient {
         generationConfig: { responseMimeType: 'application/json' },
       });
       const result = await model.generateContent(prompt);
-      return result.response.text();
+      const usageMetadata = result.response.usageMetadata;
+      const usage: ProviderUsage | null = usageMetadata
+        ? {
+            promptTokens: usageMetadata.promptTokenCount ?? null,
+            completionTokens: usageMetadata.candidatesTokenCount ?? null,
+            totalTokens: usageMetadata.totalTokenCount ?? null,
+          }
+        : null;
+      return { text: result.response.text(), usage };
     } catch (err) {
       throw classifyGeminiError(err);
     }

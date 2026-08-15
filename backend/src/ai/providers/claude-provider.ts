@@ -1,13 +1,19 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { AiProviderClient, ProviderCallError } from './provider.types';
+import {
+  AiProviderClient,
+  ProviderCallError,
+  ProviderUsage,
+} from './provider.types';
 
 export class ClaudeProvider implements AiProviderClient {
   constructor(
     private readonly apiKey: string,
-    private readonly model: string,
+    public readonly model: string,
   ) {}
 
-  async generateJson(prompt: string): Promise<string> {
+  async generateJson(
+    prompt: string,
+  ): Promise<{ text: string; usage: ProviderUsage | null }> {
     try {
       const client = new Anthropic({ apiKey: this.apiKey });
       const result = await client.messages.create({
@@ -16,7 +22,18 @@ export class ClaudeProvider implements AiProviderClient {
         messages: [{ role: 'user', content: prompt }],
       });
       const block = result.content[0];
-      return block?.type === 'text' ? block.text : '';
+      const usage: ProviderUsage | null = result.usage
+        ? {
+            promptTokens: result.usage.input_tokens ?? null,
+            completionTokens: result.usage.output_tokens ?? null,
+            totalTokens:
+              result.usage.input_tokens != null &&
+              result.usage.output_tokens != null
+                ? result.usage.input_tokens + result.usage.output_tokens
+                : null,
+          }
+        : null;
+      return { text: block?.type === 'text' ? block.text : '', usage };
     } catch (err) {
       throw classifyClaudeError(err);
     }

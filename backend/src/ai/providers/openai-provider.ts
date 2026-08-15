@@ -1,13 +1,19 @@
 import OpenAI from 'openai';
-import { AiProviderClient, ProviderCallError } from './provider.types';
+import {
+  AiProviderClient,
+  ProviderCallError,
+  ProviderUsage,
+} from './provider.types';
 
 export class OpenAiProvider implements AiProviderClient {
   constructor(
     private readonly apiKey: string,
-    private readonly model: string,
+    public readonly model: string,
   ) {}
 
-  async generateJson(prompt: string): Promise<string> {
+  async generateJson(
+    prompt: string,
+  ): Promise<{ text: string; usage: ProviderUsage | null }> {
     try {
       const client = new OpenAI({ apiKey: this.apiKey });
       const result = await client.chat.completions.create({
@@ -15,7 +21,14 @@ export class OpenAiProvider implements AiProviderClient {
         messages: [{ role: 'user', content: prompt }],
         response_format: { type: 'json_object' },
       });
-      return result.choices[0]?.message?.content ?? '';
+      const usage: ProviderUsage | null = result.usage
+        ? {
+            promptTokens: result.usage.prompt_tokens ?? null,
+            completionTokens: result.usage.completion_tokens ?? null,
+            totalTokens: result.usage.total_tokens ?? null,
+          }
+        : null;
+      return { text: result.choices[0]?.message?.content ?? '', usage };
     } catch (err) {
       throw classifyOpenAiError(err);
     }

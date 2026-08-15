@@ -7,15 +7,25 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { PrismaService } from '../../database/prisma.service';
 
 /**
  * Global exception filter. Normalizes every error into Nest's default
  * `{ statusCode, message, error }` shape (per API_CONTRACT.md) and never
  * leaks stack traces or internal error details to the client.
+ *
+ * Phase 2 addition: any *unexpected* error — not a thrown `HttpException`,
+ * or any 5xx regardless of type — also gets one `SystemLog` row (severity
+ * `ERROR`), fired-and-forgotten so a logging hiccup never delays or breaks
+ * the client-facing error response (docs/ADMIN_PANEL.md, "Existing modules
+ * touched"). 4xx validation errors are intentionally never logged here —
+ * that would just be noise, not a system error.
  */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger('ExceptionFilter');
+
+  constructor(private readonly prisma: PrismaService) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -50,10 +60,40 @@ export class HttpExceptionFilter implements ExceptionFilter {
       );
     }
 
+    const isUnexpected = !(exception instanceof HttpException) || status >= 500;
+    if (isUnexpected) {
+      // Fire-and-forget: never await inside catch(), never let this throw.
+      void this.writeSystemLog(exception, request, status);
+    }
+
     response.status(status).json({
       statusCode: status,
       message,
       error,
     });
+  }
+
+  private async writeSystemLog(
+    exception: unknown,
+    request: Request,
+    status: number,
+  ): Promise<void> {
+    const message =
+      exception instanceof Error ? exception.message : 'Unknown error';
+    const stack = exception instanceof Error ? (exception.stack ?? null) : null;
+    try {
+      await this.prisma.systemLog.create({
+        data: {
+          severity: 'ERROR',
+          service: 'api',
+          message: `${request.method} ${request.url}: ${message}`,
+          requestId: (request.headers['x-request-id'] as string) ?? null,
+          statusCode: status,
+          stack,
+        },
+      });
+    } catch (err) {
+      this.logger.error(`Failed to write SystemLog: ${(err as Error).message}`);
+    }
   }
 }

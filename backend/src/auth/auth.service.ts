@@ -6,7 +6,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { createHash } from 'crypto';
+import { FeatureFlagsService } from '../common/feature-flags/feature-flags.service';
 import { EnvConfig } from '../config/env.validation';
 import { PrismaService } from '../database/prisma.service';
 import { UserResponseDto } from '../users/dto/user-response.dto';
@@ -31,6 +33,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService<EnvConfig, true>,
+    private readonly featureFlags: FeatureFlagsService,
   ) {}
 
   private async issueTokenPair(userId: string): Promise<TokenPairDto> {
@@ -70,11 +73,13 @@ export class AuthService {
   }
 
   /** Upserts a User by googleId (falling back to matching by email so a
-   * user who previously signed in via Telegram/email can link Google),
-   * then issues a token pair. Called from the Google OAuth callback. */
-  async loginWithGoogle(
+   * user who previously signed in via Telegram/email can link Google).
+   * Shared by both the regular login flow and the admin `state=admin`
+   * branch — an admin's identity is the same Google-authenticated User row
+   * (docs/ADMIN_PANEL.md, "RBAC model"). */
+  private async resolveGoogleUser(
     profile: GoogleProfilePayload,
-  ): Promise<AuthResponseDto> {
+  ): Promise<User> {
     let user = await this.prisma.user.findUnique({
       where: { googleId: profile.googleId },
     });
@@ -102,10 +107,51 @@ export class AuthService {
       });
     }
 
+    return user;
+  }
+
+  /** Upserts a User by googleId, then issues a token pair. Called from the
+   * Google OAuth callback — this is the byte-for-byte-unchanged Phase 1
+   * path (no `state` query param, or any `state` other than `'admin'`). */
+  async loginWithGoogle(
+    profile: GoogleProfilePayload,
+  ): Promise<AuthResponseDto> {
+    const user = await this.resolveGoogleUser(profile);
     return this.buildAuthResponse(user.id);
   }
 
+  /** The `state=admin` OAuth callback branch (docs/ADMIN_API_CONTRACT.md,
+   * "Auth"). Resolves/creates the same User row `loginWithGoogle` would,
+   * but does NOT issue tokens itself — the caller (AuthController) decides
+   * whether the resolved user is an admin and only then calls
+   * `issueAdminSession`, so a non-admin's failed attempt never mints a
+   * token pair or touches `refreshTokenHash`. */
+  async resolveAdminGoogleUser(profile: GoogleProfilePayload): Promise<User> {
+    return this.resolveGoogleUser(profile);
+  }
+
+  /** Issues a token pair for an already-confirmed admin and stamps
+   * `lastLoginAt` (overwritten, never appended — see docs/ADMIN_PANEL.md,
+   * "What's intentionally not built in Phase 2"). */
+  async issueAdminSession(userId: string): Promise<TokenPairDto> {
+    const tokens = await this.issueTokenPair(userId);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { lastLoginAt: new Date() },
+    });
+    return tokens;
+  }
+
   async loginWithTelegram(dto: TelegramAuthDto): Promise<AuthResponseDto> {
+    const telegramAuthEnabled = await this.featureFlags.isEnabled(
+      'TELEGRAM_AUTH_ENABLED',
+    );
+    if (!telegramAuthEnabled) {
+      throw new ServiceUnavailableException(
+        'Telegram authentication is currently disabled',
+      );
+    }
+
     const botToken = this.configService.get('TELEGRAM_BOT_TOKEN', {
       infer: true,
     });
