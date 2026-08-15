@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { MoreHorizontal, ArrowUp, Menu } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { MoreHorizontal, ArrowUp, Menu, TriangleAlert } from 'lucide-react'
 import { useTranslation } from '@/shared/i18n'
+import { useAuth } from '@/app/providers/auth-provider'
 import { useMessages, useSendMessage } from '@/shared/api/chat'
 import { useCreateConversation } from '@/shared/api/chat'
 import { NutritionResultCard } from '@/widgets/chat-window/nutrition-result-card'
@@ -30,6 +31,7 @@ export function ChatWindow({
   onOpenHistory?: () => void
 }) {
   const { t } = useTranslation()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [draft, setDraft] = useState('')
@@ -39,13 +41,16 @@ export function ChatWindow({
   const sendMessage = useSendMessage()
   const createConversation = useCreateConversation()
 
+  const aiConfigured = !!user?.aiProvider
+  const aiWarning = user?.aiKeyStatus && user.aiKeyStatus !== 'OK' ? t.aiKeyStatusLabel[user.aiKeyStatus] : null
+
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
   }, [messages, sendMessage.isPending])
 
   const submit = async (content: string) => {
     const text = content.trim()
-    if (!text || sendMessage.isPending) return
+    if (!text || sendMessage.isPending || !aiConfigured) return
     setDraft('')
     let targetId = conversationId
     if (!targetId) {
@@ -123,7 +128,8 @@ export function ChatWindow({
                 <button
                   key={qa.label}
                   onClick={() => submit(qa.label)}
-                  className="flex items-center gap-[11px] rounded-2xl border border-line bg-surf px-3.5 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-line2 hover:bg-surf2"
+                  disabled={!aiConfigured}
+                  className="flex items-center gap-[11px] rounded-2xl border border-line bg-surf px-3.5 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-line2 hover:bg-surf2 disabled:pointer-events-none disabled:opacity-50"
                 >
                   <span className={cn('grid h-[30px] w-[30px] flex-none place-items-center rounded-[10px] text-[14px]', qa.bg)}>
                     {qa.emoji}
@@ -198,12 +204,32 @@ export function ChatWindow({
 
       <div className="relative border-t border-line bg-bg px-5 pb-4 pt-3 md:px-[26px]">
         <div className="mx-auto max-w-[700px]">
+          {!aiConfigured ? (
+            <div className="mb-2.5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-fat/30 bg-fatT px-3.5 py-3 text-[12.5px] text-fat">
+              <TriangleAlert className="h-4 w-4 flex-none" />
+              <span className="flex-1">{t.app.aiChatBanner}</span>
+              <Link to="/settings" className="whitespace-nowrap font-semibold underline underline-offset-2">
+                {t.app.aiGoToSettings}
+              </Link>
+            </div>
+          ) : (
+            aiWarning && (
+              <div className="mb-2.5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-fat/30 bg-fatT px-3.5 py-3 text-[12.5px] text-fat">
+                <TriangleAlert className="h-4 w-4 flex-none" />
+                <span className="flex-1">{aiWarning}</span>
+                <Link to="/settings" className="whitespace-nowrap font-semibold underline underline-offset-2">
+                  {t.app.aiGoToSettings}
+                </Link>
+              </div>
+            )
+          )}
           <div className="mb-2.5 flex flex-wrap gap-[7px]">
             {suggestions.map((s) => (
               <button
                 key={s}
                 onClick={() => submit(s)}
-                className="whitespace-nowrap rounded-full border border-line px-[11px] py-1.5 text-[11.5px] text-tx2 transition-colors hover:bg-surf2 hover:text-tx"
+                disabled={!aiConfigured}
+                className="whitespace-nowrap rounded-full border border-line px-[11px] py-1.5 text-[11.5px] text-tx2 transition-colors hover:bg-surf2 hover:text-tx disabled:pointer-events-none disabled:opacity-50"
               >
                 {s}
               </button>
@@ -220,12 +246,13 @@ export function ChatWindow({
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               placeholder={t.inputPh}
-              className="min-w-0 flex-1 bg-transparent py-1.5 text-[13.5px] outline-none"
+              disabled={!aiConfigured}
+              className="min-w-0 flex-1 bg-transparent py-1.5 text-[13.5px] outline-none disabled:opacity-50"
             />
             <button
               type="submit"
               title={t.send}
-              disabled={!draft.trim() || sendMessage.isPending}
+              disabled={!draft.trim() || sendMessage.isPending || !aiConfigured}
               className="grid h-[34px] w-[34px] flex-none place-items-center rounded-[11px] bg-acc text-[#04120e] transition-[filter,transform] hover:brightness-[1.08] active:scale-[0.94] disabled:opacity-50"
             >
               <ArrowUp className="h-[15px] w-[15px]" />

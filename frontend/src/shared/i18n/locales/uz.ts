@@ -148,6 +148,8 @@ export const uz: Dict = {
     ACTIVE: 'Juda faol',
   },
   genderLabel: { MALE: 'Erkak', FEMALE: 'Ayol', OTHER: 'Boshqa' },
+  aiProviderLabel: { GEMINI: 'Gemini', OPENAI: 'ChatGPT (OpenAI)', CLAUDE: 'Claude (Anthropic)' },
+  aiKeyStatusLabel: { OK: 'Ulangan', EXHAUSTED: 'Limiti tugagan', INVALID: 'Token yaroqsiz' },
 
   stTitle: 'Sozlamalar',
   stSub: "Ilovani o'zingizga moslab oling.",
@@ -267,5 +269,19 @@ export const uz: Dict = {
     selectPreviousMeal: 'Oldingi ovqatdan tanlash',
     selectPreviousMealPh: 'Ro’yxatdan tanlang (ixtiyoriy)',
     noPreviousMeals: "Oldingi ovqatlar topilmadi",
+    aiApiKeyLabel: 'API token',
+    aiApiKeyPh: 'API tokeningizni joylashtiring',
+    aiSaveKey: 'Saqlash',
+    aiRemoveKey: "Tokenni o'chirish",
+    aiNotConfigured: 'Ulanmagan',
+    aiSettingsSub: "Chat, ovqat tahlili va tavsiyalar shu tokendan foydalanadi — xarajat tokenning egasiga hisoblanadi",
+    aiOnboardingTitle: 'AI yordamchini ulang',
+    aiOnboardingSub:
+      "Chat, ovqat tahlili va tavsiyalar uchun o'z Gemini, ChatGPT yoki Claude tokeningizni kiriting. Buni keyinroq Sozlamalardan ham qilishingiz mumkin.",
+    aiOnboardingSkip: "Hozircha o'tkazib yuborish",
+    aiOnboardingSave: 'Saqlash va davom etish',
+    aiChatBanner: "AI murabbiy ishlashi uchun avval Sozlamalar bo'limida API tokeningizni qo'shing.",
+    aiRecommendationsBanner: "Tavsiya olish uchun avval Sozlamalar bo'limida API tokeningizni qo'shing.",
+    aiGoToSettings: "Sozlamalarga o'tish",
   },
 }

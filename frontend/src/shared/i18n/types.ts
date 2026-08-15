@@ -146,6 +146,8 @@ export interface Dict {
   goalLabel: Record<'LOSE' | 'MAINTAIN' | 'GAIN', string>
   activityLabel: Record<'SEDENTARY' | 'LIGHT' | 'MODERATE' | 'ACTIVE', string>
   genderLabel: Record<'MALE' | 'FEMALE' | 'OTHER', string>
+  aiProviderLabel: Record<'GEMINI' | 'OPENAI' | 'CLAUDE', string>
+  aiKeyStatusLabel: Record<'OK' | 'EXHAUSTED' | 'INVALID', string>
 
   stTitle: string
   stSub: string
@@ -267,5 +269,18 @@ export interface Dict {
     selectPreviousMeal: string
     selectPreviousMealPh: string
     noPreviousMeals: string
+    aiApiKeyLabel: string
+    aiApiKeyPh: string
+    aiSaveKey: string
+    aiRemoveKey: string
+    aiNotConfigured: string
+    aiSettingsSub: string
+    aiOnboardingTitle: string
+    aiOnboardingSub: string
+    aiOnboardingSkip: string
+    aiOnboardingSave: string
+    aiChatBanner: string
+    aiRecommendationsBanner: string
+    aiGoToSettings: string
   }
 }

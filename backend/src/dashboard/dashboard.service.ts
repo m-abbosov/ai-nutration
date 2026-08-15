@@ -20,9 +20,9 @@ export interface DashboardResponseDto {
  * Rationale (documented per the task brief's "your call, document which"):
  * the dashboard loads far more often than chat/recommendations (every app
  * open), so calling Gemini here would multiply AI spend for a low-value
- * one-liner and would also make the dashboard depend on GEMINI_API_KEY
- * being configured. A template keeps the dashboard fast, free, and fully
- * functional with no AI key at all, while still feeling personalized
+ * one-liner and would also make the dashboard depend on the user having
+ * configured their own AI key. A template keeps the dashboard fast, free,
+ * and fully functional with no AI key at all, while still feeling personalized
  * since it reacts to today's actual consumed/remaining/macro numbers.
  */
 function buildInsight(

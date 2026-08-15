@@ -16,6 +16,8 @@ type MealType = 'BREAKFAST' | 'LUNCH' | 'SNACK' | 'DINNER'
 type MealSource = 'MANUAL' | 'AI'
 type Language = 'UZ' | 'RU' | 'EN'
 type Theme = 'LIGHT' | 'DARK'
+type AiProvider = 'GEMINI' | 'OPENAI' | 'CLAUDE'
+type AiKeyStatus = 'OK' | 'EXHAUSTED' | 'INVALID'
 
 interface UserDto {
   id: string; name: string; email: string | null; avatarUrl: string | null;
@@ -25,6 +27,8 @@ interface UserDto {
   language: Language; theme: Theme;
   notifyDaily: boolean; notifyWeekly: boolean; notifyAiTips: boolean;
   onboardingCompletedAt: string | null;
+  // Bring-your-own-key AI credentials — never the raw key, only enough to render a status badge.
+  aiProvider: AiProvider | null; aiKeyLast4: string | null; aiKeyStatus: AiKeyStatus | null; aiKeyStatusMessage: string | null;
 }
 
 interface MealItemDto { id: string; name: string; quantity: string; calories: number; protein: number; carbs: number; fat: number }
@@ -71,6 +75,8 @@ interface RecommendationDto {
 ### Users / Onboarding
 - `POST /users/onboarding` — body `{ age, heightCm, weightKg, gender?, activityLevel, goal, goalWeightKg? }` → computes and persists calorie/macro targets, sets `onboardingCompletedAt` → returns `UserDto`.
 - `PATCH /users/me` — partial profile/preference update (also used for theme/language) → `UserDto`. If body includes any onboarding metric, recompute targets.
+- `POST /users/me/ai-key` — body `{ provider: AiProvider, apiKey: string }` → live-tests the key against its provider (fails with `400` if rejected or already out of quota — the key is never stored on failure), then encrypts and saves it → `UserDto`.
+- `DELETE /users/me/ai-key` → clears the stored AI key/provider → `UserDto`.
 
 ### Meals
 - `GET /meals?date=YYYY-MM-DD` → `MealDto[]` for that day (defaults to today).
@@ -89,14 +95,13 @@ interface RecommendationDto {
 - `GET /chat/conversations` → `ConversationDto[]` (ordered by `updatedAt` desc; frontend groups into Today/Yesterday/Previous 7 days/Older from `updatedAt`).
 - `POST /chat/conversations` — body `{}` → `ConversationDto`.
 - `GET /chat/conversations/:id/messages` → `ChatMessageDto[]`.
-- `POST /chat/conversations/:id/messages` — body `{ content: string }` → `{ userMessage: ChatMessageDto; assistantMessage: ChatMessageDto }`. Backend builds user/nutrition context, calls Gemini, validates structured output, persists both messages.
+- `POST /chat/conversations/:id/messages` — body `{ content: string }` → `{ userMessage: ChatMessageDto; assistantMessage: ChatMessageDto }`. Backend builds user/nutrition context, calls the user's own configured AI provider, validates structured output, persists both messages. If the user has no AI key configured, the assistant message is a static "add your key in Settings" prompt instead of a model call; if the call fails because the key is invalid or out of quota, the assistant message says so specifically and the user's `aiKeyStatus` is updated accordingly.
 
 ### Recommendations
-- `POST /recommendations` — body `{ mealType?: MealType }` (optional hint, e.g. user asks "what should I eat for lunch") → `{ recommendations: RecommendationDto[] }` (min. 3). Also invoked internally by the chat flow when the user asks a recommendation-shaped question.
+- `POST /recommendations` — body `{ mealType?: MealType }` (optional hint, e.g. user asks "what should I eat for lunch") → `{ recommendations: RecommendationDto[] }` (min. 3). Also invoked internally by the chat flow when the user asks a recommendation-shaped question. `400` if no AI key is configured, `401` if the key is invalid, `402` if it's out of quota.
 
 ### Health
 - `GET /health` → `{ status: 'ok' }`.
-- `GET /health/gemini` → `{ connected: boolean }` (true iff `GEMINI_API_KEY` is configured; never returns the key).
 
 ## Calorie/macro formula (backend `nutrition/calorie.util.ts`, also documented in DESIGN_MAPPING.md)
 

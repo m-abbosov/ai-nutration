@@ -58,6 +58,18 @@ enum Theme {
   DARK
 }
 
+enum AiProvider {
+  GEMINI
+  OPENAI
+  CLAUDE
+}
+
+enum AiKeyStatus {
+  OK
+  EXHAUSTED
+  INVALID
+}
+
 model User {
   id        String  @id @default(cuid())
   telegramId String? @unique
@@ -90,6 +102,16 @@ model User {
   notifyAiTips Boolean @default(false)
 
   refreshTokenHash String?
+
+  // Per-user AI credentials (BYOK): each user supplies their own provider API
+  // key so AI usage is billed to them, not the app's shared quota. The key is
+  // encrypted at rest (see ai/crypto.util.ts) — only its provider, last 4
+  // characters, and last known health status are ever exposed to the client.
+  aiProvider          AiProvider?
+  aiApiKeyEncrypted   String?
+  aiApiKeyLast4       String?
+  aiKeyStatus         AiKeyStatus?
+  aiKeyStatusMessage  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

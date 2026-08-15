@@ -15,7 +15,6 @@ export const queryClient = new QueryClient({
 
 export const queryKeys = {
   me: ['me'] as const,
-  geminiHealth: ['health', 'gemini'] as const,
   dashboard: ['dashboard'] as const,
   meals: (date?: string) => ['meals', date ?? 'today'] as const,
   nutritionDaily: (date?: string) => ['nutrition', 'daily', date ?? 'today'] as const,

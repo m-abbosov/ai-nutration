@@ -1,8 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Gender, User } from '@prisma/client';
+import { AiService } from '../ai/ai.service';
+import { encryptSecret, last4 } from '../ai/crypto.util';
+import { EnvConfig } from '../config/env.validation';
 import { PrismaService } from '../database/prisma.service';
 import { calculateCalorieTargets } from './calorie.util';
 import { OnboardingDto } from './dto/onboarding.dto';
+import { SetAiKeyDto } from './dto/set-ai-key.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { toUserResponseDto } from './users.mapper';
@@ -18,7 +27,11 @@ const ONBOARDING_METRIC_KEYS = [
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly aiService: AiService,
+    private readonly configService: ConfigService<EnvConfig, true>,
+  ) {}
 
   async findByIdOrThrow(userId: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -130,6 +143,54 @@ export class UsersService {
       },
     });
 
+    return toUserResponseDto(updated);
+  }
+
+  /** Live-tests the key against its provider before storing it, so a typo'd
+   * or already-exhausted key is never silently saved. */
+  async setAiKey(userId: string, dto: SetAiKeyDto): Promise<UserResponseDto> {
+    await this.findByIdOrThrow(userId);
+
+    const check = await this.aiService.testKey(dto.provider, dto.apiKey);
+    if (!check.ok) {
+      const reason =
+        check.reason === 'INVALID_KEY'
+          ? 'This API key was rejected by the provider — double check it and try again'
+          : check.reason === 'EXHAUSTED'
+            ? 'This API key has no quota left — use a key with available balance'
+            : 'Could not verify this API key right now — please try again';
+      throw new BadRequestException(reason);
+    }
+
+    const secret = this.configService.get('AI_KEY_ENCRYPTION_SECRET', {
+      infer: true,
+    });
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        aiProvider: dto.provider,
+        aiApiKeyEncrypted: encryptSecret(dto.apiKey, secret),
+        aiApiKeyLast4: last4(dto.apiKey),
+        aiKeyStatus: 'OK',
+        aiKeyStatusMessage: null,
+      },
+    });
+
+    return toUserResponseDto(updated);
+  }
+
+  async removeAiKey(userId: string): Promise<UserResponseDto> {
+    await this.findByIdOrThrow(userId);
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        aiProvider: null,
+        aiApiKeyEncrypted: null,
+        aiApiKeyLast4: null,
+        aiKeyStatus: null,
+        aiKeyStatusMessage: null,
+      },
+    });
     return toUserResponseDto(updated);
   }
 }

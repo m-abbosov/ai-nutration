@@ -16,7 +16,6 @@ export function SettingsPage() {
       <p className="m-0 mt-[5px] text-[13.5px] text-tx2">{t.stSub}</p>
 
       <SettingsAppearance />
-      <SettingsAi />
 
       {isLoading || !user ? (
         <div className="mt-6 flex flex-col gap-3">
@@ -25,6 +24,7 @@ export function SettingsPage() {
         </div>
       ) : (
         <>
+          <SettingsAi user={user} />
           <SettingsNotifications user={user} />
           <SettingsAccount user={user} />
         </>

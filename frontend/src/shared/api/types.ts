@@ -8,12 +8,18 @@ export type MealType = 'BREAKFAST' | 'LUNCH' | 'SNACK' | 'DINNER'
 export type MealSource = 'MANUAL' | 'AI'
 export type Language = 'UZ' | 'RU' | 'EN'
 export type Theme = 'LIGHT' | 'DARK'
+export type AiProvider = 'GEMINI' | 'OPENAI' | 'CLAUDE'
+export type AiKeyStatus = 'OK' | 'EXHAUSTED' | 'INVALID'
 
 export interface UserDto {
   id: string
   name: string
   email: string | null
   avatarUrl: string | null
+  aiProvider: AiProvider | null
+  aiKeyLast4: string | null
+  aiKeyStatus: AiKeyStatus | null
+  aiKeyStatusMessage: string | null
   age: number | null
   heightCm: number | null
   weightKg: number | null

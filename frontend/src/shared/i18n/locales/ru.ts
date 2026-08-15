@@ -146,6 +146,8 @@ export const ru: Dict = {
     ACTIVE: 'Высокая',
   },
   genderLabel: { MALE: 'Мужской', FEMALE: 'Женский', OTHER: 'Другое' },
+  aiProviderLabel: { GEMINI: 'Gemini', OPENAI: 'ChatGPT (OpenAI)', CLAUDE: 'Claude (Anthropic)' },
+  aiKeyStatusLabel: { OK: 'Подключено', EXHAUSTED: 'Лимит исчерпан', INVALID: 'Токен недействителен' },
 
   stTitle: 'Настройки',
   stSub: 'Настройте приложение под себя.',
@@ -265,5 +267,19 @@ export const ru: Dict = {
     selectPreviousMeal: 'Выбрать из прошлых приёмов пищи',
     selectPreviousMealPh: 'Выберите из списка (необязательно)',
     noPreviousMeals: 'Прошлые приёмы пищи не найдены',
+    aiApiKeyLabel: 'API-токен',
+    aiApiKeyPh: 'Вставьте свой API-токен',
+    aiSaveKey: 'Сохранить',
+    aiRemoveKey: 'Удалить токен',
+    aiNotConfigured: 'Не подключено',
+    aiSettingsSub: 'Чат, анализ еды и рекомендации используют этот токен — расходы идут на счёт его владельца',
+    aiOnboardingTitle: 'Подключите AI-помощника',
+    aiOnboardingSub:
+      'Добавьте свой токен Gemini, ChatGPT или Claude для чата, анализа еды и рекомендаций. Это можно сделать и позже в Настройках.',
+    aiOnboardingSkip: 'Пропустить пока',
+    aiOnboardingSave: 'Сохранить и продолжить',
+    aiChatBanner: 'Добавьте свой API-токен в Настройках, чтобы пользоваться AI-помощником.',
+    aiRecommendationsBanner: 'Добавьте свой API-токен в Настройках, чтобы получать рекомендации.',
+    aiGoToSettings: 'Перейти в Настройки',
   },
 }

@@ -3,9 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Language, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { AiService } from '../ai/ai.service';
 import { buildAiContext } from '../ai/context.util';
+import { fallbackMessageFor } from '../ai/ai-fallback-messages';
+import { UserAiCredentialsService } from '../ai/user-ai-credentials.service';
 import { PrismaService } from '../database/prisma.service';
 import { NutritionService } from '../nutrition/nutrition.service';
 import {
@@ -14,15 +16,6 @@ import {
 } from './chat.mapper';
 import { ConversationResponseDto } from './dto/conversation-response.dto';
 import { SendMessageResponseDto } from './dto/chat-message-response.dto';
-
-// Deliberately not run through Gemini — this is the one user-facing string
-// the backend must produce even when the model is completely unreachable,
-// so it's a small static per-language dictionary rather than an AI call.
-const FALLBACK_APOLOGY: Record<Language, string> = {
-  EN: "Sorry, I couldn't process that just now. Could you try rephrasing your message?",
-  RU: 'Извините, я не смог обработать это сообщение. Попробуйте переформулировать.',
-  UZ: "Kechirasiz, buni qayta ishlay olmadim. Xabaringizni boshqacha yozib ko'rasizmi?",
-};
 
 function truncateTitle(content: string): string {
   const trimmed = content.trim().replace(/\s+/g, ' ');
@@ -35,6 +28,7 @@ export class ChatService {
     private readonly prisma: PrismaService,
     private readonly nutritionService: NutritionService,
     private readonly aiService: AiService,
+    private readonly userAiCredentials: UserAiCredentialsService,
   ) {}
 
   async listConversations(userId: string): Promise<ConversationResponseDto[]> {
@@ -103,32 +97,56 @@ export class ChatService {
       this.nutritionService.getDaily(userId),
     ]);
 
-    const context = buildAiContext(user, daily);
-    const generation = await this.aiService.generateChatReply(
-      context,
-      content,
-      isFirstMessage,
-    );
+    const credentials = this.userAiCredentials.resolve(user);
 
     let assistantContent: string;
     let metadata: Prisma.InputJsonValue | typeof Prisma.JsonNull =
       Prisma.JsonNull;
 
-    if (generation.ok) {
-      assistantContent = generation.data.reply;
-      if (generation.data.mealAnalysis) {
-        metadata = {
-          kind: 'nutrition_card',
-          data: generation.data.mealAnalysis,
-        };
-      } else if (generation.data.recommendations) {
-        metadata = {
-          kind: 'recommendations',
-          data: generation.data.recommendations,
-        };
-      }
+    if (!credentials) {
+      assistantContent = fallbackMessageFor('NOT_CONFIGURED', user.language);
     } else {
-      assistantContent = FALLBACK_APOLOGY[user.language];
+      const context = buildAiContext(user, daily);
+      const generation = await this.aiService.generateChatReply(
+        context,
+        content,
+        isFirstMessage,
+        credentials.provider,
+        credentials.apiKey,
+      );
+
+      if (generation.ok) {
+        assistantContent = generation.data.reply;
+        if (generation.data.mealAnalysis) {
+          metadata = {
+            kind: 'nutrition_card',
+            data: generation.data.mealAnalysis,
+          };
+        } else if (generation.data.recommendations) {
+          metadata = {
+            kind: 'recommendations',
+            data: generation.data.recommendations,
+          };
+        }
+        if (user.aiKeyStatus && user.aiKeyStatus !== 'OK') {
+          await this.userAiCredentials.recordStatus(userId, 'OK', null);
+        }
+      } else {
+        assistantContent = fallbackMessageFor(generation.reason, user.language);
+        if (generation.reason === 'INVALID_KEY') {
+          await this.userAiCredentials.recordStatus(
+            userId,
+            'INVALID',
+            generation.reason,
+          );
+        } else if (generation.reason === 'EXHAUSTED') {
+          await this.userAiCredentials.recordStatus(
+            userId,
+            'EXHAUSTED',
+            generation.reason,
+          );
+        }
+      }
     }
 
     const assistantMessage = await this.prisma.chatMessage.create({

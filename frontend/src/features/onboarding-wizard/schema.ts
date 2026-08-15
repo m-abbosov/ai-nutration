@@ -16,5 +16,6 @@ export const STEP_FIELDS: (keyof OnboardingFormValues)[][] = [
   ['goal'],
   ['age', 'heightCm', 'weightKg', 'gender', 'goalWeightKg'],
   ['activityLevel'],
+  [], // AI key step — not part of the onboarding form, saved via its own mutation
   [],
 ]

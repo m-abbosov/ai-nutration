@@ -8,13 +8,17 @@ import { useTranslation } from '@/shared/i18n'
 import { fmtNumber } from '@/shared/lib/format'
 import { LogoMark } from '@/shared/ui/nav-icons'
 import { Button } from '@/shared/ui/button'
+import { Input } from '@/shared/ui/input'
+import { Label } from '@/shared/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
 import { cn } from '@/shared/lib/cn'
-import { useSubmitOnboarding } from '@/shared/api/users'
+import { useSubmitOnboarding, useSetAiKey } from '@/shared/api/users'
 import { previewTargets } from '@/entities/user/lib/helpers'
-import type { ActivityLevel, Goal } from '@/shared/api/types'
+import type { ActivityLevel, AiProvider, Goal } from '@/shared/api/types'
 import { onboardingSchema, STEP_FIELDS } from '@/features/onboarding-wizard/schema'
 import type { OnboardingFormValues } from '@/features/onboarding-wizard/schema'
+
+const AI_PROVIDERS: AiProvider[] = ['GEMINI', 'OPENAI', 'CLAUDE']
 
 const GOALS: { value: Goal; deltaLabel: string }[] = [
   { value: 'LOSE', deltaLabel: '−0,4 kg' },
@@ -34,6 +38,9 @@ export function OnboardingWizard() {
   const navigate = useNavigate()
   const [step, setStep] = useState(0)
   const submitOnboarding = useSubmitOnboarding()
+  const setAiKey = useSetAiKey()
+  const [aiProvider, setAiProvider] = useState<AiProvider>('GEMINI')
+  const [aiApiKey, setAiApiKey] = useState('')
 
   const {
     register,
@@ -66,9 +73,18 @@ export function OnboardingWizard() {
     const fields = STEP_FIELDS[step]
     const valid = fields.length === 0 || (await trigger(fields))
     if (!valid) return
-    if (step < 3) setStep((s) => s + 1)
+    if (step < 4) setStep((s) => s + 1)
   }
   const goBack = () => setStep((s) => Math.max(0, s - 1))
+
+  const skipAiStep = () => setStep((s) => s + 1)
+  const saveAiKeyAndContinue = () => {
+    if (!aiApiKey.trim()) return
+    setAiKey.mutate(
+      { provider: aiProvider, apiKey: aiApiKey.trim() },
+      { onSuccess: () => setStep((s) => s + 1) },
+    )
+  }
 
   const onSubmit = handleSubmit((data) => {
     submitOnboarding.mutate(
@@ -85,7 +101,7 @@ export function OnboardingWizard() {
     )
   })
 
-  const dots = [0, 1, 2, 3]
+  const dots = [0, 1, 2, 3, 4]
 
   return (
     <div className="relative flex min-h-screen flex-col items-center overflow-hidden bg-bg px-5 pb-10 pt-[34px]">
@@ -258,6 +274,40 @@ export function OnboardingWizard() {
             )}
 
             {step === 3 && (
+              <motion.div key="ai-key" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                <h2 className="m-0 text-center text-[25px] font-medium tracking-[-.025em] md:text-[27px]">
+                  {t.app.aiOnboardingTitle}
+                </h2>
+                <p className="m-0 mt-2 text-center text-[13.5px] text-tx2">{t.app.aiOnboardingSub}</p>
+                <div className="mt-6 flex flex-col gap-3 rounded-[18px] border border-line bg-surf p-[18px]">
+                  <div>
+                    <Label htmlFor="onboarding-ai-provider">{t.app.aiApiKeyLabel}</Label>
+                    <Select value={aiProvider} onValueChange={(v) => setAiProvider(v as AiProvider)}>
+                      <SelectTrigger id="onboarding-ai-provider">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AI_PROVIDERS.map((p) => (
+                          <SelectItem key={p} value={p}>
+                            {t.aiProviderLabel[p]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Input
+                    type="password"
+                    autoComplete="off"
+                    placeholder={t.app.aiApiKeyPh}
+                    value={aiApiKey}
+                    onChange={(e) => setAiApiKey(e.target.value)}
+                  />
+                  {setAiKey.isError && <p className="text-[12px] text-fat">{t.app.error}</p>}
+                </div>
+              </motion.div>
+            )}
+
+            {step === 4 && (
               <motion.div key="done" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="text-center">
                 <div className="relative mx-auto mb-1.5 h-[184px] w-[184px]">
                   <div
@@ -329,6 +379,19 @@ export function OnboardingWizard() {
             <Button onClick={goNext} size="lg">
               {t.onNext}
             </Button>
+          ) : step === 3 ? (
+            <>
+              <button
+                type="button"
+                onClick={skipAiStep}
+                className="rounded-xl px-[14px] py-3 text-[13px] font-medium text-tx2 transition-colors hover:text-tx"
+              >
+                {t.app.aiOnboardingSkip}
+              </button>
+              <Button onClick={saveAiKeyAndContinue} size="lg" disabled={!aiApiKey.trim() || setAiKey.isPending}>
+                {t.app.aiOnboardingSave}
+              </Button>
+            </>
           ) : (
             <Button onClick={onSubmit} size="lg" disabled={submitOnboarding.isPending}>
               {t.onStart}

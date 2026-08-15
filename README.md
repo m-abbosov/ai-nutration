@@ -67,22 +67,27 @@ Summary:
 |---|---|---|
 | `DATABASE_URL` | backend | everything (Postgres connection) |
 | `JWT_SECRET` | backend | everything (session tokens) |
+| `AI_KEY_ENCRYPTION_SECRET` | backend | everything (encrypts each user's own AI key at rest — generate with `openssl rand -hex 32`) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_CALLBACK_URL` | backend | Google sign-in ([console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials)) |
 | `TELEGRAM_BOT_TOKEN` | backend | Telegram sign-in — create a bot via [@BotFather](https://t.me/BotFather), then `/setdomain` it to your frontend URL |
-| `GEMINI_API_KEY` | backend | AI chat/recommendations ([aistudio.google.com/apikey](https://aistudio.google.com/apikey)) |
+| `GEMINI_MODEL` / `OPENAI_MODEL` / `CLAUDE_MODEL` | backend | which model to call per provider — no credentials, see below |
 | `FRONTEND_URL` | backend | CORS + OAuth redirect target |
 | `VITE_API_URL` | frontend | pointing the SPA at the API |
 | `VITE_TELEGRAM_BOT_USERNAME` | frontend | rendering the Telegram Login Widget |
 
-Every feature degrades gracefully when its credentials are missing (documented per
-endpoint in `docs/API_CONTRACT.md`): the app still builds and boots without any of
-Google/Telegram/Gemini configured — those specific features return a clear 503
-instead of crashing the server or the client.
+AI is bring-your-own-key: there is no shared server-side AI key. Each user adds
+their own Gemini/OpenAI/Claude API key from Settings (or skips it during
+onboarding); it's encrypted at rest with `AI_KEY_ENCRYPTION_SECRET` and used only
+for that user's own chat/recommendations calls. AI features simply stay off for a
+user until they add a key — this doesn't block sign-in or the rest of the app.
+Google/Telegram sign-in still degrade gracefully when unconfigured (documented per
+endpoint in `docs/API_CONTRACT.md`): the app still builds and boots without them,
+those specific sign-in options just return a clear 503.
 
-**Secrets never reach the browser.** `GEMINI_API_KEY`, `GOOGLE_CLIENT_SECRET`,
-`TELEGRAM_BOT_TOKEN`, and `JWT_SECRET` are backend-only env vars; the frontend's
-Settings screen shows only a masked "connected/not connected" badge for Gemini
-(`GET /health/gemini`).
+**Secrets never reach the browser.** `AI_KEY_ENCRYPTION_SECRET`, `GOOGLE_CLIENT_SECRET`,
+`TELEGRAM_BOT_TOKEN`, `JWT_SECRET`, and every user's AI key are backend-only /
+encrypted-at-rest; the frontend's Settings screen only ever sees the provider name,
+last 4 characters, and connection status of a saved key, never the key itself.
 
 ## Development commands
 
@@ -122,10 +127,10 @@ npx prisma migrate dev      npx prisma studio        npm run seed
    (name it e.g. `backend` — the CLI creates/targets it on first deploy).
 2. In that service's **Variables**, set: `DATABASE_URL` (reference the Postgres
    plugin, e.g. `${{Postgres.DATABASE_URL}}`), `JWT_SECRET`, `JWT_ACCESS_TTL`,
-   `JWT_REFRESH_TTL`, and whichever of `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`/
-   `GOOGLE_CALLBACK_URL`, `TELEGRAM_BOT_TOKEN`, `GEMINI_API_KEY`/`GEMINI_MODEL` you
-   have (all optional — see the table above, missing ones degrade gracefully).
-   Leave `FRONTEND_URL` for step 4.
+   `JWT_REFRESH_TTL`, `AI_KEY_ENCRYPTION_SECRET` (required — `openssl rand -hex 32`),
+   and whichever of `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`/`GOOGLE_CALLBACK_URL`/
+   `TELEGRAM_BOT_TOKEN` you have (optional — see the table above, missing ones
+   degrade gracefully). Leave `FRONTEND_URL` for step 4.
 3. Service **Settings → Networking → Generate Domain** to get a public backend URL.
 4. Service **Settings → Tokens** (or account-level Project Token) → create a token →
    this is `RAILWAY_TOKEN`. If the project has more than one service, also note the

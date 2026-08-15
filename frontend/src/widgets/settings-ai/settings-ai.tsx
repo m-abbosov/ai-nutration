@@ -1,13 +1,43 @@
+import { useState } from 'react'
 import { useTranslation } from '@/shared/i18n'
-import { useGeminiHealth } from '@/shared/api/health'
-import { Skeleton } from '@/shared/ui/skeleton'
+import { useSetAiKey, useRemoveAiKey } from '@/shared/api/users'
+import { ApiError } from '@/shared/api/client'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
+import { Input } from '@/shared/ui/input'
+import { Button } from '@/shared/ui/button'
+import { Label } from '@/shared/ui/label'
+import type { AiProvider, UserDto } from '@/shared/api/types'
 
-/** Read-only Gemini connection badge. Per DESIGN_MAPPING.md the "Replace key"
- * control from the mock is intentionally dropped — the key is a server-only
- * env var, never sent to or editable from the client. */
-export function SettingsAi() {
+const PROVIDERS: AiProvider[] = ['GEMINI', 'OPENAI', 'CLAUDE']
+
+export function SettingsAi({ user }: { user: UserDto }) {
   const { t } = useTranslation()
-  const { data, isLoading } = useGeminiHealth()
+  const setAiKey = useSetAiKey()
+  const removeAiKey = useRemoveAiKey()
+  const [provider, setProvider] = useState<AiProvider>(user.aiProvider ?? 'GEMINI')
+  const [apiKey, setApiKey] = useState('')
+
+  const configured = !!user.aiProvider
+  const statusBadge = user.aiKeyStatus
+    ? {
+        label: t.aiKeyStatusLabel[user.aiKeyStatus],
+        tone: user.aiKeyStatus === 'OK' ? 'ok' : ('bad' as const),
+      }
+    : { label: t.app.aiNotConfigured, tone: 'bad' as const }
+
+  const submit = () => {
+    if (!apiKey.trim()) return
+    setAiKey.mutate(
+      { provider, apiKey: apiKey.trim() },
+      { onSuccess: () => setApiKey('') },
+    )
+  }
+
+  const errorMessage = setAiKey.isError
+    ? setAiKey.error instanceof ApiError
+      ? setAiKey.error.message
+      : t.app.error
+    : null
 
   return (
     <>
@@ -30,24 +60,69 @@ export function SettingsAi() {
           </div>
           <div className="min-w-[180px] flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[13.5px] font-semibold">{t.stGem}</span>
-              {isLoading ? (
-                <Skeleton className="h-5 w-20 rounded-full" />
-              ) : data?.connected ? (
-                <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accT px-2.5 py-[3px] text-[10.5px] text-acc">
-                  <span className="h-1 w-1 animate-pulse-soft rounded-full bg-acc" />
-                  {t.stConn}
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-fatT px-2.5 py-[3px] text-[10.5px] text-fat">
-                  <span className="h-1 w-1 rounded-full bg-fat" />
-                  {t.stDisconnected}
-                </span>
-              )}
+              <span className="text-[13.5px] font-semibold">
+                {configured ? t.aiProviderLabel[user.aiProvider!] : t.stGem}
+              </span>
+              <span
+                className={
+                  statusBadge.tone === 'ok'
+                    ? 'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accT px-2.5 py-[3px] text-[10.5px] text-acc'
+                    : 'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-fatT px-2.5 py-[3px] text-[10.5px] text-fat'
+                }
+              >
+                <span className={statusBadge.tone === 'ok' ? 'h-1 w-1 animate-pulse-soft rounded-full bg-acc' : 'h-1 w-1 rounded-full bg-fat'} />
+                {statusBadge.label}
+              </span>
             </div>
-            <div className="mt-[3px] text-[12px] text-tx3">{t.stGemSub}</div>
+            <div className="mt-[3px] text-[12px] text-tx3">{t.app.aiSettingsSub}</div>
+            {user.aiKeyLast4 && (
+              <div className="mt-1 font-mono text-[11px] text-tx3">•••• {user.aiKeyLast4}</div>
+            )}
           </div>
+          {configured && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => removeAiKey.mutate()}
+              disabled={removeAiKey.isPending}
+            >
+              {t.app.aiRemoveKey}
+            </Button>
+          )}
         </div>
+
+        <div className="relative mt-4 flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:items-end">
+          <div className="min-w-0 flex-1 sm:max-w-[180px]">
+            <Label htmlFor="ai-provider">{t.app.aiApiKeyLabel}</Label>
+            <Select value={provider} onValueChange={(v) => setProvider(v as AiProvider)}>
+              <SelectTrigger id="ai-provider">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PROVIDERS.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {t.aiProviderLabel[p]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="min-w-0 flex-1">
+            <Input
+              id="ai-key"
+              type="password"
+              autoComplete="off"
+              placeholder={t.app.aiApiKeyPh}
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+            />
+          </div>
+          <Button type="button" onClick={submit} disabled={!apiKey.trim() || setAiKey.isPending}>
+            {t.app.aiSaveKey}
+          </Button>
+        </div>
+        {errorMessage && <p className="relative mt-2 text-[12px] text-fat">{errorMessage}</p>}
       </div>
     </>
   )

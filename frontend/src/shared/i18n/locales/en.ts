@@ -147,6 +147,8 @@ export const en: Dict = {
     ACTIVE: 'Very active',
   },
   genderLabel: { MALE: 'Male', FEMALE: 'Female', OTHER: 'Other' },
+  aiProviderLabel: { GEMINI: 'Gemini', OPENAI: 'ChatGPT (OpenAI)', CLAUDE: 'Claude (Anthropic)' },
+  aiKeyStatusLabel: { OK: 'Connected', EXHAUSTED: 'Quota exhausted', INVALID: 'Key invalid' },
 
   stTitle: 'Settings',
   stSub: 'Tune the app around the way you eat.',
@@ -266,5 +268,19 @@ export const en: Dict = {
     selectPreviousMeal: 'Pick from a previous meal',
     selectPreviousMealPh: 'Choose from the list (optional)',
     noPreviousMeals: 'No previous meals found',
+    aiApiKeyLabel: 'API key',
+    aiApiKeyPh: 'Paste your API key',
+    aiSaveKey: 'Save',
+    aiRemoveKey: 'Remove key',
+    aiNotConfigured: 'Not connected',
+    aiSettingsSub: 'Chat, meal analysis, and recommendations use this key — usage is billed to whoever owns it',
+    aiOnboardingTitle: 'Connect your AI assistant',
+    aiOnboardingSub:
+      'Add your own Gemini, ChatGPT, or Claude API key for chat, meal analysis, and recommendations. You can do this later from Settings too.',
+    aiOnboardingSkip: 'Skip for now',
+    aiOnboardingSave: 'Save and continue',
+    aiChatBanner: 'Add your API key in Settings to use the AI coach.',
+    aiRecommendationsBanner: 'Add your API key in Settings to get recommendations.',
+    aiGoToSettings: 'Go to Settings',
   },
 }
