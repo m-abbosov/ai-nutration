@@ -20,7 +20,7 @@ const envSchema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().optional().default(''),
 
   GEMINI_API_KEY: z.string().optional().default(''),
-  GEMINI_MODEL: z.string().optional().default('gemini-2.0-flash'),
+  GEMINI_MODEL: z.string().optional().default('gemini-2.5-flash'),
 
   FRONTEND_URL: z.string().default('http://localhost:5173'),
   PORT: z.string().optional().default('3001'),
