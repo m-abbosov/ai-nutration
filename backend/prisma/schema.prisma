@@ -70,8 +70,188 @@ enum AiKeyStatus {
   INVALID
 }
 
+// ── Admin panel (Phase 2) ───────────────────────────────────────────────
+// Additive only — no existing model/field above this line is touched.
+// An "admin user" is a regular User with adminRoleId set; there is no
+// separate admin account table (see docs/ADMIN_PANEL.md).
+
+enum AdminRoleName {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+  SUPPORT
+}
+
+enum AdminPermissionKey {
+  DASHBOARD_READ
+  USERS_READ
+  USERS_UPDATE
+  USERS_DISABLE
+  NUTRITION_READ
+  AI_READ
+  AI_LOGS_READ
+  CONVERSATIONS_READ
+  ANALYTICS_READ
+  SYSTEM_READ
+  ADMIN_USERS_READ
+  ADMIN_USERS_MANAGE
+  SETTINGS_MANAGE
+  AUDIT_LOGS_READ
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+model AdminRole {
+  id          String        @id @default(cuid())
+  name        AdminRoleName @unique
+  description String?
+  // Seeded built-in roles; the four above are never deletable from the UI.
+  isSystem    Boolean       @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  permissions AdminRolePermission[]
+  admins      User[]                @relation("UserAdminRole")
+
+  @@map("admin_roles")
+}
+
+model AdminPermission {
+  id          String             @id @default(cuid())
+  key         AdminPermissionKey @unique
+  description String?
+
+  roles AdminRolePermission[]
+
+  @@map("admin_permissions")
+}
+
+model AdminRolePermission {
+  roleId String
+  role   AdminRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permissionId String
+  permission   AdminPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("admin_role_permissions")
+}
+
+enum AuditAction {
+  ADMIN_LOGIN
+  ADMIN_LOGIN_DENIED
+  USER_VIEWED
+  USER_STATUS_CHANGED
+  ADMIN_ROLE_CHANGED
+  ADMIN_USER_STATUS_CHANGED
+  CONVERSATION_VIEWED
+  SETTING_CHANGED
+  FEATURE_FLAG_CHANGED
+}
+
+model AuditLog {
+  id      String @id @default(cuid())
+  adminId String
+  admin   User   @relation("AuditLogsByAdmin", fields: [adminId], references: [id], onDelete: Cascade)
+
+  action     AuditAction
+  targetType String? // e.g. "User", "Conversation", "AdminRole", "FeatureFlag"
+  targetId   String?
+  metadata   Json?
+  ipAddress  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([adminId, createdAt])
+  @@index([targetType, targetId])
+  @@map("audit_logs")
+}
+
+model FeatureFlag {
+  key         String   @id // e.g. "AI_CHAT_ENABLED"
+  enabled     Boolean  @default(true)
+  description String?
+  updatedAt   DateTime @updatedAt
+
+  updatedById String?
+  updatedBy   User?   @relation("FeatureFlagUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@map("feature_flags")
+}
+
+enum AiEndpoint {
+  CHAT
+  RECOMMENDATION
+}
+
+enum AiRequestStatus {
+  SUCCESS
+  ERROR
+}
+
+// One row per provider call attempt from ai.service.ts (both the initial try
+// and a schema-validation retry are logged separately). Never stores the
+// prompt or the response body — metadata only, privacy-first.
+model AiRequestLog {
+  id     String  @id @default(cuid())
+  userId String?
+  user   User?   @relation("AiRequestLogsByUser", fields: [userId], references: [id], onDelete: SetNull)
+
+  endpoint AiEndpoint
+  provider AiProvider
+  model    String
+
+  status      AiRequestStatus
+  errorReason String? // ProviderErrorReason | 'GENERATION_FAILED', null when SUCCESS
+
+  responseTimeMs Int
+
+  // Only populated when the provider SDK actually returns usage data in its
+  // response (Gemini/OpenAI/Claude all do, when available) — never estimated.
+  promptTokens     Int?
+  completionTokens Int?
+  totalTokens      Int?
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([endpoint, createdAt])
+  @@map("ai_request_logs")
+}
+
+enum SystemLogSeverity {
+  INFO
+  WARNING
+  ERROR
+}
+
+// Unhandled/unexpected server errors (5xx) captured from the global
+// exception filter — distinct from AiRequestLog, which is domain-specific
+// to provider calls. Stack traces are stored but only ever rendered to
+// admins holding SYSTEM_READ; never sent to end users.
+model SystemLog {
+  id         String            @id @default(cuid())
+  severity   SystemLogSeverity
+  service    String // e.g. "api", "database", "ai"
+  message    String            @db.Text
+  requestId  String?
+  statusCode Int?
+  stack      String?           @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([severity, createdAt])
+  @@map("system_logs")
+}
+
 model User {
-  id        String  @id @default(cuid())
+  id         String  @id @default(cuid())
   telegramId String? @unique
   googleId   String? @unique
   email      String? @unique
@@ -79,17 +259,17 @@ model User {
   avatarUrl  String?
 
   // Onboarding / profile
-  age                Int?
-  heightCm           Float?
-  weightKg           Float?
-  goalWeightKg        Float?
-  gender             Gender?
-  activityLevel      ActivityLevel?
-  goal               Goal?
-  dailyCalorieTarget Int?
-  proteinTargetG     Int?
-  carbsTargetG       Int?
-  fatTargetG         Int?
+  age                   Int?
+  heightCm              Float?
+  weightKg              Float?
+  goalWeightKg          Float?
+  gender                Gender?
+  activityLevel         ActivityLevel?
+  goal                  Goal?
+  dailyCalorieTarget    Int?
+  proteinTargetG        Int?
+  carbsTargetG          Int?
+  fatTargetG            Int?
   onboardingCompletedAt DateTime?
 
   // Preferences
@@ -107,17 +287,33 @@ model User {
   // key so AI usage is billed to them, not the app's shared quota. The key is
   // encrypted at rest (see ai/crypto.util.ts) — only its provider, last 4
   // characters, and last known health status are ever exposed to the client.
-  aiProvider          AiProvider?
-  aiApiKeyEncrypted   String?
-  aiApiKeyLast4       String?
-  aiKeyStatus         AiKeyStatus?
-  aiKeyStatusMessage  String?
+  aiProvider         AiProvider?
+  aiApiKeyEncrypted  String?
+  aiApiKeyLast4      String?
+  aiKeyStatus        AiKeyStatus?
+  aiKeyStatusMessage String?
+
+  // Admin panel (Phase 2). A user is "an admin" iff adminRoleId is set;
+  // adminActive lets a SUPER_ADMIN revoke panel access without losing the
+  // role assignment (re-enabling doesn't require re-picking a role).
+  adminRoleId String?
+  adminRole   AdminRole? @relation("UserAdminRole", fields: [adminRoleId], references: [id])
+  adminActive Boolean    @default(true)
+  lastLoginAt DateTime?
+
+  // Regular-app account status, settable by an admin with USERS_DISABLE.
+  // Distinct from adminActive above, which only gates admin-panel access.
+  status UserStatus @default(ACTIVE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   meals         Meal[]
   conversations Conversation[]
+
+  auditLogs           AuditLog[]     @relation("AuditLogsByAdmin")
+  updatedFeatureFlags FeatureFlag[]  @relation("FeatureFlagUpdatedBy")
+  aiRequestLogs       AiRequestLog[] @relation("AiRequestLogsByUser")
 
   @@map("users")
 }
@@ -132,10 +328,10 @@ model Meal {
   name     String
   emoji    String?
 
-  calories Int
-  protein  Float
-  carbs    Float
-  fat      Float
+  calories    Int
+  protein     Float
+  carbs       Float
+  fat         Float
   servingSize String?
 
   source MealSource @default(MANUAL)
@@ -185,8 +381,8 @@ model ChatMessage {
   conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
-  role    MessageRole
-  content String      @db.Text
+  role     MessageRole
+  content  String      @db.Text
   // Structured AI payload when applicable: { kind: "nutrition_card"|"recommendations", data: {...} }
   metadata Json?
 
