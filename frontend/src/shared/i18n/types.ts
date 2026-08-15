@@ -16,6 +16,8 @@
  * generic actions) — these are original copy, written to match the voice
  * of the surrounding transcribed strings, not from the source file.
  */
+import type { AdminDict } from '@/shared/i18n/admin-types'
+
 export interface Dict {
   // T — global chrome / dashboard
   navSection: string
@@ -283,4 +285,7 @@ export interface Dict {
     aiRecommendationsBanner: string
     aiGoToSettings: string
   }
+
+  // Admin Panel (Phase 2) — see shared/i18n/admin-types.ts
+  admin: AdminDict
 }

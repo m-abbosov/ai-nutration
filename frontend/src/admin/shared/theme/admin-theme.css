@@ -1,0 +1,211 @@
+/*
+ * Admin design tokens — completely independent of `app/styles/theme.css`.
+ * Every token is prefixed `--adm-*` and only ever defined under `.admin-root`,
+ * never on `:root`/`html`/`body`, so it can never bleed into a `/` or `/chat`
+ * render, and the user app's `--bg`/--tx/etc. tokens can never bleed in here.
+ *
+ * Aesthetic: dense, neutral, typography-driven ops-tool — cool grays, a single
+ * restrained blue accent, hairline borders, small radii. Deliberately NOT the
+ * user app's warm dark-teal oklch/glow/big-rounded-card look.
+ *
+ * Categorical chart palette below is the validated 8-hue set from the
+ * dataviz skill reference palette (blue/orange/aqua/yellow/magenta/green/
+ * violet/red) — already passes CVD + contrast checks in both modes, reused
+ * as-is rather than re-deriving.
+ */
+
+.admin-root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --adm-bg: #f6f7f9;
+  --adm-bg-inset: #eef0f3;
+  --adm-surface: #ffffff;
+  --adm-surface-hover: #f3f5f7;
+  --adm-overlay: rgba(16, 24, 40, 0.45);
+
+  /* Borders */
+  --adm-border: #e3e6eb;
+  --adm-border-strong: #cdd3dc;
+
+  /* Text */
+  --adm-text: #10151f;
+  --adm-text-2: #4c5566;
+  --adm-text-3: #8992a3;
+  --adm-text-on-accent: #ffffff;
+
+  /* Accent (blue — also chart categorical slot 1) */
+  --adm-accent: #2a78d6;
+  --adm-accent-hover: #1c5cab;
+  --adm-accent-subtle: #eaf2fc;
+  --adm-focus-ring: rgba(42, 120, 214, 0.38);
+
+  /* Status (fixed across modes per dataviz status palette; subtle bg per mode) */
+  --adm-good: #0ca30c;
+  --adm-good-subtle: #e5f6e5;
+  --adm-warning: #b06a00;
+  --adm-warning-fill: #fab219;
+  --adm-warning-subtle: #fdf1d8;
+  --adm-critical: #d03b3b;
+  --adm-critical-subtle: #fbe8e8;
+  --adm-neutral-subtle: #eef0f3;
+
+  /* Elevation */
+  --adm-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --adm-shadow-md: 0 4px 14px -4px rgba(16, 24, 40, 0.12), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --adm-shadow-lg: 0 16px 40px -12px rgba(16, 24, 40, 0.22);
+
+  /* Radii */
+  --adm-radius-sm: 6px;
+  --adm-radius-md: 8px;
+  --adm-radius-lg: 12px;
+
+  /* Chart chrome */
+  --adm-chart-surface: var(--adm-surface);
+  --adm-chart-grid: #e9ebef;
+  --adm-chart-axis: #98a2b3;
+  --adm-tooltip-bg: #10151f;
+  --adm-tooltip-text: #ffffff;
+  --adm-tooltip-border: rgba(255, 255, 255, 0.08);
+
+  /* Categorical chart series (validated 8-hue order) */
+  --adm-chart-1: #2a78d6;
+  --adm-chart-2: #eb6834;
+  --adm-chart-3: #1baf7a;
+  --adm-chart-4: #eda100;
+  --adm-chart-5: #e87ba4;
+  --adm-chart-6: #008300;
+  --adm-chart-7: #4a3aa7;
+  --adm-chart-8: #e34948;
+
+  background: var(--adm-bg);
+  color: var(--adm-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+.admin-root[data-admin-theme='dark'] {
+  color-scheme: dark;
+
+  --adm-bg: #0a0d12;
+  --adm-bg-inset: #0e1218;
+  --adm-surface: #12161d;
+  --adm-surface-hover: #171c24;
+  --adm-overlay: rgba(0, 0, 0, 0.6);
+
+  --adm-border: #232a35;
+  --adm-border-strong: #333c4a;
+
+  --adm-text: #eaedf3;
+  --adm-text-2: #9aa4b5;
+  --adm-text-3: #626c7d;
+  --adm-text-on-accent: #ffffff;
+
+  --adm-accent: #3987e5;
+  --adm-accent-hover: #5c9eec;
+  --adm-accent-subtle: rgba(57, 135, 229, 0.16);
+  --adm-focus-ring: rgba(57, 135, 229, 0.4);
+
+  --adm-good: #1baf7a;
+  --adm-good-subtle: rgba(27, 175, 122, 0.16);
+  --adm-warning: #fab219;
+  --adm-warning-fill: #fab219;
+  --adm-warning-subtle: rgba(250, 178, 25, 0.16);
+  --adm-critical: #e66767;
+  --adm-critical-subtle: rgba(230, 103, 103, 0.16);
+  --adm-neutral-subtle: #1a1f28;
+
+  --adm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --adm-shadow-md: 0 4px 16px -4px rgba(0, 0, 0, 0.5), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
+  --adm-shadow-lg: 0 20px 48px -12px rgba(0, 0, 0, 0.65);
+
+  --adm-chart-surface: var(--adm-surface);
+  --adm-chart-grid: #232a35;
+  --adm-chart-axis: #626c7d;
+  --adm-tooltip-bg: #1f2531;
+  --adm-tooltip-text: #eaedf3;
+  --adm-tooltip-border: #333c4a;
+
+  --adm-chart-1: #3987e5;
+  --adm-chart-2: #d95926;
+  --adm-chart-3: #199e70;
+  --adm-chart-4: #c98500;
+  --adm-chart-5: #d55181;
+  --adm-chart-6: #35b135;
+  --adm-chart-7: #9085e9;
+  --adm-chart-8: #e66767;
+}
+
+.admin-root * {
+  box-sizing: border-box;
+}
+
+.admin-root ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.admin-root ::-webkit-scrollbar-thumb {
+  background: var(--adm-border-strong);
+  border-radius: 8px;
+}
+.admin-root ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-root .adm-mono {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-root button {
+  font: inherit;
+  color: inherit;
+}
+
+.admin-root a {
+  color: var(--adm-accent);
+  text-decoration: none;
+}
+
+@keyframes adm-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.admin-root .adm-animate-pulse {
+  animation: adm-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes adm-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes adm-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes adm-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
