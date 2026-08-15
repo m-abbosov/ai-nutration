@@ -40,8 +40,11 @@ jobs:
       - name: Install Vercel CLI
         run: npm i -g vercel
 
+      # Run from the repo root (not working-directory: frontend) — the linked Vercel
+      # project already has Root Directory=frontend configured on vercel.com, so the
+      # CLI resolves .../frontend itself. Running these from inside frontend/ too
+      # doubles the path to frontend/frontend and fails with "path does not exist".
       - name: Pull Vercel project settings
-        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -49,7 +52,6 @@ jobs:
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build on Vercel
-        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -57,7 +59,6 @@ jobs:
         run: vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy prebuilt output to Vercel
-        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
