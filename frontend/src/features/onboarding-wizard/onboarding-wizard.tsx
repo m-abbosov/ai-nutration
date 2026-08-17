@@ -219,7 +219,6 @@ export function OnboardingWizard() {
                             <SelectItem value="NONE">—</SelectItem>
                             <SelectItem value="MALE">{t.genderLabel.MALE}</SelectItem>
                             <SelectItem value="FEMALE">{t.genderLabel.FEMALE}</SelectItem>
-                            <SelectItem value="OTHER">{t.genderLabel.OTHER}</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
