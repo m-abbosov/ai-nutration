@@ -15,7 +15,6 @@ import { validateEnv } from './config/env.validation';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
-import { BootstrapSuperAdminModule } from './internal-bootstrap/bootstrap-superadmin.module';
 import { MealsModule } from './meals/meals.module';
 import { NutritionModule } from './nutrition/nutrition.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
@@ -43,7 +42,6 @@ import { UsersModule } from './users/users.module';
     RecommendationsModule,
     HealthModule,
     AdminModule,
-    BootstrapSuperAdminModule, // TEMPORARY — remove after one-time superadmin bootstrap
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
