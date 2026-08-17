@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { MealCard } from '@/widgets/meal-timeline/meal-card'
 import { EmptyState } from '@/shared/ui/state-blocks'
-import type { MealDto } from '@/shared/api/types'
+import type { MealDto } from '@nutriai/shared/api/types'
 
 export function MealTimeline({ meals }: { meals: MealDto[] }) {
   const { t } = useTranslation()

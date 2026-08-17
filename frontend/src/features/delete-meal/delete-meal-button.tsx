@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Trash2 } from 'lucide-react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useDeleteMeal } from '@/shared/api/meals'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/dialog'
 import { Button } from '@/shared/ui/button'

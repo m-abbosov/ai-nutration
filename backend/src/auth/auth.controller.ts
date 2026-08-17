@@ -78,10 +78,10 @@ export class AuthController {
     req: Request,
     res: Response,
   ): Promise<void> {
-    const frontendUrl = this.configService.get('FRONTEND_URL', {
+    const adminFrontendUrl = this.configService.get('ADMIN_FRONTEND_URL', {
       infer: true,
     });
-    const redirectUrl = new URL('/admin/auth/callback', frontendUrl);
+    const redirectUrl = new URL('/auth/callback', adminFrontendUrl);
 
     const user = await this.authService.resolveAdminGoogleUser(profile);
     const isAdmin = user.adminRoleId != null && user.adminActive;

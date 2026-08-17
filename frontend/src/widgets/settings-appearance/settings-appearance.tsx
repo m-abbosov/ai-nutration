@@ -1,10 +1,10 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useThemeContext } from '@/app/providers/theme-provider'
 import { useAuth } from '@/app/providers/auth-provider'
 import { useUpdateMe } from '@/shared/api/users'
 import { LanguageSwitchSelect } from '@/features/language-switch/language-switch'
-import { cn } from '@/shared/lib/cn'
-import type { Theme } from '@/shared/api/types'
+import { cn } from '@nutriai/shared/lib/cn'
+import type { Theme } from '@nutriai/shared/api/types'
 
 export function SettingsAppearance() {
   const { t } = useTranslation()

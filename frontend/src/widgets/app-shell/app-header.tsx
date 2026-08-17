@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Bell } from 'lucide-react'
-import { useTranslation, localeTags } from '@/shared/i18n'
+import { useTranslation, localeTags } from '@nutriai/shared/i18n'
 import { useAuth } from '@/app/providers/auth-provider'
 import { ThemeToggle } from '@/features/theme-toggle/theme-toggle'
 import { Avatar } from '@/shared/ui/avatar'

@@ -18,7 +18,10 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: configService.get('FRONTEND_URL', { infer: true }),
+    origin: [
+      configService.get('FRONTEND_URL', { infer: true }),
+      configService.get('ADMIN_FRONTEND_URL', { infer: true }),
+    ],
     credentials: true,
   });
 

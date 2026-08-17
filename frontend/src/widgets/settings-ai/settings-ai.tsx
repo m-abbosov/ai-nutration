@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useSetAiKey, useRemoveAiKey } from '@/shared/api/users'
-import { ApiError } from '@/shared/api/client'
+import { ApiError } from '@nutriai/shared/api/client'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { Label } from '@/shared/ui/label'
-import type { AiProvider, UserDto } from '@/shared/api/types'
+import type { AiProvider, UserDto } from '@nutriai/shared/api/types'
 
 const PROVIDERS: AiProvider[] = ['GEMINI', 'OPENAI', 'CLAUDE']
 

@@ -1,6 +1,6 @@
-import { useTranslation } from '@/shared/i18n'
-import { fmtNumber } from '@/shared/lib/format'
-import type { RecommendationDto } from '@/shared/api/types'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtNumber } from '@nutriai/shared/lib/format'
+import type { RecommendationDto } from '@nutriai/shared/api/types'
 
 export function RecommendationsCard({ items }: { items: RecommendationDto[] }) {
   const { t, lang } = useTranslation()

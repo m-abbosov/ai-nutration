@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useAddMeal } from '@/shared/api/meals'
-import { cn } from '@/shared/lib/cn'
-import type { NutritionAnalysisDto } from '@/shared/api/types'
+import { cn } from '@nutriai/shared/lib/cn'
+import type { NutritionAnalysisDto } from '@nutriai/shared/api/types'
 
 export function AddMealFromAiButton({
   analysis,

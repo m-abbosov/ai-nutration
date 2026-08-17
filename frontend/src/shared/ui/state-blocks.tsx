@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { AlertTriangle, Inbox } from 'lucide-react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { Button } from '@/shared/ui/button'
 
 export function ErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {

@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
-import { fmtDecimal, clamp } from '@/shared/lib/format'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtDecimal, clamp } from '@nutriai/shared/lib/format'
 import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
-import type { UserDto } from '@/shared/api/types'
+import type { UserDto } from '@nutriai/shared/api/types'
 
 /** Current vs. goal weight only — no multi-point weight history in Phase 1
  * (DESIGN_MAPPING.md: "Weight trend multi-point chart ... out of scope"). */

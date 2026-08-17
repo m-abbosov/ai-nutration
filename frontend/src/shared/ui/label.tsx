@@ -1,5 +1,5 @@
 import * as LabelPrimitive from '@radix-ui/react-label'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 import type { ComponentPropsWithoutRef } from 'react'
 
 export function Label({ className, ...props }: ComponentPropsWithoutRef<typeof LabelPrimitive.Root>) {

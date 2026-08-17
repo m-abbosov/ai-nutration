@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { ChatSidebar } from '@/widgets/chat-sidebar/chat-sidebar'
 import { ChatWindow } from '@/widgets/chat-window/chat-window'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 
 export function ChatPage() {
   const { conversationId } = useParams<{ conversationId?: string }>()

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { useTranslation, localeTags } from '@/shared/i18n'
-import { fmtNumber, formatTime } from '@/shared/lib/format'
+import { useTranslation, localeTags } from '@nutriai/shared/i18n'
+import { fmtNumber, formatTime } from '@nutriai/shared/lib/format'
 import { Button } from '@/shared/ui/button'
-import type { MealDto } from '@/shared/api/types'
+import type { MealDto } from '@nutriai/shared/api/types'
 
 export function TodaysMeals({ meals }: { meals: MealDto[] }) {
   const { t, lang } = useTranslation()

@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { EditProfileDialog } from '@/features/edit-profile/edit-profile-dialog'
 import { Button } from '@/shared/ui/button'
 import { Avatar } from '@/shared/ui/avatar'
-import type { UserDto } from '@/shared/api/types'
+import type { UserDto } from '@nutriai/shared/api/types'
 
 export function ProfileHeader({ user, streakDays, dayPct }: { user: UserDto; streakDays: number; dayPct: number }) {
   const { t } = useTranslation()

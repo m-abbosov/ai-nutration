@@ -1,4 +1,4 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useDailyNutrition } from '@/shared/api/nutrition'
 import { MealsSummary } from '@/widgets/meals-summary/meals-summary'
 import { AddMealDropdown } from '@/widgets/meals-summary/add-meal-dropdown'

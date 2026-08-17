@@ -1,8 +1,8 @@
 import { Bar, BarChart, CartesianGrid, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { useTranslation } from '@/shared/i18n'
-import { fmtNumber } from '@/shared/lib/format'
-import type { Dict } from '@/shared/i18n/types'
-import type { Language, NutritionWeeklyPointDto } from '@/shared/api/types'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtNumber } from '@nutriai/shared/lib/format'
+import type { Dict } from '@nutriai/shared/i18n/types'
+import type { Language, NutritionWeeklyPointDto } from '@nutriai/shared/api/types'
 
 interface ChartTooltipProps {
   active?: boolean

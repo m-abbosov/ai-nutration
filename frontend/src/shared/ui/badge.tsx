@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'react'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 
 export function Badge({ className, ...props }: HTMLAttributes<HTMLSpanElement>) {
   return (

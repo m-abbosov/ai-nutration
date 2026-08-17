@@ -1,6 +1,6 @@
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/dialog'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -9,7 +9,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { useUpdateMe } from '@/shared/api/users'
 import { editProfileSchema } from '@/features/edit-profile/schema'
 import type { EditProfileFormValues } from '@/features/edit-profile/schema'
-import type { UserDto } from '@/shared/api/types'
+import type { UserDto } from '@nutriai/shared/api/types'
 
 export function EditProfileDialog({
   user,

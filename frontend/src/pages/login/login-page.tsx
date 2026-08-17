@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { LogoMark } from '@/shared/ui/nav-icons'
 import { GoogleSignInButton } from '@/features/auth/google-sign-in/google-sign-in-button'
 import { TelegramSignInWidget } from '@/features/auth/telegram-sign-in/telegram-sign-in-widget'

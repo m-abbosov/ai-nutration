@@ -1,5 +1,5 @@
-import { googleSignInUrl } from '@/shared/api/auth'
-import { useTranslation } from '@/shared/i18n'
+import { googleSignInUrl } from '@nutriai/shared/api/auth'
+import { useTranslation } from '@nutriai/shared/i18n'
 
 export function GoogleSignInButton() {
   const { t } = useTranslation()

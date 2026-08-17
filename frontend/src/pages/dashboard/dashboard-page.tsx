@@ -1,4 +1,4 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useDashboard } from '@/shared/api/dashboard'
 import { DashboardHero } from '@/widgets/dashboard-hero/dashboard-hero'
 import { MacroOverview } from '@/widgets/macro-overview/macro-overview'

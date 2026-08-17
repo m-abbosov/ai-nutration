@@ -30,6 +30,7 @@ const envSchema = z.object({
   CLAUDE_MODEL: z.string().optional().default('claude-sonnet-4-5'),
 
   FRONTEND_URL: z.string().default('http://localhost:5173'),
+  ADMIN_FRONTEND_URL: z.string().default('http://localhost:5174'),
   PORT: z.string().optional().default('3001'),
 });
 

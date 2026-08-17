@@ -1,7 +1,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import type { ComponentPropsWithoutRef, HTMLAttributes } from 'react'
 import { X } from 'lucide-react'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 
 export const Dialog = DialogPrimitive.Root
 export const DialogTrigger = DialogPrimitive.Trigger

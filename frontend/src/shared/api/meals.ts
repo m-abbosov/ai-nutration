@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/shared/api/client'
-import { queryKeys } from '@/shared/api/query-client'
-import type { MealDto, MealType } from '@/shared/api/types'
+import { api } from '@nutriai/shared/api/client'
+import { queryKeys } from '@nutriai/shared/api/query-client'
+import type { MealDto, MealType } from '@nutriai/shared/api/types'
 
 export function useMeals(date?: string) {
   const qs = date ? `?date=${date}` : ''

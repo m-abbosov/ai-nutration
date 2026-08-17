@@ -1,9 +1,9 @@
-import { useTranslation } from '@/shared/i18n'
-import { fmtNumber } from '@/shared/lib/format'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtNumber } from '@nutriai/shared/lib/format'
 import { MEAL_TYPE_EMOJI } from '@/entities/meal/lib/helpers'
 import { macroBarWidths } from '@/entities/message/lib/helpers'
 import { AddMealFromAiButton } from '@/features/add-meal-from-ai/add-meal-from-ai-button'
-import type { NutritionAnalysisDto } from '@/shared/api/types'
+import type { NutritionAnalysisDto } from '@nutriai/shared/api/types'
 
 export function NutritionResultCard({
   analysis,

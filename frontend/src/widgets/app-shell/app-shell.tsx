@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { AppSidebar } from '@/widgets/app-sidebar/app-sidebar'
 import { MobileBottomNav } from '@/widgets/mobile-bottom-nav/mobile-bottom-nav'
 import { AppHeader } from '@/widgets/app-shell/app-header'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 
 export function AppShell() {
   const location = useLocation()

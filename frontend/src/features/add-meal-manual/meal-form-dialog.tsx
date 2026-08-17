@@ -1,7 +1,7 @@
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/dialog'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -10,7 +10,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { mealTypeLabel, MEAL_TYPE_ORDER } from '@/entities/meal/lib/helpers'
 import { manualMealSchema } from '@/features/add-meal-manual/schema'
 import type { ManualMealFormValues } from '@/features/add-meal-manual/schema'
-import type { MealDto } from '@/shared/api/types'
+import type { MealDto } from '@nutriai/shared/api/types'
 
 export function MealFormDialog({
   open,

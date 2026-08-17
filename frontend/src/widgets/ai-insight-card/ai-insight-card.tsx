@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import { useTranslation } from '@/shared/i18n'
-import { fmtNumber } from '@/shared/lib/format'
-import type { NutritionDailyDto } from '@/shared/api/types'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtNumber } from '@nutriai/shared/lib/format'
+import type { NutritionDailyDto } from '@nutriai/shared/api/types'
 
 export function AiInsightCard({ daily, insight }: { daily: NutritionDailyDto; insight: string | null }) {
   const { t, lang } = useTranslation()

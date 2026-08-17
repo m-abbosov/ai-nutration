@@ -6,34 +6,27 @@ flows, screens, or data shapes** — every change below is either a new file, a 
 route, or a small, explicitly-noted touch point in shared code (auth guard, HTTP
 exception filter). See `docs/ADMIN_API_CONTRACT.md` for the exact wire contract.
 
-## Architecture decision: one app, isolated route tree
+## Architecture decision: separate Vite project, shared backend
 
-The admin panel is **not** a separate Vite project or a separate deployment. It
-lives inside the existing `frontend/` SPA as an isolated route subtree mounted at
-`/admin/*`, and inside the existing `backend/` NestJS app as a new top-level
-`AdminModule`. Reasoning:
-
-- The task's own preference order lists `frontend/admin/` before a fully separate
-  app, and names `/admin` as the preferred URL (a separate subdomain is explicitly
-  the fallback "if the existing architecture makes a separate app more
-  appropriate" — it doesn't here).
-- Phase 1 already has a working, debugged Vercel deployment (`frontend/vercel.json`,
-  `.github/workflows/deploy-frontend.yml`) and a working Railway deployment
-  (`backend/railway.json`, `.github/workflows/deploy-backend.yml`). A second app
-  means a second Vercel project, second domain/DNS, second set of CI secrets —
-  real operational cost for no architectural benefit, and directly conflicts with
-  "do not unnecessarily restructure."
-- A single NestJS process sharing one `PrismaService`/`AiService`/etc. avoids
-  duplicating business logic (explicitly forbidden by the brief) far more cleanly
-  than two backend deployments would.
+> **Revised after initial ship.** The panel originally lived inside `frontend/`
+> as a `React.lazy` route subtree mounted at `/admin/*` (rationale for that
+> choice is preserved below the line, since the "why not a second app"
+> tradeoffs are still relevant context). It has since been split out into its
+> own `admin-frontend/` Vite project, its own Vercel deployment, and its own
+> domain — see "Frontend structure" below for the current layout. The backend
+> stays a single NestJS process; only `FRONTEND_URL`/`ADMIN_FRONTEND_URL` and
+> CORS changed to accommodate two frontend origins.
+>
+> Original reasoning for keeping it in one app (no longer the current state,
+> kept for history): a second app meant a second Vercel project, second
+> domain/DNS, second set of CI secrets — real operational cost weighed against
+> no separate-team/separate-cadence need at the time. `packages/shared` (the
+> API client, i18n, token storage, `cn`/`format` utils) now exists precisely so
+> the two frontends don't duplicate that code now that they're split.
 
 **Visual isolation** (the panel must *not* look like the user app) is achieved with
 a second, self-contained design-token set scoped under a root wrapper — see
-"Frontend structure" below — not with a second build.
-
-**Bundle isolation**: every `/admin/*` page is behind `React.lazy` + route-based
-code-splitting, so none of the admin JS/CSS ships in the initial bundle a regular
-user downloads at `/`, `/chat`, etc.
+"Frontend structure" below.
 
 ## Backend structure
 
@@ -172,10 +165,10 @@ billing, cost can be added then from real invoice data.
 ## Frontend structure
 
 ```
-frontend/src/admin/
-  app/            — AdminApp shell: its own QueryClient (or the existing one —
-                     agent's call), its own theme provider scoped to this subtree,
-                     admin router
+admin-frontend/src/
+  main.tsx        — standalone root: QueryClientProvider, I18nProvider,
+                     BrowserRouter (from @nutriai/shared), then AdminApp
+  app/            — AdminApp shell: its own theme provider, admin router
   pages/          — dashboard, users, user-detail, nutrition, ai, ai-request-detail,
                      conversations, conversation-detail, analytics, system,
                      system-errors, admin-users, admin-user-detail, settings, login
@@ -196,10 +189,11 @@ frontend/src/admin/
                      it never leaks into `/`, `/chat`, etc. and vice versa
 ```
 
-`frontend/src/app/router.tsx` gains one lazy-loaded branch: `/admin/*` → `AdminApp`.
-Everything under it is a separate `React.lazy` chunk. Reuses the existing
-`shared/i18n` infrastructure (uz/ru/en) — admin strings live in the same locale
-files under a new `admin` namespace key, not a parallel i18n system.
+`admin-frontend` is its own Vite entry point (own `index.html`/`main.tsx`), routed
+at its domain root (`/`, `/login`, `/users/:id`, ...) rather than nested under
+`/admin/*`. It reuses `@nutriai/shared`'s i18n infrastructure (uz/ru/en) — admin
+strings live in the same locale files under an `admin` namespace key, not a
+parallel i18n system.
 
 ## What's intentionally *not* built in Phase 2
 

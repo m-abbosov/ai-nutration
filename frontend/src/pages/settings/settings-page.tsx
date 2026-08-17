@@ -1,4 +1,4 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useAuth } from '@/app/providers/auth-provider'
 import { SettingsAppearance } from '@/widgets/settings-appearance/settings-appearance'
 import { SettingsAi } from '@/widgets/settings-ai/settings-ai'

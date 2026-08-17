@@ -1,4 +1,4 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useAddMeal, useMeals } from '@/shared/api/meals'
 import { MealFormDialog } from '@/features/add-meal-manual/meal-form-dialog'
 

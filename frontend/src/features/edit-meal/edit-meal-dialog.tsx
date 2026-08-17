@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useUpdateMeal } from '@/shared/api/meals'
 import { MealFormDialog } from '@/features/add-meal-manual/meal-form-dialog'
-import type { MealDto } from '@/shared/api/types'
+import type { MealDto } from '@nutriai/shared/api/types'
 
 export function EditMealDialog({
   meal,

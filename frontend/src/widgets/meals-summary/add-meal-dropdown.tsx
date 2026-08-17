@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Plus, Pencil } from 'lucide-react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { AddMealManualDialog } from '@/features/add-meal-manual/add-meal-manual-dialog'
 
 export function AddMealDropdown() {

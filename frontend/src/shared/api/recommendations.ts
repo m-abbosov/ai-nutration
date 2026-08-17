@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
-import { api } from '@/shared/api/client'
-import type { MealType, RecommendationDto } from '@/shared/api/types'
+import { api } from '@nutriai/shared/api/client'
+import type { MealType, RecommendationDto } from '@nutriai/shared/api/types'
 
 export function useRequestRecommendations() {
   return useMutation({

@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef } from 'react'
-import { env } from '@/shared/config/env'
-import { useTranslation } from '@/shared/i18n'
-import { useTelegramSignIn } from '@/shared/api/auth'
-import type { TelegramAuthPayload } from '@/shared/api/auth'
+import { env } from '@nutriai/shared/config/env'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { useTelegramSignIn } from '@nutriai/shared/api/auth'
+import type { TelegramAuthPayload } from '@nutriai/shared/api/auth'
 
 declare global {
   interface Window {

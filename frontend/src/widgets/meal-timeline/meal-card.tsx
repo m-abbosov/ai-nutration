@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { useTranslation, localeTags } from '@/shared/i18n'
-import { fmtNumber, formatTime } from '@/shared/lib/format'
+import { useTranslation, localeTags } from '@nutriai/shared/i18n'
+import { fmtNumber, formatTime } from '@nutriai/shared/lib/format'
 import { mealTypeLabel } from '@/entities/meal/lib/helpers'
 import { EditMealDialog } from '@/features/edit-meal/edit-meal-dialog'
 import { DeleteMealButton } from '@/features/delete-meal/delete-meal-button'
-import { cn } from '@/shared/lib/cn'
-import type { MealDto } from '@/shared/api/types'
+import { cn } from '@nutriai/shared/lib/cn'
+import type { MealDto } from '@nutriai/shared/api/types'
 
 export function MealCard({ meal, dayTotal }: { meal: MealDto; dayTotal: number }) {
   const { t, lang } = useTranslation()

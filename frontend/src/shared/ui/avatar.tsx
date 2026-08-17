@@ -1,6 +1,6 @@
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 import { userInitial } from '@/entities/user/lib/helpers'
-import type { UserDto } from '@/shared/api/types'
+import type { UserDto } from '@nutriai/shared/api/types'
 
 /** Renders the Google profile photo when available, falling back to the initial-letter badge. */
 export function Avatar({

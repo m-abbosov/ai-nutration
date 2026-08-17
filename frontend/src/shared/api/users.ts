@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/shared/api/client'
-import { queryKeys } from '@/shared/api/query-client'
-import type { ActivityLevel, AiProvider, Gender, Goal, Language, Theme, UserDto } from '@/shared/api/types'
+import { api } from '@nutriai/shared/api/client'
+import { queryKeys } from '@nutriai/shared/api/query-client'
+import type { ActivityLevel, AiProvider, Gender, Goal, Language, Theme, UserDto } from '@nutriai/shared/api/types'
 
 export interface OnboardingPayload {
   age: number

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useWeeklyNutrition, useDailyNutrition } from '@/shared/api/nutrition'
 import { useAuth } from '@/app/providers/auth-provider'
 import { computeWeeklyStats } from '@/entities/meal/lib/weekly-stats'

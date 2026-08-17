@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useAuth } from '@/app/providers/auth-provider'
 import { Avatar } from '@/shared/ui/avatar'
 import { LanguageSwitchFlyout } from '@/features/language-switch/language-switch'
 import { DashIcon, CoachIcon, MealsIcon, ProgIcon, ProfIcon, SetIcon, LogoMark } from '@/shared/ui/nav-icons'
-import { cn } from '@/shared/lib/cn'
-import { fmtNumber } from '@/shared/lib/format'
+import { cn } from '@nutriai/shared/lib/cn'
+import { fmtNumber } from '@nutriai/shared/lib/format'
 
 const navItems = [
   { to: '/', labelKey: 'navDash' as const, Icon: DashIcon, dot: true },

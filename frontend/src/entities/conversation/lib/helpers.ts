@@ -1,6 +1,6 @@
-import type { ConversationDto } from '@/shared/api/types'
-import { bucketForDate, type DateBucket } from '@/shared/lib/format'
-import type { Dict } from '@/shared/i18n/types'
+import type { ConversationDto } from '@nutriai/shared/api/types'
+import { bucketForDate, type DateBucket } from '@nutriai/shared/lib/format'
+import type { Dict } from '@nutriai/shared/i18n/types'
 
 export const BUCKET_ORDER: DateBucket[] = ['today', 'yesterday', 'previous7', 'older']
 

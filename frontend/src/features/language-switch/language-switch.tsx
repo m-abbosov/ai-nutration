@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { ChevronUp } from 'lucide-react'
-import { useTranslation, langFlag, langName } from '@/shared/i18n'
+import { useTranslation, langFlag, langName } from '@nutriai/shared/i18n'
 import { useAuth } from '@/app/providers/auth-provider'
 import { useUpdateMe } from '@/shared/api/users'
-import { cn } from '@/shared/lib/cn'
-import type { Language } from '@/shared/api/types'
+import { cn } from '@nutriai/shared/lib/cn'
+import type { Language } from '@nutriai/shared/api/types'
 
 const LANGS: Language[] = ['UZ', 'RU', 'EN']
 

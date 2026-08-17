@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
-import { fmtNumber, clamp } from '@/shared/lib/format'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtNumber, clamp } from '@nutriai/shared/lib/format'
 import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
-import type { NutritionDailyDto } from '@/shared/api/types'
+import type { NutritionDailyDto } from '@nutriai/shared/api/types'
 
 export function MealsSummary({ daily }: { daily: NutritionDailyDto }) {
   const { t, lang } = useTranslation()

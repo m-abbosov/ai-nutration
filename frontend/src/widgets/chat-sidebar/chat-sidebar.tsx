@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { Plus } from 'lucide-react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useConversations, useCreateConversation } from '@/shared/api/chat'
 import { groupConversations, bucketLabel } from '@/entities/conversation/lib/helpers'
 import { Skeleton } from '@/shared/ui/skeleton'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 
 export function ChatSidebar({
   activeId,

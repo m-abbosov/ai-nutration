@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { useTranslation } from '@/shared/i18n'
-import { useLogout } from '@/shared/api/auth'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { useLogout } from '@nutriai/shared/api/auth'
 import { userInitial } from '@/entities/user/lib/helpers'
-import type { UserDto } from '@/shared/api/types'
+import type { UserDto } from '@nutriai/shared/api/types'
 
 export function SettingsAccount({ user }: { user: UserDto }) {
   const { t } = useTranslation()

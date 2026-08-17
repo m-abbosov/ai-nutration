@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { DashIcon, CoachIcon, MealsIcon, ProgIcon, ProfIcon } from '@/shared/ui/nav-icons'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 
 const items = [
   { to: '/', key: 'home' as const, Icon: DashIcon },

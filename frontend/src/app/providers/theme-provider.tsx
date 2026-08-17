@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import type { Theme } from '@/shared/api/types'
+import type { Theme } from '@nutriai/shared/api/types'
 
 const STORAGE_KEY = 'nutriai.theme'
 

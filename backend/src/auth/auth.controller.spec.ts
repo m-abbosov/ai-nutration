@@ -14,6 +14,7 @@ import { GoogleProfilePayload } from './strategies/google.strategy';
  */
 describe('AuthController — google/callback state branching', () => {
   const FRONTEND_URL = 'http://localhost:5173';
+  const ADMIN_FRONTEND_URL = 'http://localhost:5174';
   const PROFILE: GoogleProfilePayload = {
     googleId: 'google-123',
     email: 'someone@example.com',
@@ -29,7 +30,9 @@ describe('AuthController — google/callback state branching', () => {
     } as unknown as jest.Mocked<AuthService>;
 
     const configService = {
-      get: jest.fn().mockReturnValue(FRONTEND_URL),
+      get: jest.fn((key: string) =>
+        key === 'ADMIN_FRONTEND_URL' ? ADMIN_FRONTEND_URL : FRONTEND_URL,
+      ),
     };
 
     const auditLogService = {
@@ -95,7 +98,7 @@ describe('AuthController — google/callback state branching', () => {
     );
   });
 
-  it('state=admin AND the resolved user is an admin: issues an admin session and redirects to /admin/auth/callback', async () => {
+  it('state=admin AND the resolved user is an admin: issues an admin session and redirects to the admin frontend /auth/callback', async () => {
     const { controller, authService, auditLogService } = buildController();
     authService.resolveAdminGoogleUser.mockResolvedValue({
       id: 'user-1',
@@ -117,7 +120,7 @@ describe('AuthController — google/callback state branching', () => {
       expect.objectContaining({ adminId: 'user-1', action: 'ADMIN_LOGIN' }),
     );
     expect(redirect).toHaveBeenCalledWith(
-      `${FRONTEND_URL}/admin/auth/callback?token=admin-access&refresh=admin-refresh`,
+      `${ADMIN_FRONTEND_URL}/auth/callback?token=admin-access&refresh=admin-refresh`,
     );
   });
 
@@ -142,7 +145,7 @@ describe('AuthController — google/callback state branching', () => {
       }),
     );
     expect(redirect).toHaveBeenCalledWith(
-      `${FRONTEND_URL}/admin/auth/callback?error=not_admin`,
+      `${ADMIN_FRONTEND_URL}/auth/callback?error=not_admin`,
     );
   });
 });

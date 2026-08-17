@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useUpdateMe } from '@/shared/api/users'
 import { Switch } from '@/shared/ui/switch'
-import type { UserDto } from '@/shared/api/types'
+import type { UserDto } from '@nutriai/shared/api/types'
 
 /** Toggles persist as user preference flags (UI-only in Phase 1 — no push/email/
  * Telegram delivery yet, per DESIGN_MAPPING.md). */

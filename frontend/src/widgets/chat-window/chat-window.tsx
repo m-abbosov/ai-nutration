@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { MoreHorizontal, ArrowUp, Menu, TriangleAlert } from 'lucide-react'
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useAuth } from '@/app/providers/auth-provider'
 import { useMessages, useSendMessage } from '@/shared/api/chat'
 import { useCreateConversation } from '@/shared/api/chat'
@@ -9,7 +9,7 @@ import { NutritionResultCard } from '@/widgets/chat-window/nutrition-result-card
 import { RecommendationsCard } from '@/widgets/chat-window/recommendations-card'
 import { ErrorState } from '@/shared/ui/state-blocks'
 import { Skeleton } from '@/shared/ui/skeleton'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@nutriai/shared/lib/cn'
 
 const AiAvatar = ({ size = 28 }: { size?: number }) => (
   <div

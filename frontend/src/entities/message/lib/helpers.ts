@@ -1,4 +1,4 @@
-import type { NutritionAnalysisDto } from '@/shared/api/types'
+import type { NutritionAnalysisDto } from '@nutriai/shared/api/types'
 
 /** Relative bar widths for the protein/carb/fat rows on a nutrition card, matching
  * the design's `mx = Math.max(p, c, f)` normalization. */

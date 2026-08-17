@@ -1,4 +1,4 @@
-import type { ActivityLevel, Gender, Goal, UserDto } from '@/shared/api/types'
+import type { ActivityLevel, Gender, Goal, UserDto } from '@nutriai/shared/api/types'
 
 /** Activity multipliers, ported verbatim from docs/API_CONTRACT.md / DESIGN_MAPPING.md. */
 export const ACTIVITY_MULTIPLIER: Record<ActivityLevel, number> = {

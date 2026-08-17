@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/shared/api/client'
-import { queryKeys } from '@/shared/api/query-client'
-import type { NutritionDailyDto, NutritionWeeklyPointDto } from '@/shared/api/types'
+import { api } from '@nutriai/shared/api/client'
+import { queryKeys } from '@nutriai/shared/api/query-client'
+import type { NutritionDailyDto, NutritionWeeklyPointDto } from '@nutriai/shared/api/types'
 
 export function useDailyNutrition(date?: string) {
   const qs = date ? `?date=${date}` : ''

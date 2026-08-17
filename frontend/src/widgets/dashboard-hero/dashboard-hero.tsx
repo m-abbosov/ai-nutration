@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
-import { useTranslation } from '@/shared/i18n'
-import { fmtNumber, clamp } from '@/shared/lib/format'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtNumber, clamp } from '@nutriai/shared/lib/format'
 import { useCountUp } from '@/shared/lib/use-count-up'
 import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
-import type { NutritionDailyDto } from '@/shared/api/types'
+import type { NutritionDailyDto } from '@nutriai/shared/api/types'
 
 const R = 92
 const CIRCUMFERENCE = 2 * Math.PI * R // 578.05

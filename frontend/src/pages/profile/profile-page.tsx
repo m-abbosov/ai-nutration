@@ -1,4 +1,4 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useAuth } from '@/app/providers/auth-provider'
 import { useDashboard } from '@/shared/api/dashboard'
 import { ProfileHeader } from '@/widgets/profile-header/profile-header'

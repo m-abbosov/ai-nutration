@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
+import { useTranslation } from '@nutriai/shared/i18n'
 import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
 import { macroPercent } from '@/entities/meal/lib/helpers'
-import type { NutritionDailyDto } from '@/shared/api/types'
+import type { NutritionDailyDto } from '@nutriai/shared/api/types'
 
 export function MacroOverview({ daily }: { daily: NutritionDailyDto }) {
   const { t } = useTranslation()

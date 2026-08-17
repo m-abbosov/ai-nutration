@@ -1,4 +1,4 @@
-import type { NutritionWeeklyPointDto } from '@/shared/api/types'
+import type { NutritionWeeklyPointDto } from '@nutriai/shared/api/types'
 
 /**
  * Derived progress stats computed client-side from `NutritionWeeklyPointDto[]`

@@ -1,5 +1,5 @@
-import type { MealType } from '@/shared/api/types'
-import type { Dict } from '@/shared/i18n/types'
+import type { MealType } from '@nutriai/shared/api/types'
+import type { Dict } from '@nutriai/shared/i18n/types'
 
 /** Emoji + display-time defaults per meal type, matching the design's timeline icons. */
 export const MEAL_TYPE_EMOJI: Record<MealType, string> = {

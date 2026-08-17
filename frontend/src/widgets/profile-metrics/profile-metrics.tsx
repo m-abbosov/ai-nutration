@@ -1,7 +1,7 @@
-import { useTranslation } from '@/shared/i18n'
-import { fmtNumber, fmtDecimal } from '@/shared/lib/format'
+import { useTranslation } from '@nutriai/shared/i18n'
+import { fmtNumber, fmtDecimal } from '@nutriai/shared/lib/format'
 import { bmi, GOAL_WEEKLY_RATE_KG } from '@/entities/user/lib/helpers'
-import type { UserDto } from '@/shared/api/types'
+import type { UserDto } from '@nutriai/shared/api/types'
 
 export function ProfileMetrics({ user }: { user: UserDto }) {
   const { t, lang } = useTranslation()
