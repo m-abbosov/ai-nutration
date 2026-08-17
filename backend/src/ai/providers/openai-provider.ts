@@ -37,7 +37,11 @@ export class OpenAiProvider implements AiProviderClient {
 
 function classifyOpenAiError(err: unknown): ProviderCallError {
   if (err instanceof OpenAI.APIError) {
-    if (err.status === 401 || err.code === 'invalid_api_key') {
+    if (
+      err.status === 401 ||
+      err.status === 403 ||
+      err.code === 'invalid_api_key'
+    ) {
       return new ProviderCallError('INVALID_KEY', err.message);
     }
     if (err.status === 429 || err.code === 'insufficient_quota') {
