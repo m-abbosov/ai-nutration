@@ -45,7 +45,11 @@ function classifyClaudeError(err: unknown): ProviderCallError {
     if (err.status === 401 || err.status === 403) {
       return new ProviderCallError('INVALID_KEY', err.message);
     }
-    if (err.status === 429) {
+    // Anthropic reports "no funds on the account" as a 400 invalid_request_error
+    // (not 429) — e.g. {"type":"invalid_request_error","message":"Your credit
+    // balance is too low to access the Anthropic API. ..."}. Without this,
+    // a zero-balance key falls through to the generic UNKNOWN message below.
+    if (err.status === 429 || /credit balance is too low/i.test(err.message)) {
       return new ProviderCallError('EXHAUSTED', err.message);
     }
   }

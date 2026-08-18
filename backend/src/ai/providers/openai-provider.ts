@@ -44,7 +44,15 @@ function classifyOpenAiError(err: unknown): ProviderCallError {
     ) {
       return new ProviderCallError('INVALID_KEY', err.message);
     }
-    if (err.status === 429 || err.code === 'insufficient_quota') {
+    // Billing/quota failures aren't always a 429 — e.g. a project with no
+    // payment method attached returns 400 `billing_hard_limit_reached`, so
+    // fall back to matching the code/message rather than status alone.
+    if (
+      err.status === 429 ||
+      err.code === 'insufficient_quota' ||
+      err.code === 'billing_hard_limit_reached' ||
+      /quota|billing|credit balance/i.test(err.message)
+    ) {
       return new ProviderCallError('EXHAUSTED', err.message);
     }
   }
