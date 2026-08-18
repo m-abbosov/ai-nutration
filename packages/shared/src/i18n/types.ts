@@ -18,6 +18,7 @@
  */
 import type { AdminDict } from './admin-types'
 import type { LandingDict } from './landing-types'
+import type { CalcPagesDict } from './calc-pages-types'
 
 export interface Dict {
   // T — global chrome / dashboard
@@ -292,4 +293,7 @@ export interface Dict {
 
   // Public marketing landing page — see shared/i18n/landing-types.ts
   landing: LandingDict
+
+  // The 14 working /calculators/:slug pages — see shared/i18n/calc-pages-types.ts
+  calcPages: CalcPagesDict
 }

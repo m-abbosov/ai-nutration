@@ -39,6 +39,16 @@ export function defaultMacroSplit(targetKcal: number) {
   }
 }
 
+/** Mifflin-St Jeor BMR, from docs/API_CONTRACT.md — same formula as backend/src/users/calorie.util.ts. */
+export function calculateBmr(age: number, heightCm: number, weightKg: number, gender?: Gender): number {
+  const base = 10 * weightKg + 6.25 * heightCm - 5 * age
+  return gender === 'FEMALE' ? base - 161 : gender === 'OTHER' ? base + 5 - 78 : base + 5
+}
+
+export function calculateTdee(bmrValue: number, activityLevel: ActivityLevel): number {
+  return bmrValue * ACTIVITY_MULTIPLIER[activityLevel]
+}
+
 /**
  * Client-side preview of the calorie/macro formula from docs/API_CONTRACT.md
  * (Mifflin-St Jeor BMR × activity multiplier, adjusted by goal). The backend
@@ -54,9 +64,8 @@ export function previewTargets(input: {
   goal: Goal
 }) {
   const { age, heightCm, weightKg, gender, activityLevel, goal } = input
-  const base = 10 * weightKg + 6.25 * heightCm - 5 * age
-  const bmrValue = gender === 'FEMALE' ? base - 161 : gender === 'OTHER' ? base + 5 - 78 : base + 5
-  const tdee = bmrValue * ACTIVITY_MULTIPLIER[activityLevel]
+  const bmrValue = calculateBmr(age, heightCm, weightKg, gender)
+  const tdee = calculateTdee(bmrValue, activityLevel)
   const target = Math.round(goal === 'LOSE' ? tdee - 500 : goal === 'GAIN' ? tdee + 300 : tdee)
   return { dailyCalorieTarget: target, ...defaultMacroSplit(target) }
 }

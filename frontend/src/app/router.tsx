@@ -5,7 +5,7 @@ import { LandingPage } from '@/pages/landing/landing-page'
 import { LoginPage } from '@/pages/login/login-page'
 import { AuthCallbackPage } from '@/pages/auth-callback/auth-callback-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
-import { ComingSoonPage } from '@/pages/coming-soon/coming-soon-page'
+import { CalculatorRoute } from '@/pages/calculator/registry'
 import { DashboardPage } from '@/pages/dashboard/dashboard-page'
 import { ChatPage } from '@/pages/chat/chat-page'
 import { MealsPage } from '@/pages/meals/meals-page'
@@ -41,7 +41,7 @@ export function AppRouter() {
           </RequireAuthOnly>
         }
       />
-      <Route path="/calculators/:slug" element={<ComingSoonPage />} />
+      <Route path="/calculators/:slug" element={<CalculatorRoute />} />
 
       <Route
         element={
