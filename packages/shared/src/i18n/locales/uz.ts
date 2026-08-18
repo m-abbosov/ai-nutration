@@ -293,6 +293,8 @@ export const uz: Dict = {
     noPreviousMeals: "Oldingi ovqatlar topilmadi",
     aiApiKeyLabel: "API token",
     aiApiKeyPh: "API tokeningizni joylashtiring",
+    aiGetKeyLink: (provider) =>
+      `${provider} uchun API kalitni qayerdan olish mumkin`,
     aiSaveKey: "Saqlash",
     aiRemoveKey: "Tokenni o'chirish",
     aiNotConfigured: "Ulanmagan",

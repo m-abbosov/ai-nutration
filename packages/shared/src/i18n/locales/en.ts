@@ -291,6 +291,7 @@ export const en: Dict = {
     noPreviousMeals: "No previous meals found",
     aiApiKeyLabel: "API key",
     aiApiKeyPh: "Paste your API key",
+    aiGetKeyLink: (provider) => `Get an API key for ${provider}`,
     aiSaveKey: "Save",
     aiRemoveKey: "Remove key",
     aiNotConfigured: "Not connected",

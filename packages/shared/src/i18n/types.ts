@@ -276,6 +276,7 @@ export interface Dict {
     noPreviousMeals: string;
     aiApiKeyLabel: string;
     aiApiKeyPh: string;
+    aiGetKeyLink: (provider: string) => string;
     aiSaveKey: string;
     aiRemoveKey: string;
     aiNotConfigured: string;

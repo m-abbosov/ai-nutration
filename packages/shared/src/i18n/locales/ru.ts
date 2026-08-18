@@ -291,6 +291,7 @@ export const ru: Dict = {
     noPreviousMeals: "Прошлые приёмы пищи не найдены",
     aiApiKeyLabel: "API-токен",
     aiApiKeyPh: "Вставьте свой API-токен",
+    aiGetKeyLink: (provider) => `Где получить API-ключ ${provider}`,
     aiSaveKey: "Сохранить",
     aiRemoveKey: "Удалить токен",
     aiNotConfigured: "Не подключено",

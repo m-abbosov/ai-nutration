@@ -3,12 +3,15 @@ import { useState } from "react";
 import { ApiError } from "@nutriai/shared/api/client";
 import type { AiProvider, UserDto } from "@nutriai/shared/api/types";
 import { useTranslation } from "@nutriai/shared/i18n";
+import { ExternalLink } from "lucide-react";
 
 import { useRemoveAiKey, useSetAiKey } from "@/shared/api/users";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { AI_PROVIDER_KEY_URL } from "@/entities/user/lib/ai-provider-links";
 
 const PROVIDERS: AiProvider[] = ["GEMINI", "OPENAI", "CLAUDE"];
 
@@ -107,6 +110,15 @@ export function SettingsAi({ user }: { user: UserDto }) {
             {t.app.aiSaveKey}
           </Button>
         </div>
+        <a
+          href={AI_PROVIDER_KEY_URL[provider]}
+          target="_blank"
+          rel="noreferrer"
+          className="relative mt-2 inline-flex items-center gap-1.5 text-[12px] text-acc hover:underline"
+        >
+          {t.app.aiGetKeyLink(t.aiProviderLabel[provider])}
+          <ExternalLink className="h-3 w-3" />
+        </a>
         {errorMessage && <p className="relative mt-2 text-[12px] text-fat">{errorMessage}</p>}
       </div>
     </>

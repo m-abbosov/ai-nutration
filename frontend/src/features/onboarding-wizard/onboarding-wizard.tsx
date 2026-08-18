@@ -7,6 +7,7 @@ import { useTranslation } from "@nutriai/shared/i18n";
 import { cn } from "@nutriai/shared/lib/cn";
 import { fmtNumber } from "@nutriai/shared/lib/format";
 import { AnimatePresence, motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { STEP_FIELDS, onboardingSchema } from "@/features/onboarding-wizard/schema";
 import type { OnboardingFormValues } from "@/features/onboarding-wizard/schema";
 
+import { AI_PROVIDER_KEY_URL } from "@/entities/user/lib/ai-provider-links";
 import { previewTargets } from "@/entities/user/lib/helpers";
 
 const AI_PROVIDERS: AiProvider[] = ["GEMINI", "OPENAI", "CLAUDE"];
@@ -289,6 +291,15 @@ export function OnboardingWizard() {
                         ))}
                       </SelectContent>
                     </Select>
+                    <a
+                      href={AI_PROVIDER_KEY_URL[aiProvider]}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1.5 inline-flex items-center gap-1.5 text-[12px] text-acc hover:underline"
+                    >
+                      {t.app.aiGetKeyLink(t.aiProviderLabel[aiProvider])}
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
                   </div>
                   <Input
                     type="password"
