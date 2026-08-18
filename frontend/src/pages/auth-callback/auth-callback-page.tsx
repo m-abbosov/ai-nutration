@@ -36,7 +36,7 @@ export function AuthCallbackPage() {
       .get<UserDto>('/auth/me')
       .then((user) => {
         qc.setQueryData(queryKeys.me, user)
-        navigate(isOnboarded(user) ? '/' : '/onboarding', { replace: true })
+        navigate(isOnboarded(user) ? '/dashboard' : '/onboarding', { replace: true })
       })
       .catch(() => {
         tokenStorage.clear()

@@ -17,6 +17,7 @@
  * of the surrounding transcribed strings, not from the source file.
  */
 import type { AdminDict } from './admin-types'
+import type { LandingDict } from './landing-types'
 
 export interface Dict {
   // T — global chrome / dashboard
@@ -288,4 +289,7 @@ export interface Dict {
 
   // Admin Panel (Phase 2) — see shared/i18n/admin-types.ts
   admin: AdminDict
+
+  // Public marketing landing page — see shared/i18n/landing-types.ts
+  landing: LandingDict
 }

@@ -10,7 +10,7 @@ import { cn } from '@nutriai/shared/lib/cn'
 import { fmtNumber } from '@nutriai/shared/lib/format'
 
 const navItems = [
-  { to: '/', labelKey: 'navDash' as const, Icon: DashIcon, dot: true },
+  { to: '/dashboard', labelKey: 'navDash' as const, Icon: DashIcon, dot: true },
   { to: '/chat', labelKey: 'navCoach' as const, Icon: CoachIcon, ai: true },
   { to: '/meals', labelKey: 'navMeals' as const, Icon: MealsIcon, dot: true },
   { to: '/progress', labelKey: 'navProg' as const, Icon: ProgIcon, dot: true },
@@ -73,7 +73,7 @@ export function AppSidebar() {
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
+            end={to === '/dashboard'}
             title={collapsed ? t[labelKey] : undefined}
             className={({ isActive }) =>
               cn(

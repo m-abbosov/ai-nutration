@@ -4,7 +4,7 @@ import { DashIcon, CoachIcon, MealsIcon, ProgIcon, ProfIcon } from '@/shared/ui/
 import { cn } from '@nutriai/shared/lib/cn'
 
 const items = [
-  { to: '/', key: 'home' as const, Icon: DashIcon },
+  { to: '/dashboard', key: 'home' as const, Icon: DashIcon },
   { to: '/chat', key: 'chat' as const, Icon: CoachIcon },
   { to: '/meals', key: 'meals' as const, Icon: MealsIcon },
   { to: '/progress', key: 'prog' as const, Icon: ProgIcon },
@@ -20,7 +20,7 @@ export function MobileBottomNav() {
         <NavLink
           key={to}
           to={to}
-          end={to === '/'}
+          end={to === '/dashboard'}
           className={({ isActive }) =>
             cn(
               'flex min-h-[48px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1 transition-colors',

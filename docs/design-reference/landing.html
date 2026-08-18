@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#0b0d0c;--bg2:#0f1211;--surf:#151918;--surf2:#1b201e;--surfH:#232927;
+--line:rgba(255,255,255,.075);--line2:rgba(255,255,255,.15);
+--tx:#e9ede9;--tx2:#99a49f;--tx3:#69736e;
+--acc:oklch(.76 .13 172);--accD:oklch(.60 .115 172);--accT:oklch(.76 .13 172/.13);--accG:oklch(.76 .13 172/.38);
+--pro:oklch(.72 .12 288);--proT:oklch(.72 .12 288/.15);
+--carb:oklch(.79 .13 72);--carbT:oklch(.79 .13 72/.15);
+--fat:oklch(.72 .13 18);--fatT:oklch(.72 .13 18/.15);
+--sh:0 1px 2px rgba(0,0,0,.5),0 18px 40px -24px rgba(0,0,0,.85);
+--glass:rgba(17,21,20,.78);
+}
+[data-th=light]{
+--bg:#f3f1ec;--bg2:#edeae3;--surf:#fbfaf7;--surf2:#ffffff;--surfH:#f1efe9;
+--line:rgba(23,32,28,.09);--line2:rgba(23,32,28,.18);
+--tx:#171c1a;--tx2:#5b6661;--tx3:#8a948e;
+--acc:oklch(.56 .115 172);--accD:oklch(.45 .1 172);--accT:oklch(.56 .115 172/.1);--accG:oklch(.56 .115 172/.2);
+--pro:oklch(.5 .14 288);--proT:oklch(.5 .14 288/.1);
+--carb:oklch(.58 .13 62);--carbT:oklch(.58 .13 62/.11);
+--fat:oklch(.55 .15 18);--fatT:oklch(.55 .15 18/.1);
+--sh:0 1px 2px rgba(23,32,28,.05),0 16px 34px -20px rgba(23,32,28,.2);
+--glass:rgba(251,250,247,.82);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Instrument Sans',ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;transition:background-color .35s ease,color .35s ease;overflow-x:hidden}
+a{color:var(--acc);text-decoration:none}
+a:hover{color:var(--tx)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:8px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+::-webkit-scrollbar-track{background:transparent}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(0,-11px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(0,9px)}}
+@keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(-7px,-7px)}}
+@keyframes halo{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.9;transform:scale(1.05)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.82)}}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}33%{transform:translate(7px,-8px) scale(1.06)}66%{transform:translate(-6px,6px) scale(.96)}100%{transform:translate(0,0) scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--bg)">
+
+<header style="position:sticky;top:0;z-index:80;background:var(--glass);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:13px 26px">
+    <a href="#top" style="display:flex;align-items:center;gap:10px;flex:none;color:var(--tx)" style-hover="color:var(--tx)">
+      <span style="position:relative;width:26px;height:26px;display:block">
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--accT);animation:halo 5s ease-in-out infinite"></span>
+        <svg width="26" height="26" viewBox="0 0 26 26" style="position:relative;display:block">
+          <circle cx="13" cy="13" r="9.5" fill="none" stroke="var(--acc)" stroke-width="1.6" stroke-dasharray="45 60" stroke-linecap="round" transform="rotate(-90 13 13)"></circle>
+          <circle cx="13" cy="13" r="3.4" fill="var(--acc)"></circle>
+        </svg>
+      </span>
+      <span style="font-size:16px;font-weight:600;letter-spacing:-.015em;white-space:nowrap">AI <span style="color:var(--acc)">Nutrition</span></span>
+    </a>
+
+    <nav aria-label="Main" style="display:{{ ui.navDisplay }};align-items:center;gap:2px;margin-left:14px">
+      <a href="#top" style="padding:8px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--tx2);white-space:nowrap" style-hover="background:var(--surf2);color:var(--tx)">{{ t.navHome }}</a>
+      <div style="position:relative">
+        <button onClick="{{ toggleDrop }}" aria-expanded="{{ dropOpen }}" style="display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:{{ ui.dropFg }};background:{{ ui.dropBg }};white-space:nowrap;transition:background .18s ease,color .18s ease" style-hover="background:var(--surf2);color:var(--tx)">
+          {{ t.navCalc }}
+          <svg width="10" height="10" viewBox="0 0 12 12" style="opacity:.6;transform:{{ ui.dropChev }};transition:transform .22s ease"><path d="M2.4 4.4 6 8l3.6-3.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+        </button>
+        <sc-if value="{{ dropOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 9px);left:-14px;z-index:90;width:min(660px,84vw);display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:22px;background:var(--surf2);border:1px solid var(--line2);border-radius:18px;padding:20px;box-shadow:var(--sh);animation:fu .18s ease both">
+            <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;padding:0 8px 10px">
+                  <span style="width:6px;height:6px;border-radius:2px;background:{{ g.col }}"></span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;color:var(--tx3)">{{ g.label }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:1px">
+                  <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="5">
+                    <a href="#calculators" style="display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:9px;font-size:13px;color:var(--tx2)" style-hover="background:var(--surfH);color:var(--tx)">
+                      <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span>
+                      <sc-if value="{{ c.pop }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--acc);background:var(--accT);padding:2px 5px;border-radius:5px;flex:none">{{ t.popular }}</span></sc-if>
+                    </a>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <a href="#features" style="padding:8px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--tx2);white-space:nowrap" style-hover="background:var(--surf2);color:var(--tx)">{{ t.navFeatures }}</a>
+      <a href="#how" style="padding:8px 12px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--tx2);white-space:nowrap" style-hover="background:var(--surf2);color:var(--tx)">{{ t.navHow }}</a>
+    </nav>
+
+    <div style="flex:1"></div>
+
+    <div style="position:relative;display:{{ ui.navDisplay }}">
+      <button onClick="{{ toggleLang }}" aria-label="Language" style="display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--line);border-radius:10px;font-size:12.5px;color:var(--tx2)" style-hover="background:var(--surf2);color:var(--tx)">
+        <span>{{ langFlag }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em">{{ langCode }}</span>
+      </button>
+      <sc-if value="{{ langOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:calc(100% + 7px);right:0;z-index:90;width:186px;background:var(--surf2);border:1px solid var(--line2);border-radius:13px;padding:6px;box-shadow:var(--sh);animation:fu .16s ease both">
+          <button onClick="{{ setUz }}" style="display:flex;width:100%;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13px" style-hover="background:var(--surfH)"><span>🇺🇿</span><span style="flex:1;text-align:left">O'zbekcha</span><span style="color:var(--acc)">{{ tick.uz }}</span></button>
+          <button onClick="{{ setRu }}" style="display:flex;width:100%;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13px" style-hover="background:var(--surfH)"><span>🇷🇺</span><span style="flex:1;text-align:left">Русский</span><span style="color:var(--acc)">{{ tick.ru }}</span></button>
+          <button onClick="{{ setEn }}" style="display:flex;width:100%;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13px" style-hover="background:var(--surfH)"><span>🇬🇧</span><span style="flex:1;text-align:left">English</span><span style="color:var(--acc)">{{ tick.en }}</span></button>
+        </div>
+      </sc-if>
+    </div>
+
+    <button onClick="{{ toggleTheme }}" aria-label="Theme" style="width:34px;height:34px;flex:none;border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;color:var(--tx2)" style-hover="background:var(--surf2);color:var(--tx)">
+      <svg width="15" height="15" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.6" fill="currentColor"></circle><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="1.5 3.4"></circle></svg>
+    </button>
+    <a href="#top" style="display:{{ ui.navDisplay }};padding:9px 13px;border-radius:10px;font-size:13px;font-weight:500;color:var(--tx2)" style-hover="background:var(--surf2);color:var(--tx)">{{ t.signIn }}</a>
+    <a href="#cta" style="display:{{ ui.ctaDisplay }};padding:10px 16px;border-radius:11px;background:var(--acc);color:#04120e;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 8px 22px -12px var(--accG);transition:transform .16s ease,filter .16s ease" style-hover="filter:brightness(1.08);color:#04120e" style-active="transform:scale(.97)">{{ t.getStarted }}</a>
+    <button onClick="{{ toggleMenu }}" aria-label="Menu" style="display:{{ ui.burgerDisplay }};width:34px;height:34px;flex:none;border:1px solid var(--line);border-radius:10px;place-items:center;color:var(--tx2)">
+      <svg width="15" height="15" viewBox="0 0 16 16"><path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+    </button>
+  </div>
+
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="border-top:1px solid var(--line);background:var(--bg2);padding:16px 20px 22px;animation:fu .2s ease both">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <a href="#top" onClick="{{ closeMenu }}" style="padding:12px 10px;border-radius:11px;font-size:15px;font-weight:500;color:var(--tx)" style-hover="background:var(--surf2)">{{ t.navHome }}</a>
+        <a href="#calculators" onClick="{{ closeMenu }}" style="padding:12px 10px;border-radius:11px;font-size:15px;font-weight:500;color:var(--tx)" style-hover="background:var(--surf2)">{{ t.navCalc }}</a>
+        <a href="#features" onClick="{{ closeMenu }}" style="padding:12px 10px;border-radius:11px;font-size:15px;font-weight:500;color:var(--tx)" style-hover="background:var(--surf2)">{{ t.navFeatures }}</a>
+        <a href="#how" onClick="{{ closeMenu }}" style="padding:12px 10px;border-radius:11px;font-size:15px;font-weight:500;color:var(--tx)" style-hover="background:var(--surf2)">{{ t.navHow }}</a>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap">
+        <button onClick="{{ setUz }}" style="padding:9px 13px;border-radius:10px;border:1px solid {{ ui.uzBd }};background:{{ ui.uzBg }};font-size:12.5px">🇺🇿 UZ</button>
+        <button onClick="{{ setRu }}" style="padding:9px 13px;border-radius:10px;border:1px solid {{ ui.ruBd }};background:{{ ui.ruBg }};font-size:12.5px">🇷🇺 RU</button>
+        <button onClick="{{ setEn }}" style="padding:9px 13px;border-radius:10px;border:1px solid {{ ui.enBd }};background:{{ ui.enBg }};font-size:12.5px">🇬🇧 EN</button>
+        <span style="flex:1"></span>
+        <a href="#cta" onClick="{{ closeMenu }}" style="padding:11px 17px;border-radius:11px;background:var(--acc);color:#04120e;font-size:13px;font-weight:600" style-hover="color:#04120e">{{ t.getStarted }}</a>
+      </div>
+    </div>
+  </sc-if>
+</header>
+
+<main id="top">
+
+<section style="position:relative;overflow:hidden">
+  <div style="position:absolute;inset:0;background:radial-gradient(76% 62% at 26% 6%,var(--accT),transparent 62%);pointer-events:none"></div>
+  <div style="position:absolute;inset:-30% -10% auto;height:150%;background:repeating-radial-gradient(circle at 22% 20%,transparent 0 26px,var(--line) 26px 27px);opacity:.55;pointer-events:none;mask-image:linear-gradient(112deg,#000,transparent 68%);-webkit-mask-image:linear-gradient(112deg,#000,transparent 68%)"></div>
+
+  <div style="position:relative;max-width:1280px;margin:0 auto;padding:64px 26px 74px;display:grid;grid-template-columns:{{ ui.heroCols }};gap:52px;align-items:center">
+    <div style="min-width:0;animation:fu .5s ease both">
+      <div style="display:inline-flex;align-items:center;gap:9px;padding:7px 14px 7px 10px;border-radius:999px;background:var(--accT);border:1px solid var(--line2)">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--accG);animation:pulse 2.4s ease-in-out infinite"></span>
+        <span style="font-size:12px;font-weight:500;color:var(--acc)">{{ t.heroBadge }}</span>
+      </div>
+      <h1 style="margin:22px 0 0;font-size:{{ ui.h1 }};font-weight:500;letter-spacing:-.035em;line-height:1.06;text-wrap:balance">{{ t.h1a }}<br><span style="font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.01em">{{ t.h1b }}</span><br>{{ t.h1c }}</h1>
+      <p style="margin:22px 0 0;font-size:15.5px;line-height:1.6;color:var(--tx2);max-width:47ch;text-wrap:pretty">{{ t.heroSub }}</p>
+      <div style="margin-top:30px;display:flex;gap:11px;flex-wrap:wrap">
+        <a href="#cta" style="display:inline-flex;align-items:center;gap:9px;padding:14px 22px;border-radius:13px;background:var(--acc);color:#04120e;font-size:14px;font-weight:600;box-shadow:0 12px 30px -12px var(--accG);transition:transform .16s ease,filter .16s ease" style-hover="filter:brightness(1.08);color:#04120e" style-active="transform:scale(.98)">{{ t.ctaPrimary }}<span style="font-family:'IBM Plex Mono',monospace">→</span></a>
+        <a href="#calculators" style="display:inline-flex;align-items:center;padding:14px 22px;border-radius:13px;border:1px solid var(--line2);font-size:14px;font-weight:500;color:var(--tx)" style-hover="background:var(--surf);color:var(--tx)">{{ t.ctaSecondary }}</a>
+      </div>
+      <div style="margin-top:34px;padding-top:26px;border-top:1px solid var(--line);display:flex;gap:34px;flex-wrap:wrap">
+        <div><div style="font-size:22px;font-weight:500;letter-spacing:-.03em">14</div><div style="font-size:12px;color:var(--tx3);margin-top:3px;max-width:16ch">{{ t.stat1 }}</div></div>
+        <div><div style="font-size:22px;font-weight:500;letter-spacing:-.03em">12 400+</div><div style="font-size:12px;color:var(--tx3);margin-top:3px;max-width:16ch">{{ t.stat2 }}</div></div>
+        <div><div style="font-size:22px;font-weight:500;letter-spacing:-.03em">3</div><div style="font-size:12px;color:var(--tx3);margin-top:3px;max-width:16ch">{{ t.stat3 }}</div></div>
+      </div>
+    </div>
+
+    <div style="position:relative;min-width:0;animation:fu .6s ease .1s both">
+      <div style="position:relative;border-radius:24px;border:1px solid var(--line2);background:var(--surf);box-shadow:var(--sh);overflow:hidden">
+        <div style="display:flex;align-items:center;gap:9px;padding:12px 15px;border-bottom:1px solid var(--line);background:var(--bg2)">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--line2)"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--line2)"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--line2)"></span>
+          <span style="flex:1"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;color:var(--tx3)">{{ t.dashLabel }}</span>
+        </div>
+        <div style="position:relative;padding:26px 22px 24px;overflow:hidden">
+          <div style="position:absolute;inset:-40% -20% auto auto;width:280px;height:280px;background:radial-gradient(circle,var(--accG),transparent 66%);filter:blur(32px);opacity:.7;animation:drift 15s ease-in-out infinite;pointer-events:none"></div>
+          <div style="position:relative;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:center">
+            <div style="position:relative;width:186px;height:186px;flex:none">
+              <div style="position:absolute;inset:14%;border-radius:50%;background:radial-gradient(circle,var(--accG),transparent 68%);filter:blur(20px);animation:halo 6s ease-in-out infinite"></div>
+              <svg viewBox="0 0 240 240" style="position:relative;display:block;width:100%;height:100%" role="img" aria-label="{{ t.a11yRing }}">
+                <defs><linearGradient id="hRing" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="var(--accD)"></stop><stop offset=".6" stop-color="var(--acc)"></stop><stop offset="1" stop-color="var(--acc)"></stop></linearGradient></defs>
+                <sc-for list="{{ ticks }}" as="k" hint-placeholder-count="48">
+                  <line x1="{{ k.x1 }}" y1="{{ k.y1 }}" x2="{{ k.x2 }}" y2="{{ k.y2 }}" stroke="{{ k.c }}" stroke-width="1.5" stroke-linecap="round"></line>
+                </sc-for>
+                <circle cx="120" cy="120" r="92" fill="none" stroke="var(--line2)" stroke-width="12" opacity=".55"></circle>
+                <circle cx="120" cy="120" r="92" fill="none" stroke="url(#hRing)" stroke-width="12" stroke-linecap="round" transform="rotate(-90 120 120)" stroke-dasharray="578.05" stroke-dashoffset="{{ ringOff }}" style="transition:stroke-dashoffset 1.6s cubic-bezier(.16,.84,.24,1);filter:drop-shadow(0 0 9px var(--accG))"></circle>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--tx3)">{{ t.today }}</div>
+                <div style="font-size:36px;font-weight:500;letter-spacing:-.035em;line-height:1.08;font-variant-numeric:tabular-nums">{{ anim.kcal }}</div>
+                <div style="font-size:10.5px;color:var(--tx2)">{{ t.kcalEaten }}</div>
+                <div style="width:40px;height:1px;background:var(--line2);margin:7px 0 5px"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--tx2)">2 180 {{ t.kcal }}</div>
+              </div>
+            </div>
+            <div style="flex:1 1 150px;min-width:140px;display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ macroRows }}" as="r" hint-placeholder-count="3">
+                <div>
+                  <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
+                    <span style="width:7px;height:7px;border-radius:2px;background:{{ r.col }};flex:none"></span>
+                    <span style="flex:1;min-width:0;font-size:12px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-variant-numeric:tabular-nums">{{ r.val }}</span>
+                  </div>
+                  <div style="height:5px;border-radius:99px;background:var(--line);overflow:hidden"><div style="height:100%;border-radius:99px;background:{{ r.col }};width:{{ r.w }};transition:width 1.3s cubic-bezier(.16,.84,.24,1)"></div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="position:relative;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:flex;align-items:flex-end;gap:8px;height:74px">
+            <sc-for list="{{ bars }}" as="b" hint-placeholder-count="7">
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:6px">
+                <div style="position:relative;flex:1;display:flex;align-items:flex-end"><div style="width:100%;border-radius:5px 5px 3px 3px;background:{{ b.col }};height:{{ b.h }};transition:height 1.1s cubic-bezier(.16,.84,.24,1)"></div></div>
+                <div style="text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:{{ b.fg }}">{{ b.day }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:absolute;top:-14px;right:-6px;display:{{ ui.floatDisplay }};animation:float1 6.5s ease-in-out infinite">
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 15px;border-radius:15px;background:var(--surf2);border:1px solid var(--line2);box-shadow:var(--sh)">
+          <span style="width:30px;height:30px;border-radius:10px;background:var(--accT);display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.4" fill="none" stroke="var(--acc)" stroke-width="1.5" stroke-dasharray="26 12" transform="rotate(-90 7 7)"></circle></svg></span>
+          <span><span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:var(--tx3)">BMI</span><span style="display:block;font-size:16px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums">23,4</span></span>
+        </div>
+      </div>
+      <div style="position:absolute;top:38%;left:-30px;display:{{ ui.floatDisplay }};animation:float3 8s ease-in-out infinite">
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 15px;border-radius:15px;background:var(--surf2);border:1px solid var(--line2);box-shadow:var(--sh)">
+          <span style="width:30px;height:30px;border-radius:10px;background:var(--proT);display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="3" fill="var(--pro)"></circle><circle cx="7" cy="7" r="6" fill="none" stroke="var(--pro)" stroke-width="1.2" opacity=".5"></circle></svg></span>
+          <span><span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:var(--tx3)">{{ t.mProtein }}</span><span style="display:block;font-size:16px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums">145 {{ t.g }}</span></span>
+        </div>
+      </div>
+      <div style="position:absolute;bottom:44px;right:-26px;display:{{ ui.floatDisplay }};animation:float2 7.4s ease-in-out infinite">
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 15px;border-radius:15px;background:var(--surf2);border:1px solid var(--line2);box-shadow:var(--sh)">
+          <span style="width:30px;height:30px;border-radius:10px;background:var(--fatT);display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="5.4" cy="8" r="3.4" fill="var(--fat)" opacity=".75"></circle><circle cx="9.4" cy="5.6" r="2.4" fill="var(--fat)"></circle></svg></span>
+          <span><span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:var(--tx3)">{{ t.bodyFat }}</span><span style="display:block;font-size:16px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums">18,7%</span></span>
+        </div>
+      </div>
+      <div style="position:absolute;bottom:-16px;left:16px;display:{{ ui.floatDisplay }};animation:float1 7.9s ease-in-out .6s infinite">
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 15px;border-radius:15px;background:var(--surf2);border:1px solid var(--line2);box-shadow:var(--sh)">
+          <span style="width:30px;height:30px;border-radius:10px;background:var(--carbT);display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="2" y="8" width="2.4" height="4" rx="1.2" fill="var(--carb)" opacity=".5"></rect><rect x="5.8" y="5" width="2.4" height="7" rx="1.2" fill="var(--carb)"></rect><rect x="9.6" y="2.4" width="2.4" height="9.6" rx="1.2" fill="var(--carb)" opacity=".7"></rect></svg></span>
+          <span><span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:var(--tx3)">{{ t.steps }}</span><span style="display:block;font-size:16px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums">8 420</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calculators" style="max-width:1280px;margin:0 auto;padding:56px 26px 20px">
+  <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:26px">
+    <div style="flex:1;min-width:250px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--tx3)">{{ t.freeTools }}</div>
+      <h2 style="margin:12px 0 0;font-size:{{ ui.h2 }};font-weight:500;letter-spacing:-.028em;line-height:1.12;text-wrap:balance">{{ t.calcTitle }}</h2>
+      <p style="margin:10px 0 0;font-size:14.5px;color:var(--tx2);max-width:48ch;text-wrap:pretty">{{ t.calcSub }}</p>
+    </div>
+    <label style="flex:0 1 300px;min-width:220px">
+      <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ t.searchPh }}</span>
+      <span style="display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--line2);border-radius:13px;background:var(--surf);transition:border-color .18s ease" style-focus-within="border-color:var(--acc)">
+        <svg width="15" height="15" viewBox="0 0 16 16" style="flex:none;opacity:.5"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M10.4 10.4 14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        <input value="{{ query }}" onChange="{{ setQuery }}" placeholder="{{ t.searchPh }}" aria-label="{{ t.searchPh }}" style="flex:1;min-width:0;background:none;border:0;outline:none;font-size:13.5px">
+        <sc-if value="{{ hasQuery }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ clearQuery }}" aria-label="Clear" style="width:20px;height:20px;flex:none;border-radius:6px;display:grid;place-items:center;color:var(--tx3)" style-hover="background:var(--surfH);color:var(--tx)"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M2.6 2.6l6.8 6.8M9.4 2.6l-6.8 6.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg></button>
+        </sc-if>
+      </span>
+    </label>
+  </div>
+
+  <div role="tablist" aria-label="{{ t.freeTools }}" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px">
+    <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+      <button onClick="{{ f.on }}" role="tab" aria-selected="{{ f.sel }}" style="display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border-radius:99px;border:1px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }};font-size:12.5px;font-weight:500;white-space:nowrap;transition:background .18s ease,border-color .18s ease,color .18s ease">
+        <sc-if value="{{ f.hasDot }}" hint-placeholder-val="{{ true }}"><span style="width:6px;height:6px;border-radius:2px;background:{{ f.dot }}"></span></sc-if>
+        {{ f.label }}<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--tx3)">{{ f.count }}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:14px">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="9">
+        <a href="#cta" style="position:relative;overflow:hidden;display:flex;flex-direction:column;gap:11px;padding:19px;border:1px solid var(--line);border-radius:19px;background:var(--surf);color:var(--tx);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-3px);border-color:var(--line2);box-shadow:var(--sh);color:var(--tx)">
+          <span style="position:absolute;inset:0;background:radial-gradient(80% 90% at 100% 0,{{ c.tint }},transparent 62%);pointer-events:none"></span>
+          <span style="position:relative;display:flex;align-items:flex-start;gap:11px">
+            <span style="width:36px;height:36px;flex:none;border-radius:12px;background:{{ c.tint }};display:grid;place-items:center;color:{{ c.col }}">
+              <svg width="17" height="17" viewBox="0 0 18 18" aria-hidden="true"><sc-if value="{{ c.iRing }}" hint-placeholder-val="{{ true }}"><circle cx="9" cy="9" r="6.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-dasharray="{{ c.dash }}" stroke-linecap="round" transform="rotate(-90 9 9)"></circle><circle cx="9" cy="9" r="2.2" fill="currentColor"></circle></sc-if><sc-if value="{{ c.iBar }}" hint-placeholder-val="{{ false }}"><rect x="2" y="10" width="3.2" height="6" rx="1.4" fill="currentColor" opacity=".5"></rect><rect x="7.4" y="6" width="3.2" height="10" rx="1.4" fill="currentColor"></rect><rect x="12.8" y="2.6" width="3.2" height="13.4" rx="1.4" fill="currentColor" opacity=".7"></rect></sc-if><sc-if value="{{ c.iDrop }}" hint-placeholder-val="{{ false }}"><path d="M9 2.4c2.6 3.2 4.4 5.4 4.4 7.7A4.4 4.4 0 0 1 9 14.6a4.4 4.4 0 0 1-4.4-4.5c0-2.3 1.8-4.5 4.4-7.7Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path></sc-if><sc-if value="{{ c.iHeart }}" hint-placeholder-val="{{ false }}"><path d="M2.4 8.6h2.8l1.5-3 2 6 1.8-4.2 1.2 3.2h3.9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></sc-if></svg>
+            </span>
+            <span style="flex:1;min-width:0">
+              <span style="display:block;font-size:14.5px;font-weight:600;letter-spacing:-.012em;line-height:1.25;overflow-wrap:anywhere;hyphens:auto;text-wrap:pretty">{{ c.name }}</span>
+              <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);margin-top:4px">{{ c.cat }}</span>
+            </span>
+            <sc-if value="{{ c.pop }}" hint-placeholder-val="{{ false }}">
+              <span style="flex:none;margin-top:2px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--acc);background:var(--accT);padding:3px 6px;border-radius:6px;white-space:nowrap">{{ t.popular }}</span>
+            </sc-if>
+          </span>
+          <span style="position:relative;font-size:13px;line-height:1.5;color:var(--tx2);text-wrap:pretty">{{ c.desc }}</span>
+          <span style="position:relative;display:flex;align-items:center;gap:7px;margin-top:auto;font-size:12.5px;font-weight:600;color:var(--acc)">{{ t.calculate }}<span style="font-family:'IBM Plex Mono',monospace">→</span></span>
+        </a>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+    <div style="border:1px dashed var(--line2);border-radius:20px;padding:52px 26px;text-align:center;animation:fi .2s ease both">
+      <div style="width:44px;height:44px;margin:0 auto;border-radius:14px;background:var(--surf);border:1px solid var(--line);display:grid;place-items:center;color:var(--tx3)"><svg width="19" height="19" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M10.4 10.4 14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg></div>
+      <div style="margin-top:15px;font-size:15px;font-weight:500">{{ t.emptyTitle }}</div>
+      <div style="margin-top:6px;font-size:13px;color:var(--tx2)">{{ t.emptySub }}</div>
+      <button onClick="{{ clearQuery }}" style="margin-top:18px;padding:10px 17px;border-radius:11px;border:1px solid var(--line2);font-size:12.5px;font-weight:500" style-hover="background:var(--surf)">{{ t.emptyReset }}</button>
+    </div>
+  </sc-if>
+</section>
+
+<section style="max-width:1280px;margin:0 auto;padding:52px 26px">
+  <div style="position:relative;overflow:hidden;border:1px solid var(--line);border-radius:26px;background:var(--surf);padding:{{ ui.demoPad }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(70% 110% at 8% 0,var(--accT),transparent 58%);pointer-events:none"></div>
+    <div style="position:relative;display:grid;grid-template-columns:{{ ui.demoCols }};gap:38px;align-items:start">
+      <div style="min-width:0">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--tx3)">{{ t.tryIt }}</div>
+        <h2 style="margin:12px 0 0;font-size:{{ ui.h3 }};font-weight:500;letter-spacing:-.025em;line-height:1.14;text-wrap:balance">{{ t.demoTitle }}</h2>
+        <p style="margin:10px 0 0;font-size:14px;color:var(--tx2);max-width:42ch;text-wrap:pretty">{{ t.demoSub }}</p>
+
+        <div style="margin-top:22px;display:flex;gap:3px;padding:3px;border:1px solid var(--line2);border-radius:12px;width:fit-content" role="group" aria-label="{{ t.units }}">
+          <button onClick="{{ setMetric }}" aria-pressed="{{ isMetric }}" style="padding:8px 15px;border-radius:9px;background:{{ ui.metricBg }};color:{{ ui.metricFg }};font-size:12.5px;font-weight:500;white-space:nowrap;transition:background .2s ease,color .2s ease">{{ t.metric }}</button>
+          <button onClick="{{ setUS }}" aria-pressed="{{ isUS }}" style="padding:8px 15px;border-radius:9px;background:{{ ui.usBg }};color:{{ ui.usFg }};font-size:12.5px;font-weight:500;white-space:nowrap;transition:background .2s ease,color .2s ease">{{ t.usUnits }}</button>
+        </div>
+
+        <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px">
+          <sc-if value="{{ isMetric }}" hint-placeholder-val="{{ true }}">
+            <label style="display:block">
+              <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);margin-bottom:7px">{{ t.height }} · CM</span>
+              <input type="number" value="{{ f.cm }}" onChange="{{ setCm }}" aria-label="{{ t.height }} cm" style="width:100%;padding:12px 13px;border:1px solid {{ f.cmBd }};border-radius:12px;background:var(--surf2);outline:none;font-size:14.5px;font-variant-numeric:tabular-nums;transition:border-color .18s ease" style-focus="border-color:var(--acc)">
+            </label>
+            <label style="display:block">
+              <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);margin-bottom:7px">{{ t.weight }} · KG</span>
+              <input type="number" value="{{ f.kg }}" onChange="{{ setKg }}" aria-label="{{ t.weight }} kg" style="width:100%;padding:12px 13px;border:1px solid {{ f.kgBd }};border-radius:12px;background:var(--surf2);outline:none;font-size:14.5px;font-variant-numeric:tabular-nums;transition:border-color .18s ease" style-focus="border-color:var(--acc)">
+            </label>
+          </sc-if>
+          <sc-if value="{{ isUS }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:9px">
+              <label style="flex:1;min-width:0;display:block">
+                <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);margin-bottom:7px">{{ t.height }} · FT</span>
+                <input type="number" value="{{ f.ft }}" onChange="{{ setFt }}" aria-label="{{ t.height }} feet" style="width:100%;padding:12px 13px;border:1px solid {{ f.cmBd }};border-radius:12px;background:var(--surf2);outline:none;font-size:14.5px;font-variant-numeric:tabular-nums" style-focus="border-color:var(--acc)">
+              </label>
+              <label style="flex:1;min-width:0;display:block">
+                <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);margin-bottom:7px">IN</span>
+                <input type="number" value="{{ f.inch }}" onChange="{{ setInch }}" aria-label="{{ t.height }} inches" style="width:100%;padding:12px 13px;border:1px solid {{ f.cmBd }};border-radius:12px;background:var(--surf2);outline:none;font-size:14.5px;font-variant-numeric:tabular-nums" style-focus="border-color:var(--acc)">
+              </label>
+            </div>
+            <label style="display:block">
+              <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);margin-bottom:7px">{{ t.weight }} · LB</span>
+              <input type="number" value="{{ f.lb }}" onChange="{{ setLb }}" aria-label="{{ t.weight }} lb" style="width:100%;padding:12px 13px;border:1px solid {{ f.kgBd }};border-radius:12px;background:var(--surf2);outline:none;font-size:14.5px;font-variant-numeric:tabular-nums" style-focus="border-color:var(--acc)">
+            </label>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ f.hasError }}" hint-placeholder-val="{{ false }}">
+          <div role="alert" style="margin-top:13px;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:var(--fatT);border:1px solid var(--line2)">
+            <span style="width:16px;height:16px;flex:none;margin-top:1px;border-radius:50%;background:var(--fat);color:var(--bg);display:grid;place-items:center;font-size:11px;font-weight:600">!</span>
+            <span style="flex:1;font-size:12.5px;line-height:1.5;color:var(--tx)">{{ f.error }}</span>
+          </div>
+        </sc-if>
+
+        <p style="margin:18px 0 0;font-size:11.5px;line-height:1.55;color:var(--tx3);max-width:46ch;text-wrap:pretty">{{ t.disclaimer }}</p>
+      </div>
+
+      <div style="min-width:0">
+        <div style="border:1px solid var(--line2);border-radius:22px;background:var(--bg2);padding:24px 22px;box-shadow:var(--sh)">
+          <sc-if value="{{ r.ok }}" hint-placeholder-val="{{ true }}">
+            <div style="text-align:center">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--tx3)">{{ t.yourBmi }}</div>
+              <div style="margin-top:8px;font-size:56px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;transition:color .3s ease;color:{{ r.col }}">{{ r.bmi }}</div>
+              <div style="margin-top:11px;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:99px;background:{{ r.tint }};border:1px solid var(--line2)">
+                <span style="width:6px;height:6px;border-radius:50%;background:{{ r.col }}"></span>
+                <span style="font-size:12.5px;font-weight:600;color:{{ r.col }}">{{ r.cat }}</span>
+              </div>
+            </div>
+
+            <div style="margin-top:26px">
+              <div style="position:relative;height:9px;border-radius:99px;overflow:hidden;display:flex;gap:2px">
+                <div style="width:19%;background:var(--pro);opacity:.55;border-radius:99px 3px 3px 99px"></div>
+                <div style="width:26%;background:var(--acc)"></div>
+                <div style="width:23%;background:var(--carb);opacity:.75"></div>
+                <div style="width:32%;background:var(--fat);opacity:.7;border-radius:3px 99px 99px 3px"></div>
+              </div>
+              <div style="position:relative;height:20px">
+                <div style="position:absolute;top:-3px;left:{{ r.markerLeft }};transform:translateX(-50%);transition:left .7s cubic-bezier(.16,.84,.24,1)">
+                  <div style="width:2px;height:13px;background:var(--tx);margin:0 auto;border-radius:2px"></div>
+                  <div style="width:9px;height:9px;border-radius:50%;background:var(--tx);border:2px solid var(--bg2);margin-top:-2px"></div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--tx3)">
+                <span>15</span><span>18,5</span><span>25</span><span>30</span><span>40</span>
+              </div>
+              <div style="margin-top:11px;display:flex;flex-wrap:wrap;gap:12px">
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2)"><span style="width:8px;height:3px;border-radius:9px;background:var(--pro);opacity:.55"></span>{{ t.bmiUnder }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2)"><span style="width:8px;height:3px;border-radius:9px;background:var(--acc)"></span>{{ t.bmiNormal }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2)"><span style="width:8px;height:3px;border-radius:9px;background:var(--carb);opacity:.75"></span>{{ t.bmiOver }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2)"><span style="width:8px;height:3px;border-radius:9px;background:var(--fat);opacity:.7"></span>{{ t.bmiObese }}</span>
+              </div>
+            </div>
+
+            <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--line);border-radius:14px;overflow:hidden">
+              <div style="background:var(--surf);padding:13px 14px"><div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.healthyRange }}</div><div style="margin-top:6px;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums">{{ r.healthy }}</div></div>
+              <div style="background:var(--surf);padding:13px 14px"><div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.bmiPrime }}</div><div style="margin-top:6px;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums">{{ r.prime }}</div></div>
+              <div style="background:var(--surf);padding:13px 14px"><div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.ponderal }}</div><div style="margin-top:6px;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums">{{ r.ponderal }}</div></div>
+            </div>
+
+            <div style="margin-top:18px">
+              <div style="font-size:12.5px;font-weight:600;margin-bottom:7px">{{ t.whatMeans }}</div>
+              <p style="margin:0;font-size:13px;line-height:1.55;color:var(--tx2);text-wrap:pretty">{{ r.meaning }}</p>
+            </div>
+
+            <div style="margin-top:18px;display:flex;gap:7px;flex-wrap:wrap">
+              <button onClick="{{ doSave }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:11px;border:1px solid {{ ui.saveBd }};background:{{ ui.saveBg }};color:{{ ui.saveFg }};font-size:12.5px;font-weight:500;white-space:nowrap;transition:background .2s ease,color .2s ease">
+                <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3.2h8v7.6L7 8.6l-4 2.2V3.2Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+                {{ ui.saveLabel }}
+              </button>
+              <button onClick="{{ doCopy }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:11px;border:1px solid var(--line2);font-size:12.5px;font-weight:500;color:{{ ui.copyFg }};white-space:nowrap" style-hover="background:var(--surf)">
+                <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><rect x="4.4" y="2.4" width="7.2" height="7.2" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"></rect><path d="M9.2 11.6H4a1.6 1.6 0 0 1-1.6-1.6V4.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+                {{ ui.copyLabel }}
+              </button>
+              <button onClick="{{ doShare }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:11px;border:1px solid var(--line2);font-size:12.5px;font-weight:500;color:{{ ui.shareFg }};white-space:nowrap" style-hover="background:var(--surf)">
+                <svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><circle cx="10.4" cy="3.4" r="1.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><circle cx="3.6" cy="7" r="1.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><circle cx="10.4" cy="10.6" r="1.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M5.2 6.2 8.8 4.2M5.2 7.8l3.6 2" stroke="currentColor" stroke-width="1.4"></path></svg>
+                {{ ui.shareLabel }}
+              </button>
+              <button onClick="{{ doReset }}" style="padding:9px 14px;border-radius:11px;font-size:12.5px;font-weight:500;color:var(--tx3);white-space:nowrap" style-hover="background:var(--surf);color:var(--tx)">{{ t.reset }}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ r.empty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:34px 8px;text-align:center;animation:fi .2s ease both">
+              <div style="position:relative;width:76px;height:76px;margin:0 auto 18px">
+                <div style="position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,var(--accG),transparent 66%);filter:blur(14px);animation:halo 5s ease-in-out infinite"></div>
+                <svg viewBox="0 0 76 76" style="position:absolute;inset:0;animation:spin 26s linear infinite"><circle cx="38" cy="38" r="36" fill="none" stroke="var(--line2)" stroke-width="1" stroke-dasharray="3 7"></circle></svg>
+                <div style="position:absolute;inset:11px;border-radius:50%;background:radial-gradient(circle at 34% 26%,var(--acc),var(--accD) 56%,var(--surf) 96%);box-shadow:inset 0 0 14px rgba(255,255,255,.24)"></div>
+              </div>
+              <div style="font-size:15px;font-weight:500">{{ t.resultEmptyT }}</div>
+              <p style="margin:8px auto 0;font-size:13px;line-height:1.55;color:var(--tx2);max-width:30ch;text-wrap:pretty">{{ t.resultEmptyS }}</p>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="margin-top:14px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--tx3);margin-bottom:9px">{{ t.related }}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ relatedCalcs }}" as="rc" hint-placeholder-count="3">
+              <a href="#calculators" style="display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid var(--line);border-radius:11px;background:var(--surf);font-size:12.5px;color:var(--tx2);white-space:nowrap;transition:border-color .18s ease" style-hover="border-color:var(--line2);color:var(--tx)">
+                <span style="width:6px;height:6px;border-radius:2px;background:{{ rc.col }}"></span>{{ rc.name }}
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" style="max-width:1280px;margin:0 auto;padding:52px 26px">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--tx3)">{{ t.featuresKicker }}</div>
+  <h2 style="margin:12px 0 0;font-size:{{ ui.h2 }};font-weight:500;letter-spacing:-.028em;line-height:1.12;max-width:22ch;text-wrap:balance">{{ t.featuresTitle }}</h2>
+  <p style="margin:10px 0 0;font-size:14.5px;color:var(--tx2);max-width:52ch;text-wrap:pretty">{{ t.featuresSub }}</p>
+
+  <div style="margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:16px">
+    <sc-for list="{{ features }}" as="ft" hint-placeholder-count="4">
+      <div style="position:relative;overflow:hidden;border:1px solid var(--line);border-radius:20px;background:var(--surf);padding:22px;transition:transform .18s ease,border-color .18s ease" style-hover="transform:translateY(-3px);border-color:var(--line2)">
+        <div style="position:absolute;inset:0;background:radial-gradient(80% 90% at 100% 0,{{ ft.tint }},transparent 60%);pointer-events:none"></div>
+        <div style="position:relative;width:38px;height:38px;border-radius:13px;background:{{ ft.tint }};display:grid;place-items:center;color:{{ ft.col }}">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><sc-if value="{{ ft.iOrb }}" hint-placeholder-val="{{ true }}"><circle cx="9" cy="9" r="6.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="31 13"></circle><circle cx="9" cy="9" r="2.6" fill="currentColor"></circle></sc-if><sc-if value="{{ ft.iCam }}" hint-placeholder-val="{{ false }}"><rect x="2.2" y="4.4" width="13.6" height="10" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.5"></rect><circle cx="9" cy="9.4" r="2.7" fill="none" stroke="currentColor" stroke-width="1.5"></circle></sc-if><sc-if value="{{ ft.iChart }}" hint-placeholder-val="{{ false }}"><path d="M2.4 13.2 6.6 8l3.2 2.6 5.8-6.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></sc-if><sc-if value="{{ ft.iGlobe }}" hint-placeholder-val="{{ false }}"><circle cx="9" cy="9" r="6.6" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M2.4 9h13.2M9 2.4c1.9 2 2.9 4.2 2.9 6.6S10.9 15.6 9 15.6 6.1 11.4 6.1 9 7.1 4.4 9 2.4Z" fill="none" stroke="currentColor" stroke-width="1.3"></path></sc-if></svg>
+        </div>
+        <h3 style="position:relative;margin:16px 0 0;font-size:15.5px;font-weight:600;letter-spacing:-.015em;text-wrap:balance">{{ ft.title }}</h3>
+        <p style="position:relative;margin:9px 0 0;font-size:13px;line-height:1.55;color:var(--tx2);text-wrap:pretty">{{ ft.body }}</p>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section id="how" style="max-width:1280px;margin:0 auto;padding:52px 26px">
+  <div style="display:grid;grid-template-columns:{{ ui.howCols }};gap:44px;align-items:start">
+    <div style="min-width:0">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--tx3)">{{ t.howKicker }}</div>
+      <h2 style="margin:12px 0 0;font-size:{{ ui.h2 }};font-weight:500;letter-spacing:-.028em;line-height:1.12;text-wrap:balance">{{ t.howTitle }}</h2>
+      <p style="margin:10px 0 0;font-size:14.5px;color:var(--tx2);max-width:38ch;text-wrap:pretty">{{ t.howSub }}</p>
+      <a href="#cta" style="margin-top:22px;display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:12px;background:var(--acc);color:#04120e;font-size:13.5px;font-weight:600;box-shadow:0 10px 26px -12px var(--accG)" style-hover="filter:brightness(1.08);color:#04120e">{{ t.ctaPrimary }}<span style="font-family:'IBM Plex Mono',monospace">→</span></a>
+    </div>
+    <div style="min-width:0">
+      <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+        <div style="position:relative;display:flex;gap:18px;padding-bottom:26px">
+          <div style="position:relative;flex:none;width:32px;display:flex;justify-content:center">
+            <div style="position:absolute;top:34px;bottom:-18px;width:1px;background:var(--line2);opacity:{{ st.lineOp }}"></div>
+            <div style="position:relative;width:32px;height:32px;border-radius:11px;background:{{ st.bg }};border:1px solid var(--line2);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:{{ st.fg }}">{{ st.n }}</div>
+          </div>
+          <div style="flex:1;min-width:0;padding-top:4px">
+            <div style="font-size:15px;font-weight:600;letter-spacing:-.015em;text-wrap:balance">{{ st.title }}</div>
+            <p style="margin:7px 0 0;font-size:13px;line-height:1.55;color:var(--tx2);text-wrap:pretty">{{ st.body }}</p>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="cta" style="max-width:1280px;margin:0 auto;padding:32px 26px 52px">
+  <div style="position:relative;overflow:hidden;border-radius:28px;padding:1px;background:linear-gradient(150deg,var(--accG),var(--line) 44%,var(--line))">
+    <div style="position:relative;overflow:hidden;border-radius:27px;background:var(--surf);padding:{{ ui.ctaPad }}">
+      <div style="position:absolute;inset:-40% -10% auto auto;width:420px;height:420px;background:radial-gradient(circle,var(--accG),transparent 66%);filter:blur(44px);opacity:.75;animation:drift 17s ease-in-out infinite;pointer-events:none"></div>
+      <div style="position:relative;display:grid;grid-template-columns:{{ ui.ctaCols }};gap:38px;align-items:center">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="position:relative;width:38px;height:38px;flex:none">
+              <div style="position:absolute;inset:-5px;border-radius:50%;background:var(--accG);filter:blur(9px);animation:halo 4.6s ease-in-out infinite"></div>
+              <div style="position:relative;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 32% 28%,var(--acc),var(--accD) 58%,var(--surf2));box-shadow:inset 0 0 9px rgba(255,255,255,.28)"></div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--tx3)">{{ t.ctaKicker }}</div>
+          </div>
+          <h2 style="margin:20px 0 0;font-family:'Instrument Serif',serif;font-size:{{ ui.ctaH }};font-weight:400;letter-spacing:-.01em;line-height:1.2;max-width:22ch;text-wrap:balance">{{ t.ctaTitle }}</h2>
+          <p style="margin:14px 0 0;font-size:15px;line-height:1.6;color:var(--tx2);max-width:46ch;text-wrap:pretty">{{ t.ctaBody }}</p>
+          <div style="margin-top:26px;display:flex;gap:11px;flex-wrap:wrap">
+            <a href="#top" style="display:inline-flex;align-items:center;gap:9px;padding:14px 22px;border-radius:13px;background:var(--acc);color:#04120e;font-size:14px;font-weight:600;box-shadow:0 12px 30px -12px var(--accG);transition:transform .16s ease,filter .16s ease" style-hover="filter:brightness(1.08);color:#04120e" style-active="transform:scale(.98)">{{ t.ctaBtn1 }}<span style="font-family:'IBM Plex Mono',monospace">→</span></a>
+            <a href="#top" style="display:inline-flex;align-items:center;padding:14px 22px;border-radius:13px;border:1px solid var(--line2);font-size:14px;font-weight:500;color:var(--tx)" style-hover="background:var(--surf2);color:var(--tx)">{{ t.ctaBtn2 }}</a>
+          </div>
+          <div style="margin-top:16px;font-size:11.5px;color:var(--tx3)">{{ t.ctaNote }}</div>
+        </div>
+        <div style="min-width:0;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ funnel }}" as="fn" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:13px;padding:14px 16px;border:1px solid var(--line);border-radius:15px;background:var(--bg2)">
+              <span style="width:26px;height:26px;flex:none;border-radius:9px;background:{{ fn.tint }};color:{{ fn.col }};display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px">{{ fn.n }}</span>
+              <span style="flex:1;min-width:0;font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ fn.label }}</span>
+              <span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--tx3)">{{ fn.meta }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="max-width:1280px;margin:0 auto;padding:32px 26px 60px">
+  <div style="display:grid;grid-template-columns:{{ ui.faqCols }};gap:40px;align-items:start">
+    <div style="min-width:0">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--tx3)">FAQ</div>
+      <h2 style="margin:12px 0 0;font-size:{{ ui.h3 }};font-weight:500;letter-spacing:-.025em;line-height:1.14;max-width:18ch;text-wrap:balance">{{ t.faqTitle }}</h2>
+      <p style="margin:10px 0 0;font-size:14px;color:var(--tx2);max-width:34ch;text-wrap:pretty">{{ t.faqSub }}</p>
+    </div>
+    <div style="min-width:0;border-top:1px solid var(--line)">
+      <sc-for list="{{ faqs }}" as="q" hint-placeholder-count="5">
+        <div style="border-bottom:1px solid var(--line)">
+          <button onClick="{{ q.on }}" aria-expanded="{{ q.open }}" style="display:flex;width:100%;align-items:flex-start;gap:16px;padding:17px 4px;text-align:left" style-hover="color:var(--acc)">
+            <span style="flex:1;min-width:0;font-size:14.5px;font-weight:500;letter-spacing:-.01em;text-wrap:pretty">{{ q.q }}</span>
+            <span style="flex:none;width:22px;height:22px;margin-top:1px;border-radius:7px;border:1px solid var(--line2);display:grid;place-items:center;color:var(--tx3);transform:{{ q.chev }};transition:transform .25s ease">
+              <svg width="11" height="11" viewBox="0 0 12 12"><path d="M2.4 4.4 6 8l3.6-3.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+            </span>
+          </button>
+          <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0;padding:0 40px 19px 4px;font-size:13.5px;line-height:1.62;color:var(--tx2);text-wrap:pretty;animation:fu .24s ease both">{{ q.a }}</p>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<footer style="border-top:1px solid var(--line);background:var(--bg2)">
+  <div style="max-width:1280px;margin:0 auto;padding:40px 26px 34px;display:grid;grid-template-columns:{{ ui.footCols }};gap:34px">
+    <div style="min-width:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="24" height="24" viewBox="0 0 26 26"><circle cx="13" cy="13" r="9.5" fill="none" stroke="var(--acc)" stroke-width="1.6" stroke-dasharray="45 60" stroke-linecap="round" transform="rotate(-90 13 13)"></circle><circle cx="13" cy="13" r="3.4" fill="var(--acc)"></circle></svg>
+        <span style="font-size:15px;font-weight:600;letter-spacing:-.015em">AI <span style="color:var(--acc)">Nutrition</span></span>
+      </div>
+      <p style="margin:14px 0 0;font-size:12.5px;line-height:1.6;color:var(--tx3);max-width:32ch;text-wrap:pretty">{{ t.footBlurb }}</p>
+      <div style="margin-top:16px;display:flex;gap:7px">
+        <button onClick="{{ setUz }}" style="padding:7px 11px;border-radius:9px;border:1px solid {{ ui.uzBd }};background:{{ ui.uzBg }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--tx2)">UZ</button>
+        <button onClick="{{ setRu }}" style="padding:7px 11px;border-radius:9px;border:1px solid {{ ui.ruBd }};background:{{ ui.ruBg }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--tx2)">RU</button>
+        <button onClick="{{ setEn }}" style="padding:7px 11px;border-radius:9px;border:1px solid {{ ui.enBd }};background:{{ ui.enBg }};font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--tx2)">EN</button>
+      </div>
+    </div>
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+      <div style="min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:13px">
+          <span style="width:6px;height:6px;border-radius:2px;background:{{ g.col }}"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--tx3)">{{ g.label }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="5">
+            <a href="#calculators" style="font-size:12.5px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" style-hover="color:var(--acc)">{{ c.name }}</a>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="max-width:1280px;margin:0 auto;padding:0 26px 34px">
+    <div style="padding-top:22px;border-top:1px solid var(--line);display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:11.5px;color:var(--tx3)">© 2026 AI Nutrition</span>
+      <span style="flex:1"></span>
+      <span style="font-size:11.5px;color:var(--tx3);max-width:64ch;text-wrap:pretty">{{ t.disclaimer }}</span>
+    </div>
+  </div>
+</footer>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1024},
+&quot;startTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark'|'light'&quot;,&quot;section&quot;:&quot;Prototype&quot;},
+&quot;startLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;uz&quot;,&quot;ru&quot;,&quot;en&quot;],&quot;default&quot;:&quot;uz&quot;,&quot;tsType&quot;:&quot;'uz'|'ru'|'en'&quot;,&quot;section&quot;:&quot;Prototype&quot;},
+&quot;accentHue&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:172,&quot;min&quot;:120,&quot;max&quot;:210,&quot;step&quot;:2,&quot;unit&quot;:&quot;°&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Identity&quot;}}">
+const L={
+uz:{
+navHome:"Bosh sahifa",navCalc:"Kalkulyatorlar",navFeatures:"Imkoniyatlar",navHow:"Qanday ishlaydi",signIn:"Kirish",getStarted:"Boshlash",
+heroBadge:"Bepul · Ro'yxatdan o'tish shart emas",
+h1a:"Tanangizni tushuning.",h1b:"Aqlli ovqatlaning.",h1c:"Yaxshi yashang.",
+heroSub:"Aniq formulalar va intellektual tahlilga asoslangan bepul salomatlik, nutrition va fitnes kalkulyatorlari.",
+ctaPrimary:"Bepul boshlash",ctaSecondary:"Kalkulyatorlarni ko'rish",
+stat1:"bepul kalkulyator",stat2:"taom bazasida",stat3:"til qo'llanadi",
+dashLabel:"AI NUTRITION · BOSH SAHIFA",today:"BUGUN",kcalEaten:"kcal iste'mol",kcal:"kcal",g:"g",
+mProtein:"Oqsil",mCarbs:"Uglevodlar",mFat:"Yog'",bodyFat:"Tana yog'i",steps:"Qadamlar",
+a11yRing:"Kunlik kaloriya progressi",
+freeTools:"BEPUL VOSITALAR",calcTitle:"Salomatlik va fitnes kalkulyatorlari",calcSub:"Raqamlaringizni biling. Ular nimani anglatishini tushuning.",
+searchPh:"Kalkulyator qidirish…",popular:"MASHHUR",calculate:"Hisoblash",
+fAll:"Barchasi",fHealth:"Salomatlik",fNutrition:"Nutrition",fFitness:"Fitnes",
+emptyTitle:"Hech narsa topilmadi",emptySub:"Boshqa so'z bilan qidirib ko'ring yoki kategoriyani almashtiring.",emptyReset:"Qidiruvni tozalash",
+tryIt:"HOZIR SINAB KO'RING",demoTitle:"BMI kalkulyatori",demoSub:"Bo'y va vazningizni kiriting — natija darhol hisoblanadi. Birliklarni almashtirganda qiymatlar saqlanadi.",
+units:"Birliklar",metric:"Metrik",usUnits:"US birliklar",height:"Bo'y",weight:"Vazn",
+yourBmi:"SIZNING BMI",bmiUnder:"Kam vazn",bmiNormal:"Normal",bmiOver:"Ortiqcha vazn",bmiObese:"Semizlik",
+healthyRange:"SOG'LOM VAZN",bmiPrime:"BMI PRIME",ponderal:"PONDERAL INDEKS",
+whatMeans:"Bu nimani anglatadi",related:"TEGISHLI KALKULYATORLAR",
+save:"Saqlash",saved:"Saqlandi",copy:"Nusxalash",copied:"Nusxalandi",share:"Ulashish",shared:"Havola tayyor",reset:"Tozalash",
+resultEmptyT:"Natija shu yerda paydo bo'ladi",resultEmptyS:"Bo'y va vazningizni kiriting — hisob avtomatik yangilanadi.",
+errHeight:"Bo'yni 120 va 230 cm orasida kiriting.",errWeight:"Vaznni 25 va 300 kg orasida kiriting.",errBoth:"Bo'y va vaznni to'g'ri kiriting.",
+bmiMeanUnder:"BMI qiymatingiz kam vazn oralig'ida. Kaloriya va oqsil miqdorini oshirish foydali bo'lishi mumkin — AI Nutrition buni kuzatishga yordam beradi.",
+bmiMeanNormal:"BMI qiymatingiz sog'lom oraliqda. Hozirgi rejimni saqlab, oqsil va mikroelementlarga e'tibor bering.",
+bmiMeanOver:"BMI qiymatingiz normadan biroz yuqori. Kichik kaloriya defitsiti va oqsilga boy taomlar odatda yetarli.",
+bmiMeanObese:"BMI qiymatingiz yuqori oraliqda. Sekin va barqaror o'zgarishlar eng yaxshi natija beradi — mutaxassis bilan maslahatlashish tavsiya etiladi.",
+disclaimer:"Bu hisob-kitoblar umumiy taxminiy ma'lumot uchun bo'lib, professional tibbiy maslahat o'rnini bosmaydi.",
+featuresKicker:"IMKONIYATLAR",featuresTitle:"Raqamdan ko'proq narsa",featuresSub:"Kalkulyatorlar boshlanish nuqtasi. AI Nutrition esa ovqatlaringiz, kaloriyalaringiz va mashg'ulotlaringizni bir tizimga bog'laydi.",
+ft1:"AI nutrition murabbiy",ft1b:"Nima yeganingizni oddiy so'zlar bilan yozing. Kaloriya va makrolar avtomatik hisoblanadi.",
+ft2:"Ovqat rasmini yuklash",ft2b:"Taom suratini yuboring — porsiya va tarkib taxminiy aniqlanadi, siz faqat tasdiqlaysiz.",
+ft3:"Progress va tahlil",ft3b:"Haftalik kaloriya, makro barqarorligi va vazn dinamikasi bir joyda ko'rinadi.",
+ft4:"Uch tilda",ft4b:"O'zbek, rus va ingliz tillari. Mahalliy taomlar bazasi: osh, mastava, somsa, achichuk.",
+howKicker:"QANDAY ISHLAYDI",howTitle:"Raqamdan rejagacha to'rt qadam",howSub:"Kalkulyatordan boshlanadi, shaxsiy nutrition rejasi bilan davom etadi.",
+st1:"Kalkulyatorni tanlang",st1b:"BMI, kaloriya, makro yoki fitnes — 14 ta bepul vosita.",
+st2:"Ma'lumotni kiriting",st2b:"Metrik yoki US birliklar. Natija darhol hisoblanadi.",
+st3:"Natijani tushuning",st3b:"Har bir natija yonida «bu nimani anglatadi» izohi turadi.",
+st4:"AI Nutrition bilan davom eting",st4b:"Natijani profilingizga saqlang va kunlik kuzatuvni boshlang.",
+ctaKicker:"AI NUTRITION",ctaTitle:"Raqamdan ko'proq narsa kerakmi?",
+ctaBody:"AI Nutrition ovqatlaringiz, kaloriyalaringiz, mashg'ulotlaringiz va progressingizni bog'lab, shaxsiy tahlil beradi.",
+ctaBtn1:"Bepul kuzatishni boshlash",ctaBtn2:"AI rejamni yaratish",ctaNote:"Karta talab qilinmaydi · Istalgan vaqtda bekor qilinadi",
+fn1:"Bepul kalkulyator",fn2:"Shaxsiy natija",fn3:"Kunlik kuzatuv",fn4:"AI murabbiy",
+fnM1:"1 daqiqa",fnM2:"darhol",fnM3:"har kuni",fnM4:"doimiy",
+faqTitle:"Ko'p beriladigan savollar",faqSub:"Formulalar, aniqlik va AI Nutrition haqida.",
+q1:"BMI nima?",a1:"BMI — vaznni bo'y kvadratiga bo'lish orqali olinadigan ko'rsatkich. U tana tuzilishini emas, umumiy holatni baholaydi va skrining vositasi hisoblanadi.",
+q2:"Sog'lom BMI qanday bo'ladi?",a2:"Ko'pchilik kattalar uchun 18,5–24,9 oralig'i sog'lom deb qabul qilinadi. Sportchilarda mushak massasi hisobiga qiymat yuqori chiqishi mumkin.",
+q3:"Kalkulyatorlar bepulmi?",a3:"Ha, barcha 14 ta kalkulyator bepul va ro'yxatdan o'tishni talab qilmaydi. Natijani saqlash uchun esa profil kerak bo'ladi.",
+q4:"Metrik va US birliklar qanday ishlaydi?",a4:"Birlikni almashtirganda kiritilgan qiymat yo'qolmaydi — u avtomatik konvertatsiya qilinadi. 80 kg → 176,4 lb, 180 cm → 5 ft 11 in.",
+q5:"Natijalar tibbiy xulosami?",a5:"Yo'q. Barcha formulalar taxminiy hisob beradi va shifokor ko'rigini almashtirmaydi. Sog'liq bo'yicha qarorlarni mutaxassis bilan muhokama qiling.",
+footBlurb:"Bepul salomatlik va fitnes kalkulyatorlari, hamda AI asosidagi nutrition kuzatuv platformasi."},
+
+ru:{
+navHome:"Главная",navCalc:"Калькуляторы",navFeatures:"Возможности",navHow:"Как это работает",signIn:"Войти",getStarted:"Начать",
+heroBadge:"Бесплатно · Без регистрации",
+h1a:"Понимайте своё тело.",h1b:"Питайтесь умнее.",h1c:"Живите лучше.",
+heroSub:"Бесплатные калькуляторы здоровья, питания и фитнеса, построенные на понятных формулах и интеллектуальной аналитике.",
+ctaPrimary:"Начать бесплатно",ctaSecondary:"Смотреть калькуляторы",
+stat1:"бесплатных калькулятора",stat2:"блюд в базе",stat3:"языка интерфейса",
+dashLabel:"AI NUTRITION · ГЛАВНАЯ",today:"СЕГОДНЯ",kcalEaten:"ккал получено",kcal:"ккал",g:"г",
+mProtein:"Белки",mCarbs:"Углеводы",mFat:"Жиры",bodyFat:"Процент жира",steps:"Шаги",
+a11yRing:"Прогресс дневных калорий",
+freeTools:"БЕСПЛАТНЫЕ ИНСТРУМЕНТЫ",calcTitle:"Калькуляторы здоровья и фитнеса",calcSub:"Знайте свои цифры. Понимайте, что они значат.",
+searchPh:"Поиск калькуляторов…",popular:"ПОПУЛЯРНОЕ",calculate:"Рассчитать",
+fAll:"Все",fHealth:"Здоровье",fNutrition:"Питание",fFitness:"Фитнес",
+emptyTitle:"Ничего не найдено",emptySub:"Попробуйте другое слово или смените категорию.",emptyReset:"Очистить поиск",
+tryIt:"ПОПРОБУЙТЕ СЕЙЧАС",demoTitle:"Калькулятор ИМТ",demoSub:"Введите рост и вес — результат считается сразу. При смене единиц значения сохраняются.",
+units:"Единицы",metric:"Метрические",usUnits:"US единицы",height:"Рост",weight:"Вес",
+yourBmi:"ВАШ ИМТ",bmiUnder:"Недостаток веса",bmiNormal:"Норма",bmiOver:"Избыточный вес",bmiObese:"Ожирение",
+healthyRange:"ЗДОРОВЫЙ ВЕС",bmiPrime:"BMI PRIME",ponderal:"ИНДЕКС ПОНДЕРАЛА",
+whatMeans:"Что это значит",related:"СВЯЗАННЫЕ КАЛЬКУЛЯТОРЫ",
+save:"Сохранить",saved:"Сохранено",copy:"Копировать",copied:"Скопировано",share:"Поделиться",shared:"Ссылка готова",reset:"Сбросить",
+resultEmptyT:"Результат появится здесь",resultEmptyS:"Введите рост и вес — расчёт обновится автоматически.",
+errHeight:"Укажите рост от 120 до 230 см.",errWeight:"Укажите вес от 25 до 300 кг.",errBoth:"Проверьте рост и вес.",
+bmiMeanUnder:"Ваш ИМТ ниже нормы. Возможно, стоит увеличить калорийность и количество белка — AI Nutrition поможет это отследить.",
+bmiMeanNormal:"Ваш ИМТ в здоровом диапазоне. Сохраняйте текущий режим и следите за белком и микронутриентами.",
+bmiMeanOver:"Ваш ИМТ немного выше нормы. Обычно достаточно небольшого дефицита калорий и блюд, богатых белком.",
+bmiMeanObese:"Ваш ИМТ в высоком диапазоне. Постепенные устойчивые изменения работают лучше всего — обсудите план со специалистом.",
+disclaimer:"Эти расчёты дают общие оценки для информационных целей и не заменяют профессиональную медицинскую консультацию.",
+featuresKicker:"ВОЗМОЖНОСТИ",featuresTitle:"Больше, чем просто цифра",featuresSub:"Калькуляторы — точка входа. AI Nutrition связывает ваши приёмы пищи, калории и тренировки в одну систему.",
+ft1:"AI-нутрициолог",ft1b:"Опишите съеденное обычными словами. Калории и макросы посчитаются сами.",
+ft2:"Фото еды",ft2b:"Отправьте снимок блюда — порция и состав определятся приблизительно, вам останется подтвердить.",
+ft3:"Прогресс и аналитика",ft3b:"Недельные калории, стабильность макросов и динамика веса в одном месте.",
+ft4:"Три языка",ft4b:"Узбекский, русский и английский. База местных блюд: ош, мастава, сомса, ачичук.",
+howKicker:"КАК ЭТО РАБОТАЕТ",howTitle:"От цифры к плану за четыре шага",howSub:"Начинается с калькулятора, продолжается персональным планом питания.",
+st1:"Выберите калькулятор",st1b:"ИМТ, калории, макросы или фитнес — 14 бесплатных инструментов.",
+st2:"Введите данные",st2b:"Метрические или US единицы. Результат считается мгновенно.",
+st3:"Поймите результат",st3b:"Рядом с каждым результатом есть пояснение «что это значит».",
+st4:"Продолжите с AI Nutrition",st4b:"Сохраните результат в профиль и начните ежедневный трекинг.",
+ctaKicker:"AI NUTRITION",ctaTitle:"Нужно больше, чем цифра?",
+ctaBody:"AI Nutrition связывает ваши приёмы пищи, калории, тренировки и прогресс и даёт персональную аналитику.",
+ctaBtn1:"Начать бесплатно",ctaBtn2:"Создать мой AI-план",ctaNote:"Без карты · Отмена в любой момент",
+fn1:"Бесплатный калькулятор",fn2:"Персональный результат",fn3:"Ежедневный трекинг",fn4:"AI-тренер",
+fnM1:"1 минута",fnM2:"сразу",fnM3:"каждый день",fnM4:"постоянно",
+faqTitle:"Частые вопросы",faqSub:"О формулах, точности и AI Nutrition.",
+q1:"Что такое ИМТ?",a1:"ИМТ — отношение веса к квадрату роста. Он оценивает общую картину, а не состав тела, и служит инструментом первичного скрининга.",
+q2:"Какой ИМТ считается здоровым?",a2:"Для большинства взрослых здоровым считается диапазон 18,5–24,9. У спортсменов значение может быть выше за счёт мышечной массы.",
+q3:"Калькуляторы бесплатные?",a3:"Да, все 14 калькуляторов бесплатны и не требуют регистрации. Профиль нужен только для сохранения результатов.",
+q4:"Как работают метрические и US единицы?",a4:"При смене единиц введённое значение не сбрасывается — оно конвертируется автоматически. 80 кг → 176,4 lb, 180 см → 5 ft 11 in.",
+q5:"Результаты — это медицинское заключение?",a5:"Нет. Все формулы дают приблизительную оценку и не заменяют осмотр врача. Решения о здоровье обсуждайте со специалистом.",
+footBlurb:"Бесплатные калькуляторы здоровья и фитнеса и платформа отслеживания питания на базе AI."},
+
+en:{
+navHome:"Home",navCalc:"Calculators",navFeatures:"Features",navHow:"How it Works",signIn:"Sign In",getStarted:"Get Started",
+heroBadge:"Free · No sign-up required",
+h1a:"Understand Your Body.",h1b:"Eat Smarter.",h1c:"Live Better.",
+heroSub:"Free health, nutrition and fitness calculators powered by clear formulas and intelligent insights.",
+ctaPrimary:"Start Free",ctaSecondary:"Explore Calculators",
+stat1:"free calculators",stat2:"foods in the database",stat3:"interface languages",
+dashLabel:"AI NUTRITION · DASHBOARD",today:"TODAY",kcalEaten:"kcal eaten",kcal:"kcal",g:"g",
+mProtein:"Protein",mCarbs:"Carbs",mFat:"Fat",bodyFat:"Body Fat",steps:"Steps",
+a11yRing:"Daily calorie progress",
+freeTools:"FREE TOOLS",calcTitle:"Free Health & Fitness Calculators",calcSub:"Know your numbers. Understand what they mean.",
+searchPh:"Search calculators…",popular:"POPULAR",calculate:"Calculate",
+fAll:"All",fHealth:"Health",fNutrition:"Nutrition",fFitness:"Fitness",
+emptyTitle:"Nothing found",emptySub:"Try another word or switch the category.",emptyReset:"Clear search",
+tryIt:"TRY IT NOW",demoTitle:"BMI Calculator",demoSub:"Enter your height and weight — the result updates instantly. Switching units keeps your values.",
+units:"Units",metric:"Metric",usUnits:"US Units",height:"Height",weight:"Weight",
+yourBmi:"YOUR BMI",bmiUnder:"Underweight",bmiNormal:"Normal",bmiOver:"Overweight",bmiObese:"Obesity",
+healthyRange:"HEALTHY WEIGHT",bmiPrime:"BMI PRIME",ponderal:"PONDERAL INDEX",
+whatMeans:"What this means",related:"RELATED CALCULATORS",
+save:"Save result",saved:"Saved",copy:"Copy",copied:"Copied",share:"Share",shared:"Link ready",reset:"Reset",
+resultEmptyT:"Your result appears here",resultEmptyS:"Enter your height and weight — the calculation updates automatically.",
+errHeight:"Enter a height between 120 and 230 cm.",errWeight:"Enter a weight between 25 and 300 kg.",errBoth:"Check your height and weight.",
+bmiMeanUnder:"Your BMI sits in the underweight range. Raising calories and protein may help — AI Nutrition makes that easy to track.",
+bmiMeanNormal:"Your BMI is in the healthy range. Keep your current routine and pay attention to protein and micronutrients.",
+bmiMeanOver:"Your BMI is slightly above the healthy range. A modest calorie deficit and protein-rich meals are usually enough.",
+bmiMeanObese:"Your BMI is in the high range. Gradual, sustainable changes work best — consider discussing a plan with a professional.",
+disclaimer:"These calculations provide general estimates for informational purposes and should not replace professional medical advice.",
+featuresKicker:"FEATURES",featuresTitle:"More than a number",featuresSub:"The calculators are the entry point. AI Nutrition connects your meals, calories and workouts into one system.",
+ft1:"AI nutrition coach",ft1b:"Describe what you ate in plain words. Calories and macros are calculated for you.",
+ft2:"Food photo logging",ft2b:"Send a photo of your plate — portion and composition are estimated, you just confirm.",
+ft3:"Progress and analytics",ft3b:"Weekly calories, macro consistency and weight trend in one place.",
+ft4:"Three languages",ft4b:"Uzbek, Russian and English, with a local food database: osh, mastava, somsa, achichuk.",
+howKicker:"HOW IT WORKS",howTitle:"From a number to a plan in four steps",howSub:"It starts with a calculator and continues as a personal nutrition plan.",
+st1:"Pick a calculator",st1b:"BMI, calories, macros or fitness — 14 free tools.",
+st2:"Enter your details",st2b:"Metric or US units. The result is calculated instantly.",
+st3:"Understand the result",st3b:"Every result comes with a plain-language explanation of what it means.",
+st4:"Continue with AI Nutrition",st4b:"Save the result to your profile and start daily tracking.",
+ctaKicker:"AI NUTRITION",ctaTitle:"Want more than a number?",
+ctaBody:"AI Nutrition connects your meals, calories, workouts and progress to give you personalized insights.",
+ctaBtn1:"Start Tracking Free",ctaBtn2:"Create My AI Nutrition Plan",ctaNote:"No card required · Cancel anytime",
+fn1:"Free calculator",fn2:"Personalized result",fn3:"Daily tracking",fn4:"AI coach",
+fnM1:"1 minute",fnM2:"instant",fnM3:"every day",fnM4:"ongoing",
+faqTitle:"Frequently asked questions",faqSub:"About the formulas, accuracy and AI Nutrition.",
+q1:"What is BMI?",a1:"BMI is your weight divided by the square of your height. It describes a general picture rather than body composition, and works as a screening tool.",
+q2:"What is a healthy BMI?",a2:"For most adults, 18.5–24.9 is considered healthy. Athletes may read higher because muscle weighs more than fat.",
+q3:"Are the calculators free?",a3:"Yes — all 14 calculators are free and need no sign-up. A profile is only required if you want to save results.",
+q4:"How do Metric and US units work?",a4:"Switching units never clears your input — it converts automatically. 80 kg → 176.4 lb, 180 cm → 5 ft 11 in.",
+q5:"Are the results a medical assessment?",a5:"No. Every formula produces an estimate and does not replace a medical examination. Discuss health decisions with a professional.",
+footBlurb:"Free health and fitness calculators, plus an AI-powered nutrition tracking platform."}};
+
+const CALCS=[
+ {id:"bmi",cat:"health",pop:true,icon:"ring",dash:"31 13"},
+ {id:"bodyfat",cat:"health",pop:false,icon:"ring",dash:"22 20"},
+ {id:"ideal",cat:"health",pop:false,icon:"bar",dash:""},
+ {id:"bmr",cat:"health",pop:false,icon:"ring",dash:"26 16"},
+ {id:"tdee",cat:"health",pop:true,icon:"bar",dash:""},
+ {id:"calories",cat:"nutrition",pop:true,icon:"ring",dash:"34 10"},
+ {id:"macros",cat:"nutrition",pop:true,icon:"ring",dash:"18 24"},
+ {id:"protein",cat:"nutrition",pop:false,icon:"bar",dash:""},
+ {id:"water",cat:"nutrition",pop:false,icon:"drop",dash:""},
+ {id:"pace",cat:"fitness",pop:false,icon:"bar",dash:""},
+ {id:"burned",cat:"fitness",pop:true,icon:"heart",dash:""},
+ {id:"orm",cat:"fitness",pop:false,icon:"bar",dash:""},
+ {id:"hr",cat:"fitness",pop:false,icon:"heart",dash:""},
+ {id:"lbm",cat:"fitness",pop:false,icon:"ring",dash:"24 18"}];
+
+const CN={
+uz:{bmi:["BMI kalkulyatori","Bo'y va vaznga qarab tana massasi indeksini hisoblang."],
+bodyfat:["Tana yog'i","Bo'yin va bel o'lchoviga ko'ra yog' foizini taxminlash."],
+ideal:["Ideal vazn","Bo'yingizga mos sog'lom vazn oralig'ini ko'ring."],
+bmr:["Bazal metabolizm","Tinch holatda sarflanadigan kaloriyani hisoblang."],
+tdee:["Kunlik energiya (TDEE)","Faollik bilan birga umumiy kunlik sarfni bilib oling."],
+calories:["Kunlik kaloriya","Maqsadingizga mos kunlik kaloriya normasini hisoblang."],
+macros:["Makronutrientlar","Oqsil, uglevod va yog' taqsimotini grammda ko'ring."],
+protein:["Oqsil","Vazn va faollikka mos oqsil oralig'ini hisoblang."],
+water:["Suv miqdori","Vazn, mashg'ulot va iqlimga qarab kunlik suv normasi."],
+pace:["Yugurish temp","Masofa va vaqt bo'yicha temp va tezlikni hisoblang."],
+burned:["Sarflangan kaloriya","Mashg'ulot turi va davomiyligiga ko'ra sarf."],
+orm:["Bir marta maksimum","Ko'tarilgan vazn va takrorlar bo'yicha 1RM."],
+hr:["Maqsadli yurak urishi","Yosh bo'yicha pulse zonalarini hisoblang."],
+lbm:["Toza tana massasi","Yog'siz massa va yog' massasini ajratib ko'ring."]},
+ru:{bmi:["Калькулятор ИМТ","Рассчитайте индекс массы тела по росту и весу."],
+bodyfat:["Процент жира","Оценка процента жира по обхватам шеи и талии."],
+ideal:["Идеальный вес","Здоровый диапазон веса для вашего роста."],
+bmr:["Базовый обмен веществ","Расход калорий в состоянии покоя."],
+tdee:["Суточный расход (TDEE)","Полный дневной расход с учётом активности."],
+calories:["Суточная калорийность","Дневная норма калорий под вашу цель."],
+macros:["Макронутриенты","Распределение белков, углеводов и жиров в граммах."],
+protein:["Белок","Диапазон белка по весу и уровню активности."],
+water:["Потребление воды","Норма воды с учётом веса, тренировок и климата."],
+pace:["Темп бега","Темп и средняя скорость по дистанции и времени."],
+burned:["Сожжённые калории","Расход по виду активности и длительности."],
+orm:["Один повторный максимум","1RM по поднятому весу и числу повторов."],
+hr:["Целевой пульс","Пульсовые зоны по возрасту."],
+lbm:["Сухая масса тела","Разделение сухой массы и жировой массы."]},
+en:{bmi:["BMI Calculator","Calculate your body mass index from height and weight."],
+bodyfat:["Body Fat","Estimate body fat percentage from neck and waist measurements."],
+ideal:["Ideal Weight","See the healthy weight range for your height."],
+bmr:["Basal Metabolic Rate","Calories your body burns at complete rest."],
+tdee:["Daily Energy (TDEE)","Total daily burn including your activity level."],
+calories:["Daily Calories","Estimate your daily calorie needs for your goal."],
+macros:["Macros","Protein, carbohydrate and fat split in grams."],
+protein:["Protein","Recommended protein range for your weight and activity."],
+water:["Water Intake","Daily water estimate from weight, exercise and climate."],
+pace:["Pace Calculator","Pace and average speed from distance and time."],
+burned:["Calories Burned","Estimated burn by activity type and duration."],
+orm:["One Rep Max","Estimated 1RM from weight lifted and reps."],
+hr:["Target Heart Rate","Heart-rate zones based on your age."],
+lbm:["Lean Body Mass","Split lean mass from fat mass."]}};
+
+const SYN={bmi:["bmi","imt","имт","tana massasi","индекс массы"],bodyfat:["body fat","yog","жир","жира","tana yogi","fat"],
+ideal:["ideal","ideal vazn","идеальный вес","weight range"],bmr:["bmr","bazal","базовый обмен","metabolizm","метаболизм"],
+tdee:["tdee","energiya","расход","kunlik energiya"],calories:["calorie","calories","kaloriya","kunlik kaloriya","калории","калорийность","kcal"],
+macros:["macro","macros","makro","makronutrient","макро","макронутриенты"],protein:["protein","oqsil","белок","белки"],
+water:["water","suv","вода","воды","hydration","suv miqdori"],pace:["pace","temp","темп","running","yugurish","бег"],
+burned:["burned","calories burned","sarflangan","сожжённые","сожженные","activity"],orm:["1rm","one rep max","maksimum","максимум","bench","жим"],
+hr:["heart rate","pulse","yurak","пульс","zones","zona"],lbm:["lean","lbm","toza massa","сухая масса","lean body mass"]};
+
+const COL={health:"var(--acc)",nutrition:"var(--carb)",fitness:"var(--pro)"};
+const TINT={health:"var(--accT)",nutrition:"var(--carbT)",fitness:"var(--proT)"};
+const WEEK=[1980,2140,1870,2020,1760,2310,2180];
+
+class Component extends DCLogic{
+  state={theme:"dark",lang:"uz",w:1440,langOpen:false,dropOpen:false,menuOpen:false,
+    filter:"all",query:"",units:"metric",cm:180,kg:78,faq:0,mounted:false,
+    saved:false,copied:false,shared:false,kcal:0};
+
+  applyAccent(){
+    const h=this.props&&this.props.accentHue!=null?this.props.accentHue:172;
+    const d=this.state.theme==="dark",L2=d?.76:.56,C=d?.13:.115,rt=document.documentElement.style;
+    rt.setProperty("--acc","oklch("+L2+" "+C+" "+h+")");
+    rt.setProperty("--accD","oklch("+(d?.60:.45)+" "+(C-.015)+" "+h+")");
+    rt.setProperty("--accT","oklch("+L2+" "+C+" "+h+" / "+(d?.13:.1)+")");
+    rt.setProperty("--accG","oklch("+L2+" "+C+" "+h+" / "+(d?.38:.2)+")");
+  }
+  componentDidMount(){
+    const p=this.props||{},st={};
+    if(p.startTheme&&p.startTheme!==this.state.theme)st.theme=p.startTheme;
+    if(p.startLang&&p.startLang!==this.state.lang)st.lang=p.startLang;
+    if(Object.keys(st).length)this.setState(st);
+    this._lastTh=st.theme||this.state.theme; this._lastHue=p.accentHue;
+    document.documentElement.dataset.th=this._lastTh;
+    this.applyAccent();
+    this._rz=()=>{ const w=window.innerWidth; if(Math.abs(w-this.state.w)>4) this.setState({w}); };
+    this._rz(); window.addEventListener("resize",this._rz);
+    this._doc=e=>{ if(!e.target.closest("header")) this.setState({langOpen:false,dropOpen:false}); };
+    document.addEventListener("click",this._doc);
+    requestAnimationFrame(()=>this.setState({mounted:true}));
+    const t0=performance.now();
+    const step=()=>{ const p=Math.min(1,(performance.now()-t0)/1200);
+      this.setState({kcal:Math.round(2180*(1-Math.pow(1-p,3)))});
+      if(p<1) this._raf=requestAnimationFrame(step); };
+    this._raf=requestAnimationFrame(step);
+  }
+  componentDidUpdate(){
+    if(this._lastTh!==this.state.theme){ this._lastTh=this.state.theme; document.documentElement.dataset.th=this.state.theme; this.applyAccent(); }
+    const hue=(this.props||{}).accentHue;
+    if(this._lastHue!==hue){ this._lastHue=hue; this.applyAccent(); }
+  }
+  componentWillUnmount(){
+    cancelAnimationFrame(this._raf); window.removeEventListener("resize",this._rz);
+    document.removeEventListener("click",this._doc);
+    clearTimeout(this._ct); clearTimeout(this._st);
+  }
+
+  nfmt(n,d){ const s=(d!=null?Number(n).toFixed(d):String(n));
+    return this.state.lang==="en"?s:s.replace(".",","); }
+  gsep(n){ const s=this.state.lang==="en"?",":" ";
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,s); }
+  flash(k){ const o={}; o[k]=true; this.setState(o);
+    clearTimeout(this["_f"+k]); this["_f"+k]=setTimeout(()=>{ const c={}; c[k]=false; this.setState(c); },1900); }
+
+  renderVals(){
+    const s=this.state,t=L[s.lang],w=s.w,m=s.mounted;
+    const nar=w<1060, mid=w<1120, sm=w<760;
+
+    const ticks=[];
+    for(let i=0;i<48;i++){ const a=(i/48)*Math.PI*2-Math.PI/2, on=(i/48)<=0.71;
+      const r1=108,r2=on?116:113;
+      ticks.push({x1:(120+Math.cos(a)*r1).toFixed(1),y1:(120+Math.sin(a)*r1).toFixed(1),
+        x2:(120+Math.cos(a)*r2).toFixed(1),y2:(120+Math.sin(a)*r2).toFixed(1),
+        c:on?"var(--acc)":"var(--line2)"});
+    }
+
+    const cm=parseFloat(s.cm),kg=parseFloat(s.kg);
+    const hOk=cm>=120&&cm<=230, wOk=kg>=25&&kg<=300, ok=hOk&&wOk;
+    let err=""; if(!ok){ err = (!hOk&&!wOk)?t.errBoth : (!hOk?t.errHeight:t.errWeight); }
+
+    let r={ok:false,empty:true};
+    if(ok){
+      const bmi=kg/Math.pow(cm/100,2);
+      const cat = bmi<18.5?["under",t.bmiUnder,"var(--pro)","var(--proT)",t.bmiMeanUnder]
+        : bmi<25?["normal",t.bmiNormal,"var(--acc)","var(--accT)",t.bmiMeanNormal]
+        : bmi<30?["over",t.bmiOver,"var(--carb)","var(--carbT)",t.bmiMeanOver]
+        : ["obese",t.bmiObese,"var(--fat)","var(--fatT)",t.bmiMeanObese];
+      const lo=18.5*Math.pow(cm/100,2), hi=24.9*Math.pow(cm/100,2);
+      const us=s.units==="us";
+      const cv=v=>us?this.nfmt(v*2.20462,1)+" lb":this.nfmt(v,1)+" kg";
+      const pos=Math.max(0,Math.min(100,((bmi-15)/25)*100));
+      r={ok:true,empty:false,bmi:this.nfmt(bmi,1),cat:cat[1],col:cat[2],tint:cat[3],meaning:cat[4],
+        markerLeft:(m?pos:0).toFixed(1)+"%",
+        healthy:cv(lo)+" – "+cv(hi),
+        prime:this.nfmt(bmi/25,2),
+        ponderal:this.nfmt(kg/Math.pow(cm/100,3),1)+" kg/m³"};
+    }
+
+    const groups=[["health",t.fHealth],["nutrition",t.fNutrition],["fitness",t.fFitness]].map(g=>({
+      label:g[1],col:COL[g[0]],
+      items:CALCS.filter(c=>c.cat===g[0]).map(c=>({name:CN[s.lang][c.id][0],pop:c.pop}))}));
+
+    const q=s.query.trim().toLowerCase();
+    const cards=CALCS.filter(c=>{
+      if(s.filter!=="all"&&c.cat!==s.filter) return false;
+      if(!q) return true;
+      const hay=[CN[s.lang][c.id][0],CN[s.lang][c.id][1]].concat(SYN[c.id]||[]).join(" ").toLowerCase();
+      return hay.indexOf(q)>=0;
+    }).map(c=>({
+      name:CN[s.lang][c.id][0],desc:CN[s.lang][c.id][1],pop:c.pop,
+      cat:{health:t.fHealth,nutrition:t.fNutrition,fitness:t.fFitness}[c.cat],
+      col:COL[c.cat],tint:TINT[c.cat],dash:c.dash||"31 13",
+      iRing:c.icon==="ring",iBar:c.icon==="bar",iDrop:c.icon==="drop",iHeart:c.icon==="heart"}));
+
+    const cnt=k=>k==="all"?CALCS.length:CALCS.filter(c=>c.cat===k).length;
+    const filters=[["all",t.fAll],["health",t.fHealth],["nutrition",t.fNutrition],["fitness",t.fFitness]].map(f=>{
+      const sel=s.filter===f[0];
+      return {label:f[1],count:cnt(f[0]),sel,
+        bg:sel?"var(--accT)":"transparent",bd:sel?"var(--acc)":"var(--line2)",fg:sel?"var(--acc)":"var(--tx2)",
+        hasDot:f[0]!=="all",dot:COL[f[0]]||"var(--acc)",
+        on:()=>this.setState({filter:f[0]})};
+    });
+
+    const faqs=[1,2,3,4,5].map((i,ix)=>({q:t["q"+i],a:t["a"+i],open:s.faq===ix,
+      chev:s.faq===ix?"rotate(180deg)":"rotate(0deg)",
+      on:()=>this.setState({faq:s.faq===ix?-1:ix})}));
+
+    const feat=[["ft1","iOrb","health"],["ft2","iCam","nutrition"],["ft3","iChart","fitness"],["ft4","iGlobe","health"]].map(f=>{
+      const o={title:t[f[0]],body:t[f[0]+"b"],col:COL[f[2]],tint:TINT[f[2]],iOrb:false,iCam:false,iChart:false,iGlobe:false};
+      o[f[1]]=true; return o;
+    });
+
+    const steps=[1,2,3,4].map((i,ix)=>({n:"0"+i,title:t["st"+i],body:t["st"+i+"b"],
+      lineOp:ix===3?0:1,bg:ix===0?"var(--accT)":"var(--surf)",fg:ix===0?"var(--acc)":"var(--tx2)"}));
+
+    const funnel=[1,2,3,4].map((i,ix)=>({n:"0"+i,label:t["fn"+i],meta:t["fnM"+i],
+      col:ix<2?"var(--acc)":"var(--pro)",tint:ix<2?"var(--accT)":"var(--proT)"}));
+
+    const inch=Math.round((cm||0)/2.54);
+    const f={cm:s.cm,kg:s.kg,ft:Math.floor(inch/12)||0,inch:inch%12,
+      lb:Math.round((kg||0)*2.20462*10)/10,
+      cmBd:hOk?"var(--line2)":"var(--fat)",kgBd:wOk?"var(--line2)":"var(--fat)",
+      hasError:!ok,error:err};
+
+    const setCm=e=>this.setState({cm:e.target.value});
+    const setKg=e=>this.setState({kg:e.target.value});
+
+    return {t,ticks,groups,cards,filters,faqs,features:feat,steps,funnel,f,r,
+      hasResults:cards.length>0,noResults:cards.length===0,
+      query:s.query,hasQuery:s.query.length>0,
+      setQuery:e=>this.setState({query:e.target.value}),
+      clearQuery:()=>this.setState({query:"",filter:"all"}),
+      langOpen:s.langOpen,dropOpen:s.dropOpen,menuOpen:s.menuOpen,
+      toggleLang:()=>this.setState({langOpen:!s.langOpen,dropOpen:false}),
+      toggleDrop:()=>this.setState({dropOpen:!s.dropOpen,langOpen:false}),
+      toggleMenu:()=>this.setState({menuOpen:!s.menuOpen}),
+      closeMenu:()=>this.setState({menuOpen:false}),
+      setUz:()=>this.setState({lang:"uz",langOpen:false}),
+      setRu:()=>this.setState({lang:"ru",langOpen:false}),
+      setEn:()=>this.setState({lang:"en",langOpen:false}),
+      langFlag:{uz:"🇺🇿",ru:"🇷🇺",en:"🇬🇧"}[s.lang],langCode:s.lang.toUpperCase(),
+      tick:{uz:s.lang==="uz"?"✓":"",ru:s.lang==="ru"?"✓":"",en:s.lang==="en"?"✓":""},
+      toggleTheme:()=>this.setState({theme:s.theme==="dark"?"light":"dark"}),
+      isMetric:s.units==="metric",isUS:s.units==="us",
+      setMetric:()=>this.setState({units:"metric"}),setUS:()=>this.setState({units:"us"}),
+      setCm,setKg,
+      setFt:e=>{ const ft=parseFloat(e.target.value)||0; this.setState({cm:Math.round((ft*12+(inch%12))*2.54)}); },
+      setInch:e=>{ const i2=parseFloat(e.target.value)||0; this.setState({cm:Math.round((Math.floor(inch/12)*12+i2)*2.54)}); },
+      setLb:e=>{ const lb=parseFloat(e.target.value)||0; this.setState({kg:Math.round(lb/2.20462*10)/10}); },
+      doSave:()=>this.flash("saved"),doCopy:()=>this.flash("copied"),doShare:()=>this.flash("shared"),
+      doReset:()=>this.setState({cm:180,kg:78,units:"metric",saved:false,copied:false,shared:false}),
+      anim:{kcal:this.gsep(s.kcal)},
+      ringOff:m?167.6:578.05,
+      macroRows:[{label:t.mProtein,col:"var(--pro)",val:"145 "+t.g,w:m?"78%":"0%"},
+        {label:t.mCarbs,col:"var(--carb)",val:"230 "+t.g,w:m?"88%":"0%"},
+        {label:t.mFat,col:"var(--fat)",val:"72 "+t.g,w:m?"64%":"0%"}],
+      bars:WEEK.map((v,i)=>({day:["Mo","Tu","We","Th","Fr","Sa","Su"][i],
+        h:m?((v/2600)*100).toFixed(1)+"%":"0%",
+        col:i===6?"var(--acc)":"var(--line2)",fg:i===6?"var(--acc)":"var(--tx3)"})),
+      relatedCalcs:[{name:CN[s.lang].bodyfat[0],col:COL.health},{name:CN[s.lang].ideal[0],col:COL.health},{name:CN[s.lang].calories[0],col:COL.nutrition}],
+      ui:{navDisplay:nar?"none":"flex",burgerDisplay:nar?"grid":"none",ctaDisplay:sm?"none":"inline-flex",
+        floatDisplay:mid?"none":"block",
+        h1:sm?"34px":(mid?"42px":"52px"),h2:sm?"25px":"33px",h3:sm?"22px":"28px",ctaH:sm?"27px":"36px",
+        heroCols:mid?"1fr":"1.02fr .98fr",demoCols:mid?"1fr":".92fr 1.08fr",howCols:mid?"1fr":".85fr 1.15fr",
+        ctaCols:mid?"1fr":"1.15fr .85fr",faqCols:mid?"1fr":".8fr 1.2fr",footCols:nar?"1fr":(mid?"1fr 1fr":"1.4fr 1fr 1fr 1fr"),
+        demoPad:sm?"22px 18px":"34px 32px",ctaPad:sm?"26px 20px":"38px 36px",
+        dropBg:s.dropOpen?"var(--surf2)":"transparent",dropFg:s.dropOpen?"var(--tx)":"var(--tx2)",
+        dropChev:s.dropOpen?"rotate(180deg)":"rotate(0deg)",
+        metricBg:s.units==="metric"?"var(--surf2)":"transparent",metricFg:s.units==="metric"?"var(--tx)":"var(--tx3)",
+        usBg:s.units==="us"?"var(--surf2)":"transparent",usFg:s.units==="us"?"var(--tx)":"var(--tx3)",
+        uzBg:s.lang==="uz"?"var(--accT)":"transparent",uzBd:s.lang==="uz"?"var(--acc)":"var(--line2)",
+        ruBg:s.lang==="ru"?"var(--accT)":"transparent",ruBd:s.lang==="ru"?"var(--acc)":"var(--line2)",
+        enBg:s.lang==="en"?"var(--accT)":"transparent",enBd:s.lang==="en"?"var(--acc)":"var(--line2)",
+        saveLabel:s.saved?t.saved:t.save,saveBg:s.saved?"var(--accT)":"transparent",
+        saveBd:s.saved?"var(--acc)":"var(--line2)",saveFg:s.saved?"var(--acc)":"var(--tx)",
+        copyLabel:s.copied?t.copied:t.copy,copyFg:s.copied?"var(--acc)":"var(--tx)",
+        shareLabel:s.shared?t.shared:t.share,shareFg:s.shared?"var(--acc)":"var(--tx)"}};
+  }
+}
+</script>
+</body>
+</html>

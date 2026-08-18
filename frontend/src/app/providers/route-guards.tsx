@@ -19,15 +19,15 @@ export function RequireAuthOnly({ children }: { children: ReactNode }) {
 
   if (isLoading) return <FullscreenSpinner />
   if (!isAuthenticated) return <Navigate to="/login" replace />
-  if (isOnboarded) return <Navigate to="/" replace />
+  if (isOnboarded) return <Navigate to="/dashboard" replace />
   return <>{children}</>
 }
 
-/** Login page: bounce already-authenticated users onward. */
+/** Public landing (/) and login page: bounce already-authenticated users onward. */
 export function RequireGuest({ children }: { children: ReactNode }) {
   const { isAuthenticated, isOnboarded, isLoading } = useAuth()
 
   if (isLoading) return <FullscreenSpinner />
-  if (isAuthenticated) return <Navigate to={isOnboarded ? '/' : '/onboarding'} replace />
+  if (isAuthenticated) return <Navigate to={isOnboarded ? '/dashboard' : '/onboarding'} replace />
   return <>{children}</>
 }

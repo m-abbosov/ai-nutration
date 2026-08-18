@@ -97,7 +97,7 @@ export function OnboardingWizard() {
         goal: data.goal,
         goalWeightKg: data.goalWeightKg === '' || data.goalWeightKg == null ? undefined : Number(data.goalWeightKg),
       },
-      { onSuccess: () => navigate('/', { replace: true }) },
+      { onSuccess: () => navigate('/dashboard', { replace: true }) },
     )
   })
 
