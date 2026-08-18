@@ -1,35 +1,35 @@
-import { Link } from 'react-router-dom'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { NutritionDailyDto } from '@nutriai/shared/api/types'
+import type { NutritionDailyDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { Link } from "react-router-dom";
 
 export function AiInsightCard({ daily, insight }: { daily: NutritionDailyDto; insight: string | null }) {
-  const { t, lang } = useTranslation()
+  const { t, lang } = useTranslation();
 
   const remaining = [
-    { label: t.mProtein, color: 'var(--pro)', value: daily.protein.target - daily.protein.consumed },
-    { label: t.mCarbs, color: 'var(--carb)', value: daily.carbs.target - daily.carbs.consumed },
-    { label: t.mFat, color: 'var(--fat)', value: daily.fat.target - daily.fat.consumed },
-  ]
+    { label: t.mProtein, color: "var(--pro)", value: daily.protein.target - daily.protein.consumed },
+    { label: t.mCarbs, color: "var(--carb)", value: daily.carbs.target - daily.carbs.consumed },
+    { label: t.mFat, color: "var(--fat)", value: daily.fat.target - daily.fat.consumed },
+  ];
 
   return (
     <section
       className="relative overflow-hidden rounded-[22px] p-px"
-      style={{ background: 'linear-gradient(150deg, var(--accG), var(--line) 42%, var(--line))' }}
+      style={{ background: "linear-gradient(150deg, var(--accG), var(--line) 42%, var(--line))" }}
     >
       <div className="relative overflow-hidden rounded-[21px] bg-surf px-[22px] pb-5 pt-[22px]">
         <div
           className="pointer-events-none absolute -right-0 -top-[30%] h-[260px] w-[260px] animate-drift rounded-full opacity-70 blur-[30px]"
-          style={{ background: 'radial-gradient(circle, var(--accG), transparent 65%)' }}
+          style={{ background: "radial-gradient(circle, var(--accG), transparent 65%)" }}
         />
         <div className="relative flex items-center gap-[11px]">
           <div className="relative h-[34px] w-[34px] flex-none">
-            <div className="absolute -inset-1 animate-halo rounded-full blur-[8px]" style={{ background: 'var(--accG)' }} />
+            <div className="absolute -inset-1 animate-halo rounded-full blur-[8px]" style={{ background: "var(--accG)" }} />
             <div
               className="relative h-[34px] w-[34px] rounded-full"
               style={{
-                background: 'radial-gradient(circle at 32% 28%, var(--acc), var(--accD) 58%, var(--surf2))',
-                boxShadow: 'inset 0 0 8px rgba(255,255,255,.28)',
+                background: "radial-gradient(circle at 32% 28%, var(--acc), var(--accD) 58%, var(--surf2))",
+                boxShadow: "inset 0 0 8px rgba(255,255,255,.28)",
               }}
             />
           </div>
@@ -64,7 +64,7 @@ export function AiInsightCard({ daily, insight }: { daily: NutritionDailyDto; in
             <div key={r.label}>
               <div className="font-mono text-[9px] tracking-[.13em] text-tx3">{r.label}</div>
               <div className="mt-[3px] text-[13px] font-medium" style={{ color: r.color }}>
-                {r.value >= 0 ? '−' : '+'}
+                {r.value >= 0 ? "−" : "+"}
                 {fmtNumber(Math.abs(r.value), lang)} {t.g}
               </div>
             </div>
@@ -72,5 +72,5 @@ export function AiInsightCard({ daily, insight }: { daily: NutritionDailyDto; in
         </div>
       </div>
     </section>
-  )
+  );
 }

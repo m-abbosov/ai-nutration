@@ -1,22 +1,24 @@
-import { createContext, useContext, useMemo } from 'react'
-import type { ReactNode } from 'react'
-import { tokenStorage } from '@nutriai/shared/api/token-storage'
-import { ApiError } from '@nutriai/shared/api/client'
-import { useAdminMe } from '@/shared/api/auth'
-import type { AdminMeDto, AdminPermissionKey } from '@/shared/api/types'
+import { createContext, useContext, useMemo } from "react";
+import type { ReactNode } from "react";
+
+import { ApiError } from "@nutriai/shared/api/client";
+import { tokenStorage } from "@nutriai/shared/api/token-storage";
+
+import { useAdminMe } from "@/shared/api/auth";
+import type { AdminMeDto, AdminPermissionKey } from "@/shared/api/types";
 
 interface AdminAuthContextValue {
-  admin: AdminMeDto | undefined
-  isLoading: boolean
+  admin: AdminMeDto | undefined;
+  isLoading: boolean;
   /** A valid admin session: token present, /admin/auth/me resolved. */
-  isAdminAuthenticated: boolean
+  isAdminAuthenticated: boolean;
   /** Token present but the account is not an admin (or admin is disabled) — 403 from /admin/auth/me. */
-  isForbidden: boolean
-  error: unknown
-  refetch: () => void
+  isForbidden: boolean;
+  error: unknown;
+  refetch: () => void;
 }
 
-const AdminAuthContext = createContext<AdminAuthContextValue | null>(null)
+const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
 
 /**
  * Admin session state — a standalone app, its own `tokenStorage` (localStorage
@@ -26,11 +28,11 @@ const AdminAuthContext = createContext<AdminAuthContextValue | null>(null)
  * admin route is independently enforced server-side (see docs/ADMIN_PANEL.md).
  */
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
-  const hasToken = !!tokenStorage.getAccessToken()
-  const { data: admin, isLoading, error, refetch } = useAdminMe(hasToken)
+  const hasToken = !!tokenStorage.getAccessToken();
+  const { data: admin, isLoading, error, refetch } = useAdminMe(hasToken);
 
-  const isForbidden = error instanceof ApiError && error.statusCode === 403
-  const isUnauthorized = error instanceof ApiError && error.statusCode === 401
+  const isForbidden = error instanceof ApiError && error.statusCode === 403;
+  const isUnauthorized = error instanceof ApiError && error.statusCode === 401;
 
   const value = useMemo<AdminAuthContextValue>(
     () => ({
@@ -42,26 +44,26 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       refetch,
     }),
     [admin, isLoading, hasToken, isForbidden, isUnauthorized, error, refetch],
-  )
+  );
 
-  return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>
+  return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;
 }
 
 export function useAdminAuth() {
-  const ctx = useContext(AdminAuthContext)
-  if (!ctx) throw new Error('useAdminAuth must be used within AdminAuthProvider')
-  return ctx
+  const ctx = useContext(AdminAuthContext);
+  if (!ctx) throw new Error("useAdminAuth must be used within AdminAuthProvider");
+  return ctx;
 }
 
 export function usePermission(permission: AdminPermissionKey): boolean {
-  const { admin } = useAdminAuth()
-  return !!admin?.role.permissions.includes(permission)
+  const { admin } = useAdminAuth();
+  return !!admin?.role.permissions.includes(permission);
 }
 
 export function useHasAnyPermission(permissions: AdminPermissionKey[]): boolean {
-  const { admin } = useAdminAuth()
-  if (!admin) return false
-  return permissions.some((p) => admin.role.permissions.includes(p))
+  const { admin } = useAdminAuth();
+  if (!admin) return false;
+  return permissions.some((p) => admin.role.permissions.includes(p));
 }
 
 export function IfPermission({
@@ -69,10 +71,10 @@ export function IfPermission({
   children,
   fallback = null,
 }: {
-  permission: AdminPermissionKey
-  children: ReactNode
-  fallback?: ReactNode
+  permission: AdminPermissionKey;
+  children: ReactNode;
+  fallback?: ReactNode;
 }) {
-  const allowed = usePermission(permission)
-  return <>{allowed ? children : fallback}</>
+  const allowed = usePermission(permission);
+  return <>{allowed ? children : fallback}</>;
 }

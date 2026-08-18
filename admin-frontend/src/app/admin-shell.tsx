@@ -1,5 +1,6 @@
-import { Outlet } from 'react-router-dom'
-import { AdminSidebar } from '@/shared/ui/admin-sidebar'
+import { Outlet } from "react-router-dom";
+
+import { AdminSidebar } from "@/shared/ui/admin-sidebar";
 
 export function AdminShell() {
   return (
@@ -11,5 +12,5 @@ export function AdminShell() {
         </div>
       </main>
     </div>
-  )
+  );
 }

@@ -80,14 +80,22 @@
 
   background: var(--adm-bg);
   color: var(--adm-text);
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
   font-size: 13px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100dvh;
 }
 
-.admin-root[data-admin-theme='dark'] {
+.admin-root[data-admin-theme="dark"] {
   color-scheme: dark;
 
   --adm-bg: #0a0d12;
@@ -156,7 +164,7 @@
 }
 
 .admin-root .adm-mono {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
 

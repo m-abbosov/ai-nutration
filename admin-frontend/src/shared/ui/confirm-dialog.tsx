@@ -1,12 +1,6 @@
-import {
-  AdminDialog,
-  AdminDialogContent,
-  AdminDialogDescription,
-  AdminDialogHeader,
-  AdminDialogTitle,
-} from '@/shared/ui/dialog'
-import { AdminButton } from '@/shared/ui/button'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { AdminButton } from "@/shared/ui/button";
+import { AdminDialog, AdminDialogContent, AdminDialogDescription, AdminDialogHeader, AdminDialogTitle } from "@/shared/ui/dialog";
 
 export function ConfirmDialog({
   open,
@@ -19,18 +13,18 @@ export function ConfirmDialog({
   disabledReason,
   onConfirm,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  description: string
-  confirmLabel?: string
-  destructive?: boolean
-  loading?: boolean
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  description: string;
+  confirmLabel?: string;
+  destructive?: boolean;
+  loading?: boolean;
   /** If set, confirming is disabled and this reason is shown instead (e.g. self-lockout). */
-  disabledReason?: string
-  onConfirm: () => void
+  disabledReason?: string;
+  onConfirm: () => void;
 }) {
-  const { t } = useAdminTranslation()
+  const { t } = useAdminTranslation();
   return (
     <AdminDialog open={open} onOpenChange={onOpenChange}>
       <AdminDialogContent>
@@ -42,16 +36,11 @@ export function ConfirmDialog({
           <AdminButton variant="secondary" size="sm" onClick={() => onOpenChange(false)}>
             {t.common.cancel}
           </AdminButton>
-          <AdminButton
-            variant={destructive ? 'destructive' : 'primary'}
-            size="sm"
-            disabled={loading || !!disabledReason}
-            onClick={onConfirm}
-          >
+          <AdminButton variant={destructive ? "destructive" : "primary"} size="sm" disabled={loading || !!disabledReason} onClick={onConfirm}>
             {confirmLabel ?? t.common.confirm}
           </AdminButton>
         </div>
       </AdminDialogContent>
     </AdminDialog>
-  )
+  );
 }

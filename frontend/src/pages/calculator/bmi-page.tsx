@@ -1,32 +1,36 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtDecimal } from '@nutriai/shared/lib/format'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { calculateBmi } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
-import { GaugeBar } from './gauge-bar'
-import { StatGrid } from './stat-grid'
+import { useState } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtDecimal } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+
+import { calculateBmi } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { GaugeBar } from "./gauge-bar";
+import { StatGrid } from "./stat-grid";
 
 const CATEGORY_TONE = {
-  under: { color: 'var(--pro)', tint: 'var(--proT)' },
-  normal: { color: 'var(--acc)', tint: 'var(--accT)' },
-  over: { color: 'var(--carb)', tint: 'var(--carbT)' },
-  obese: { color: 'var(--fat)', tint: 'var(--fatT)' },
-} as const
+  under: { color: "var(--pro)", tint: "var(--proT)" },
+  normal: { color: "var(--acc)", tint: "var(--accT)" },
+  over: { color: "var(--carb)", tint: "var(--carbT)" },
+  obese: { color: "var(--fat)", tint: "var(--fatT)" },
+} as const;
 
 export default function BmiPage() {
-  const { t, lang } = useTranslation()
-  const [heightCm, setHeightCm] = useState('175')
-  const [weightKg, setWeightKg] = useState('72')
+  const { t, lang } = useTranslation();
+  const [heightCm, setHeightCm] = useState("175");
+  const [weightKg, setWeightKg] = useState("72");
 
-  const h = parseFloat(heightCm)
-  const w = parseFloat(weightKg)
-  const hOk = h >= 100 && h <= 250
-  const wOk = w >= 20 && w <= 300
-  const ok = hOk && wOk && heightCm !== '' && weightKg !== ''
+  const h = parseFloat(heightCm);
+  const w = parseFloat(weightKg);
+  const hOk = h >= 100 && h <= 250;
+  const wOk = w >= 20 && w <= 300;
+  const ok = hOk && wOk && heightCm !== "" && weightKg !== "";
 
-  const result = ok ? calculateBmi(h, w) : null
+  const result = ok ? calculateBmi(h, w) : null;
 
   return (
     <CalculatorShell
@@ -43,7 +47,7 @@ export default function BmiPage() {
               <Input id="weight" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
             </div>
           </div>
-          {!ok && (heightCm !== '' || weightKg !== '') && <ErrorBanner message={t.calcPages.invalidInput} />}
+          {!ok && (heightCm !== "" || weightKg !== "") && <ErrorBanner message={t.calcPages.invalidInput} />}
         </div>
       }
       results={
@@ -56,18 +60,18 @@ export default function BmiPage() {
             />
             <GaugeBar
               segments={[
-                { color: 'var(--pro)', widthPct: 19 },
-                { color: 'var(--acc)', widthPct: 26 },
-                { color: 'var(--carb)', widthPct: 23 },
-                { color: 'var(--fat)', widthPct: 32 },
+                { color: "var(--pro)", widthPct: 19 },
+                { color: "var(--acc)", widthPct: 26 },
+                { color: "var(--carb)", widthPct: 23 },
+                { color: "var(--fat)", widthPct: 32 },
               ]}
               markerPct={result.markerPct}
-              ticks={['15', '18.5', '25', '30', '40']}
+              ticks={["15", "18.5", "25", "30", "40"]}
               legend={[
-                { color: 'var(--pro)', label: t.calcPages.bmi.categories.under },
-                { color: 'var(--acc)', label: t.calcPages.bmi.categories.normal },
-                { color: 'var(--carb)', label: t.calcPages.bmi.categories.over },
-                { color: 'var(--fat)', label: t.calcPages.bmi.categories.obese },
+                { color: "var(--pro)", label: t.calcPages.bmi.categories.under },
+                { color: "var(--acc)", label: t.calcPages.bmi.categories.normal },
+                { color: "var(--carb)", label: t.calcPages.bmi.categories.over },
+                { color: "var(--fat)", label: t.calcPages.bmi.categories.obese },
               ]}
             />
             <StatGrid
@@ -90,5 +94,5 @@ export default function BmiPage() {
         )
       }
     />
-  )
+  );
 }

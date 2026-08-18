@@ -1,24 +1,26 @@
-import { useState } from 'react'
-import type { MouseEvent } from 'react'
-import { Trash2 } from 'lucide-react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useDeleteMeal } from '@/shared/api/meals'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/dialog'
-import { Button } from '@/shared/ui/button'
+import { useState } from "react";
+import type { MouseEvent } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { Trash2 } from "lucide-react";
+
+import { useDeleteMeal } from "@/shared/api/meals";
+import { Button } from "@/shared/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
 
 export function DeleteMealButton({ mealId }: { mealId: string }) {
-  const { t } = useTranslation()
-  const deleteMeal = useDeleteMeal()
-  const [confirming, setConfirming] = useState(false)
+  const { t } = useTranslation();
+  const deleteMeal = useDeleteMeal();
+  const [confirming, setConfirming] = useState(false);
 
   const openConfirm = (e: MouseEvent) => {
-    e.stopPropagation()
-    setConfirming(true)
-  }
+    e.stopPropagation();
+    setConfirming(true);
+  };
 
   const confirmDelete = () => {
-    deleteMeal.mutate(mealId, { onSuccess: () => setConfirming(false) })
-  }
+    deleteMeal.mutate(mealId, { onSuccess: () => setConfirming(false) });
+  };
 
   return (
     <>
@@ -47,5 +49,5 @@ export function DeleteMealButton({ mealId }: { mealId: string }) {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

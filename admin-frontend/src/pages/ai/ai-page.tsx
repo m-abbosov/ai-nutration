@@ -1,64 +1,74 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { useAdminAiOverview, useAdminAiRequest, useAdminAiRequests } from '@/shared/api/ai'
-import type { AdminAiRequestListItemDto } from '@/shared/api/types'
-import { AdminHeader } from '@/shared/ui/admin-header'
-import { KpiCard } from '@/shared/ui/kpi-card'
-import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from '@/shared/ui/chart-card'
-import { DateRangePicker } from '@/shared/ui/date-range-picker'
-import { AdminErrorState, AdminEmptyState } from '@/shared/ui/error-state'
-import { DataTable, type DataTableColumn } from '@/shared/ui/data-table'
-import { FilterBar } from '@/shared/ui/filter-bar'
-import { AdminSelect, AdminSelectContent, AdminSelectItem, AdminSelectTrigger, AdminSelectValue } from '@/shared/ui/select'
-import { StatusBadge, aiStatusToneOf } from '@/shared/ui/status-badge'
-import { KpiGridSkeleton, ChartSkeleton, AdminSkeleton } from '@/shared/ui/skeleton'
-import { DetailDrawer } from '@/shared/ui/detail-drawer'
-import { IfPermission } from '@/shared/rbac/admin-auth-context'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { Range } from '@/shared/api/types'
+import { useState } from "react";
 
-const PAGE_SIZE = 20
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { useNavigate, useParams } from "react-router-dom";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+import { useAdminAiOverview, useAdminAiRequest, useAdminAiRequests } from "@/shared/api/ai";
+import type { AdminAiRequestListItemDto } from "@/shared/api/types";
+import type { Range } from "@/shared/api/types";
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { IfPermission } from "@/shared/rbac/admin-auth-context";
+import { AdminHeader } from "@/shared/ui/admin-header";
+import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from "@/shared/ui/chart-card";
+import { DataTable, type DataTableColumn } from "@/shared/ui/data-table";
+import { DateRangePicker } from "@/shared/ui/date-range-picker";
+import { DetailDrawer } from "@/shared/ui/detail-drawer";
+import { AdminEmptyState, AdminErrorState } from "@/shared/ui/error-state";
+import { FilterBar } from "@/shared/ui/filter-bar";
+import { KpiCard } from "@/shared/ui/kpi-card";
+import { AdminSelect, AdminSelectContent, AdminSelectItem, AdminSelectTrigger, AdminSelectValue } from "@/shared/ui/select";
+import { AdminSkeleton, ChartSkeleton, KpiGridSkeleton } from "@/shared/ui/skeleton";
+import { StatusBadge, aiStatusToneOf } from "@/shared/ui/status-badge";
+
+const PAGE_SIZE = 20;
 
 export function AiPage() {
-  const { t, lang } = useAdminTranslation()
-  const navigate = useNavigate()
-  const { id: openRequestId } = useParams<{ id?: string }>()
-  const [range, setRange] = useState<Range>('7d')
-  const [page, setPage] = useState(1)
-  const [status, setStatus] = useState('')
-  const [endpoint, setEndpoint] = useState('')
+  const { t, lang } = useAdminTranslation();
+  const navigate = useNavigate();
+  const { id: openRequestId } = useParams<{ id?: string }>();
+  const [range, setRange] = useState<Range>("7d");
+  const [page, setPage] = useState(1);
+  const [status, setStatus] = useState("");
+  const [endpoint, setEndpoint] = useState("");
 
-  const overview = useAdminAiOverview(range)
-  const requests = useAdminAiRequests({ page, pageSize: PAGE_SIZE, status: status || undefined, endpoint: endpoint || undefined })
+  const overview = useAdminAiOverview(range);
+  const requests = useAdminAiRequests({ page, pageSize: PAGE_SIZE, status: status || undefined, endpoint: endpoint || undefined });
 
   const rangeOptions = [
-    { value: '7d' as Range, label: t.ranges.d7 },
-    { value: '30d' as Range, label: t.ranges.d30 },
-    { value: '90d' as Range, label: t.ranges.d90 },
-    { value: '1y' as Range, label: t.ranges.y1 },
-  ]
+    { value: "7d" as Range, label: t.ranges.d7 },
+    { value: "30d" as Range, label: t.ranges.d30 },
+    { value: "90d" as Range, label: t.ranges.d90 },
+    { value: "1y" as Range, label: t.ranges.y1 },
+  ];
 
   const columns: DataTableColumn<AdminAiRequestListItemDto>[] = [
-    { key: 'createdAt', header: t.ai.colTime, render: (row) => <span className="adm-mono text-[11.5px]">{new Date(row.createdAt).toLocaleString()}</span> },
-    { key: 'userName', header: t.ai.colUser, render: (row) => <span>{row.userName ?? '—'}</span> },
-    { key: 'endpoint', header: t.ai.colEndpoint, render: (row) => <span>{row.endpoint}</span> },
-    { key: 'provider', header: t.ai.colProvider, render: (row) => <span>{row.provider}</span> },
-    { key: 'model', header: t.ai.colModel, render: (row) => <span className="adm-mono text-[11.5px]">{row.model}</span> },
-    { key: 'status', header: t.ai.colStatus, render: (row) => <StatusBadge tone={aiStatusToneOf(row.status)} label={row.status} /> },
     {
-      key: 'responseTimeMs',
+      key: "createdAt",
+      header: t.ai.colTime,
+      render: (row) => <span className="adm-mono text-[11.5px]">{new Date(row.createdAt).toLocaleString()}</span>,
+    },
+    { key: "userName", header: t.ai.colUser, render: (row) => <span>{row.userName ?? "—"}</span> },
+    { key: "endpoint", header: t.ai.colEndpoint, render: (row) => <span>{row.endpoint}</span> },
+    { key: "provider", header: t.ai.colProvider, render: (row) => <span>{row.provider}</span> },
+    { key: "model", header: t.ai.colModel, render: (row) => <span className="adm-mono text-[11.5px]">{row.model}</span> },
+    { key: "status", header: t.ai.colStatus, render: (row) => <StatusBadge tone={aiStatusToneOf(row.status)} label={row.status} /> },
+    {
+      key: "responseTimeMs",
       header: t.ai.colResponseTime,
-      align: 'right',
+      align: "right",
       render: (row) => <span className="adm-mono">{fmtNumber(row.responseTimeMs, lang)} ms</span>,
     },
-    { key: 'errorReason', header: t.ai.colError, render: (row) => <span style={{ color: 'var(--adm-critical)' }}>{row.errorReason ?? '—'}</span> },
-  ]
+    { key: "errorReason", header: t.ai.colError, render: (row) => <span style={{ color: "var(--adm-critical)" }}>{row.errorReason ?? "—"}</span> },
+  ];
 
   return (
     <div>
-      <AdminHeader title={t.ai.title} subtitle={t.ai.subtitle} actions={<DateRangePicker value={range} options={rangeOptions} onChange={setRange} />} />
+      <AdminHeader
+        title={t.ai.title}
+        subtitle={t.ai.subtitle}
+        actions={<DateRangePicker value={range} options={rangeOptions} onChange={setRange} />}
+      />
 
       {overview.isLoading && (
         <div className="flex flex-col gap-4">
@@ -103,7 +113,14 @@ export function AiPage() {
                 <BarChart data={overview.data.requestsPerEndpoint} layout="vertical" margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
                   <CartesianGrid stroke={adminChartGrid} horizontal={false} />
                   <XAxis type="number" tick={{ fontSize: 10, fill: adminChartAxis }} tickLine={false} axisLine={{ stroke: adminChartGrid }} />
-                  <YAxis dataKey="endpoint" type="category" tick={{ fontSize: 10, fill: adminChartAxis }} tickLine={false} axisLine={false} width={90} />
+                  <YAxis
+                    dataKey="endpoint"
+                    type="category"
+                    tick={{ fontSize: 10, fill: adminChartAxis }}
+                    tickLine={false}
+                    axisLine={false}
+                    width={90}
+                  />
                   <Tooltip
                     content={({ active, label, payload }) => (
                       <AdminChartTooltip
@@ -119,8 +136,8 @@ export function AiPage() {
             </AdminChartCard>
           </div>
 
-          <div className="rounded-[var(--adm-radius-lg)] border p-4" style={{ background: 'var(--adm-surface)', borderColor: 'var(--adm-border)' }}>
-            <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--adm-text)' }}>
+          <div className="rounded-[var(--adm-radius-lg)] border p-4" style={{ background: "var(--adm-surface)", borderColor: "var(--adm-border)" }}>
+            <div className="mb-2 text-[13px] font-semibold" style={{ color: "var(--adm-text)" }}>
               {t.ai.tokenUsageTitle}
             </div>
             {overview.data.tokenUsage ? (
@@ -130,11 +147,11 @@ export function AiPage() {
                 <TokenStat label={t.ai.totalTokens} value={fmtNumber(overview.data.tokenUsage.totalTokens, lang)} />
               </dl>
             ) : (
-              <p className="text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+              <p className="text-[12px]" style={{ color: "var(--adm-text-3)" }}>
                 {t.ai.tokensNotReported}
               </p>
             )}
-            <p className="mt-3 text-[11px]" style={{ color: 'var(--adm-text-3)' }}>
+            <p className="mt-3 text-[11px]" style={{ color: "var(--adm-text-3)" }}>
               {t.ai.noApiKeyNote}
             </p>
           </div>
@@ -143,21 +160,27 @@ export function AiPage() {
 
       <IfPermission permission="AI_LOGS_READ">
         <div className="mt-6">
-          <div className="mb-3 text-[14px] font-semibold" style={{ color: 'var(--adm-text)' }}>
+          <div className="mb-3 text-[14px] font-semibold" style={{ color: "var(--adm-text)" }}>
             {t.ai.requestsTableTitle}
           </div>
           <div className="mb-3">
             <FilterBar
               hasActiveFilters={!!(status || endpoint)}
               onClear={() => {
-                setStatus('')
-                setEndpoint('')
-                setPage(1)
+                setStatus("");
+                setEndpoint("");
+                setPage(1);
               }}
             >
-              <AdminSelect value={status || '__all__'} onValueChange={(v) => { setStatus(v === '__all__' ? '' : v); setPage(1) }}>
+              <AdminSelect
+                value={status || "__all__"}
+                onValueChange={(v) => {
+                  setStatus(v === "__all__" ? "" : v);
+                  setPage(1);
+                }}
+              >
                 <AdminSelectTrigger className="w-[150px]">
-                  <span className="mr-1" style={{ color: 'var(--adm-text-3)' }}>
+                  <span className="mr-1" style={{ color: "var(--adm-text-3)" }}>
                     {t.ai.filterStatus}:
                   </span>
                   <AdminSelectValue />
@@ -168,9 +191,15 @@ export function AiPage() {
                   <AdminSelectItem value="ERROR">ERROR</AdminSelectItem>
                 </AdminSelectContent>
               </AdminSelect>
-              <AdminSelect value={endpoint || '__all__'} onValueChange={(v) => { setEndpoint(v === '__all__' ? '' : v); setPage(1) }}>
+              <AdminSelect
+                value={endpoint || "__all__"}
+                onValueChange={(v) => {
+                  setEndpoint(v === "__all__" ? "" : v);
+                  setPage(1);
+                }}
+              >
                 <AdminSelectTrigger className="w-[170px]">
-                  <span className="mr-1" style={{ color: 'var(--adm-text-3)' }}>
+                  <span className="mr-1" style={{ color: "var(--adm-text-3)" }}>
                     {t.ai.filterEndpoint}:
                   </span>
                   <AdminSelectValue />
@@ -203,27 +232,27 @@ export function AiPage() {
         </div>
       </IfPermission>
 
-      <AiRequestDrawer id={openRequestId} onClose={() => navigate('/ai')} />
+      <AiRequestDrawer id={openRequestId} onClose={() => navigate("/ai")} />
     </div>
-  )
+  );
 }
 
 function TokenStat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+      <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
         {label}
       </div>
-      <div className="adm-mono mt-0.5 text-[15px] font-semibold" style={{ color: 'var(--adm-text)' }}>
+      <div className="adm-mono mt-0.5 text-[15px] font-semibold" style={{ color: "var(--adm-text)" }}>
         {value}
       </div>
     </div>
-  )
+  );
 }
 
 function AiRequestDrawer({ id, onClose }: { id: string | undefined; onClose: () => void }) {
-  const { t, lang } = useAdminTranslation()
-  const { data, isLoading, isError, refetch } = useAdminAiRequest(id)
+  const { t, lang } = useAdminTranslation();
+  const { data, isLoading, isError, refetch } = useAdminAiRequest(id);
 
   return (
     <DetailDrawer open={!!id} onOpenChange={(open) => !open && onClose()} title={t.ai.detailTitle} subtitle={id}>
@@ -238,12 +267,12 @@ function AiRequestDrawer({ id, onClose }: { id: string | undefined; onClose: () 
       {data && (
         <dl className="grid grid-cols-2 gap-4 text-[12.5px]">
           <DrawerField label={t.ai.colTime} value={new Date(data.createdAt).toLocaleString()} />
-          <DrawerField label={t.ai.colUser} value={data.userName ?? '—'} />
+          <DrawerField label={t.ai.colUser} value={data.userName ?? "—"} />
           <DrawerField label={t.ai.colEndpoint} value={data.endpoint} />
           <DrawerField label={t.ai.colProvider} value={data.provider} />
           <DrawerField label={t.ai.colModel} value={data.model} />
           <div>
-            <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+            <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
               {t.ai.colStatus}
             </div>
             <div className="mt-1">
@@ -260,22 +289,22 @@ function AiRequestDrawer({ id, onClose }: { id: string | undefined; onClose: () 
           <DrawerField label={t.ai.totalTokens} value={data.totalTokens !== null ? fmtNumber(data.totalTokens, lang) : t.ai.tokensNotReported} />
         </dl>
       )}
-      <p className="mt-5 border-t pt-3 text-[11px]" style={{ borderColor: 'var(--adm-border)', color: 'var(--adm-text-3)' }}>
+      <p className="mt-5 border-t pt-3 text-[11px]" style={{ borderColor: "var(--adm-border)", color: "var(--adm-text-3)" }}>
         {t.ai.noApiKeyNote}
       </p>
     </DetailDrawer>
-  )
+  );
 }
 
 function DrawerField({ label, value, full }: { label: string; value: string; full?: boolean }) {
   return (
-    <div className={full ? 'col-span-2' : undefined}>
-      <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+    <div className={full ? "col-span-2" : undefined}>
+      <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
         {label}
       </div>
-      <div className="mt-0.5 font-medium" style={{ color: 'var(--adm-text)' }}>
+      <div className="mt-0.5 font-medium" style={{ color: "var(--adm-text)" }}>
         {value}
       </div>
     </div>
-  )
+  );
 }

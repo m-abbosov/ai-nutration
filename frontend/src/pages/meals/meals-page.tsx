@@ -1,15 +1,18 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useDailyNutrition } from '@/shared/api/nutrition'
-import { MealsSummary } from '@/widgets/meals-summary/meals-summary'
-import { AddMealDropdown } from '@/widgets/meals-summary/add-meal-dropdown'
-import { MealTimeline } from '@/widgets/meal-timeline/meal-timeline'
-import { RequestRecommendationButton } from '@/features/request-recommendation/request-recommendation-button'
-import { Skeleton } from '@/shared/ui/skeleton'
-import { ErrorState } from '@/shared/ui/state-blocks'
+import { useTranslation } from "@nutriai/shared/i18n";
+
+import { useDailyNutrition } from "@/shared/api/nutrition";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { ErrorState } from "@/shared/ui/state-blocks";
+
+import { RequestRecommendationButton } from "@/features/request-recommendation/request-recommendation-button";
+
+import { MealTimeline } from "@/widgets/meal-timeline/meal-timeline";
+import { AddMealDropdown } from "@/widgets/meals-summary/add-meal-dropdown";
+import { MealsSummary } from "@/widgets/meals-summary/meals-summary";
 
 export function MealsPage() {
-  const { t } = useTranslation()
-  const { data, isLoading, isError, refetch } = useDailyNutrition()
+  const { t } = useTranslation();
+  const { data, isLoading, isError, refetch } = useDailyNutrition();
 
   return (
     <div className="animate-fu px-5 pb-[70px] pt-[22px] md:px-[34px]">
@@ -43,5 +46,5 @@ export function MealsPage() {
         </>
       )}
     </div>
-  )
+  );
 }

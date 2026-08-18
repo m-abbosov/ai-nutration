@@ -7,6 +7,8 @@
     "postinstall": "prisma generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
+    "prettier": "npx prettier . --check",
+    "prettier:fix": "npx prettier . --write",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

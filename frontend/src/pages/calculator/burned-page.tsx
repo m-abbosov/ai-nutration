@@ -1,24 +1,28 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
-import { calculateCaloriesBurned, MET_ACTIVITIES, type MetActivityId } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
+import { useState } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { MET_ACTIVITIES, type MetActivityId, calculateCaloriesBurned } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 
 export default function BurnedPage() {
-  const { t, lang } = useTranslation()
-  const [activityId, setActivityId] = useState<MetActivityId>('runModerate')
-  const [weightKg, setWeightKg] = useState('72')
-  const [durationMinutes, setDurationMinutes] = useState('30')
+  const { t, lang } = useTranslation();
+  const [activityId, setActivityId] = useState<MetActivityId>("runModerate");
+  const [weightKg, setWeightKg] = useState("72");
+  const [durationMinutes, setDurationMinutes] = useState("30");
 
-  const w = parseFloat(weightKg)
-  const dur = parseFloat(durationMinutes)
-  const ok = w > 0 && dur > 0
+  const w = parseFloat(weightKg);
+  const dur = parseFloat(durationMinutes);
+  const ok = w > 0 && dur > 0;
 
-  const activity = MET_ACTIVITIES.find((a) => a.id === activityId)!
-  const kcal = ok ? calculateCaloriesBurned(activity.met, w, dur) : null
+  const activity = MET_ACTIVITIES.find((a) => a.id === activityId)!;
+  const kcal = ok ? calculateCaloriesBurned(activity.met, w, dur) : null;
 
   return (
     <CalculatorShell
@@ -61,5 +65,5 @@ export default function BurnedPage() {
         )
       }
     />
-  )
+  );
 }

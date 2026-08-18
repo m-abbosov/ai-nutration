@@ -1,22 +1,26 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtDecimal } from '@nutriai/shared/lib/format'
-import type { Gender } from '@nutriai/shared/api/types'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
-import { calculateIdealWeight } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
-import { FormulaTable } from './formula-table'
+import { useState } from "react";
+
+import type { Gender } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtDecimal } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { calculateIdealWeight } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { FormulaTable } from "./formula-table";
 
 export default function IdealPage() {
-  const { t, lang } = useTranslation()
-  const [gender, setGender] = useState<Gender>('MALE')
-  const [heightCm, setHeightCm] = useState('175')
+  const { t, lang } = useTranslation();
+  const [gender, setGender] = useState<Gender>("MALE");
+  const [heightCm, setHeightCm] = useState("175");
 
-  const h = parseFloat(heightCm)
-  const ok = h > 0 && heightCm !== ''
-  const result = ok ? calculateIdealWeight(gender, h) : null
+  const h = parseFloat(heightCm);
+  const ok = h > 0 && heightCm !== "";
+  const result = ok ? calculateIdealWeight(gender, h) : null;
 
   return (
     <CalculatorShell
@@ -63,5 +67,5 @@ export default function IdealPage() {
         )
       }
     />
-  )
+  );
 }

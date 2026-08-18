@@ -1,29 +1,25 @@
-import { useNavigate } from 'react-router-dom'
-import { Plus } from 'lucide-react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useConversations, useCreateConversation } from '@/shared/api/chat'
-import { groupConversations, bucketLabel } from '@/entities/conversation/lib/helpers'
-import { Skeleton } from '@/shared/ui/skeleton'
-import { cn } from '@nutriai/shared/lib/cn'
+import { useTranslation } from "@nutriai/shared/i18n";
+import { cn } from "@nutriai/shared/lib/cn";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export function ChatSidebar({
-  activeId,
-  onNavigate,
-}: {
-  activeId?: string
-  onNavigate?: () => void
-}) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { data: conversations, isLoading, isError } = useConversations()
-  const createConversation = useCreateConversation()
+import { useConversations, useCreateConversation } from "@/shared/api/chat";
+import { Skeleton } from "@/shared/ui/skeleton";
+
+import { bucketLabel, groupConversations } from "@/entities/conversation/lib/helpers";
+
+export function ChatSidebar({ activeId, onNavigate }: { activeId?: string; onNavigate?: () => void }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { data: conversations, isLoading, isError } = useConversations();
+  const createConversation = useCreateConversation();
 
   const handleNewChat = () => {
-    navigate('/chat')
-    onNavigate?.()
-  }
+    navigate("/chat");
+    onNavigate?.();
+  };
 
-  const groups = conversations ? groupConversations(conversations) : []
+  const groups = conversations ? groupConversations(conversations) : [];
 
   return (
     <div className="flex h-full flex-col gap-3.5 overflow-y-auto p-4">
@@ -46,9 +42,7 @@ export function ChatSidebar({
         </div>
       )}
       {isError && <p className="px-1.5 text-[12px] text-tx3">{t.app.conversationsError}</p>}
-      {conversations && conversations.length === 0 && (
-        <p className="px-1.5 text-[12px] text-tx3">{t.app.noConversations}</p>
-      )}
+      {conversations && conversations.length === 0 && <p className="px-1.5 text-[12px] text-tx3">{t.app.noConversations}</p>}
 
       {groups.map(({ bucket, items }) => (
         <div key={bucket}>
@@ -58,15 +52,15 @@ export function ChatSidebar({
               <button
                 key={c.id}
                 onClick={() => {
-                  navigate(`/chat/${c.id}`)
-                  onNavigate?.()
+                  navigate(`/chat/${c.id}`);
+                  onNavigate?.();
                 }}
                 className={cn(
-                  'flex w-full items-center gap-2.5 rounded-[10px] px-2.5 py-2.5 text-left text-[12.5px] text-tx2 transition-colors hover:bg-surf2',
-                  activeId === c.id && 'bg-surf2',
+                  "flex w-full items-center gap-2.5 rounded-[10px] px-2.5 py-2.5 text-left text-[12.5px] text-tx2 transition-colors hover:bg-surf2",
+                  activeId === c.id && "bg-surf2",
                 )}
               >
-                <span className={cn('h-1 w-1 flex-none rounded-full', activeId === c.id ? 'bg-acc' : 'bg-tx3')} />
+                <span className={cn("h-1 w-1 flex-none rounded-full", activeId === c.id ? "bg-acc" : "bg-tx3")} />
                 <span className="min-w-0 flex-1 truncate">{c.title}</span>
               </button>
             ))}
@@ -74,5 +68,5 @@ export function ChatSidebar({
         </div>
       ))}
     </div>
-  )
+  );
 }

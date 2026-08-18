@@ -5,5 +5,5 @@ export function FullscreenSpinner() {
         <div className="absolute inset-0 animate-spin rounded-full border-2 border-line2 border-t-acc" />
       </div>
     </div>
-  )
+  );
 }

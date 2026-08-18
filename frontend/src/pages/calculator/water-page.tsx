@@ -1,23 +1,27 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtDecimal } from '@nutriai/shared/lib/format'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Switch } from '@/shared/ui/switch'
-import { calculateWaterLiters } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
+import { useState } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtDecimal } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Switch } from "@/shared/ui/switch";
+
+import { calculateWaterLiters } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 
 export default function WaterPage() {
-  const { t, lang } = useTranslation()
-  const [weightKg, setWeightKg] = useState('72')
-  const [exerciseMinutes, setExerciseMinutes] = useState('30')
-  const [hotClimate, setHotClimate] = useState(false)
+  const { t, lang } = useTranslation();
+  const [weightKg, setWeightKg] = useState("72");
+  const [exerciseMinutes, setExerciseMinutes] = useState("30");
+  const [hotClimate, setHotClimate] = useState(false);
 
-  const w = parseFloat(weightKg)
-  const ex = parseFloat(exerciseMinutes) || 0
-  const ok = w > 0
+  const w = parseFloat(weightKg);
+  const ex = parseFloat(exerciseMinutes) || 0;
+  const ok = w > 0;
 
-  const liters = ok ? calculateWaterLiters(w, ex, hotClimate) : null
+  const liters = ok ? calculateWaterLiters(w, ex, hotClimate) : null;
 
   return (
     <CalculatorShell
@@ -33,12 +37,7 @@ export default function WaterPage() {
               <Label htmlFor="exercise">
                 {t.calcPages.fields.exerciseMinutes} <span className="text-tx3">({t.calcPages.fields.optional})</span>
               </Label>
-              <Input
-                id="exercise"
-                type="number"
-                value={exerciseMinutes}
-                onChange={(e) => setExerciseMinutes(e.target.value)}
-              />
+              <Input id="exercise" type="number" value={exerciseMinutes} onChange={(e) => setExerciseMinutes(e.target.value)} />
             </div>
           </div>
           <div className="mt-3.5 flex items-center justify-between rounded-[12px] border border-line bg-surf px-3.5 py-3">
@@ -61,5 +60,5 @@ export default function WaterPage() {
         )
       }
     />
-  )
+  );
 }

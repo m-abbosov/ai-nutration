@@ -1,40 +1,44 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useAuth } from '@/app/providers/auth-provider'
-import { useDashboard } from '@/shared/api/dashboard'
-import { ProfileHeader } from '@/widgets/profile-header/profile-header'
-import { ProfileMetrics } from '@/widgets/profile-metrics/profile-metrics'
-import { Skeleton } from '@/shared/ui/skeleton'
-import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
-import { defaultMacroSplit } from '@/entities/user/lib/helpers'
+import { useTranslation } from "@nutriai/shared/i18n";
+
+import { useAuth } from "@/app/providers/auth-provider";
+
+import { useDashboard } from "@/shared/api/dashboard";
+import { useMountedTransition } from "@/shared/lib/use-mounted-transition";
+import { Skeleton } from "@/shared/ui/skeleton";
+
+import { ProfileHeader } from "@/widgets/profile-header/profile-header";
+import { ProfileMetrics } from "@/widgets/profile-metrics/profile-metrics";
+
+import { defaultMacroSplit } from "@/entities/user/lib/helpers";
 
 export function ProfilePage() {
-  const { t } = useTranslation()
-  const { user, isLoading } = useAuth()
-  const { data: dashboard } = useDashboard()
-  const mounted = useMountedTransition()
+  const { t } = useTranslation();
+  const { user, isLoading } = useAuth();
+  const { data: dashboard } = useDashboard();
+  const mounted = useMountedTransition();
 
   if (isLoading || !user) {
     return (
       <div className="px-5 pb-[70px] pt-[22px] md:px-[34px]">
         <Skeleton className="h-[150px] rounded-[22px]" />
       </div>
-    )
+    );
   }
 
-  const target = user.dailyCalorieTarget ?? 2000
+  const target = user.dailyCalorieTarget ?? 2000;
   const split =
     user.proteinTargetG != null && user.carbsTargetG != null && user.fatTargetG != null
       ? { proteinG: user.proteinTargetG, carbsG: user.carbsTargetG, fatG: user.fatTargetG }
-      : defaultMacroSplit(target)
-  const splitKcal = { p: split.proteinG * 4, c: split.carbsG * 4, f: split.fatG * 9 }
-  const totalKcal = splitKcal.p + splitKcal.c + splitKcal.f || 1
+      : defaultMacroSplit(target);
+  const splitKcal = { p: split.proteinG * 4, c: split.carbsG * 4, f: split.fatG * 9 };
+  const totalKcal = splitKcal.p + splitKcal.c + splitKcal.f || 1;
   const parts = [
-    { label: t.mProtein, color: 'bg-pro', pct: Math.round((splitKcal.p / totalKcal) * 100), grams: split.proteinG },
-    { label: t.mCarbs, color: 'bg-carb', pct: Math.round((splitKcal.c / totalKcal) * 100), grams: split.carbsG },
-    { label: t.mFat, color: 'bg-fat', pct: Math.round((splitKcal.f / totalKcal) * 100), grams: split.fatG },
-  ]
+    { label: t.mProtein, color: "bg-pro", pct: Math.round((splitKcal.p / totalKcal) * 100), grams: split.proteinG },
+    { label: t.mCarbs, color: "bg-carb", pct: Math.round((splitKcal.c / totalKcal) * 100), grams: split.carbsG },
+    { label: t.mFat, color: "bg-fat", pct: Math.round((splitKcal.f / totalKcal) * 100), grams: split.fatG },
+  ];
 
-  const dayPct = dashboard ? Math.min(100, Math.round((dashboard.daily.consumed / (dashboard.daily.target || 1)) * 100)) : 0
+  const dayPct = dashboard ? Math.min(100, Math.round((dashboard.daily.consumed / (dashboard.daily.target || 1)) * 100)) : 0;
 
   return (
     <div className="animate-fu max-w-[1020px] px-5 pb-[70px] pt-[22px] md:px-[34px]">
@@ -48,7 +52,7 @@ export function ProfilePage() {
             <div
               key={p.label}
               className={`${p.color} rounded-full transition-[width] duration-1000`}
-              style={{ width: mounted ? `${p.pct}%` : '0%' }}
+              style={{ width: mounted ? `${p.pct}%` : "0%" }}
             />
           ))}
         </div>
@@ -68,5 +72,5 @@ export function ProfilePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

@@ -1,7 +1,8 @@
-import '@/shared/theme/admin-theme.css'
-import { AdminThemeProvider } from '@/shared/theme/admin-theme-provider'
-import { AdminAuthProvider } from '@/shared/rbac/admin-auth-context'
-import { AdminRouter } from '@/app/admin-router'
+import { AdminRouter } from "@/app/admin-router";
+
+import { AdminAuthProvider } from "@/shared/rbac/admin-auth-context";
+import { AdminThemeProvider } from "@/shared/theme/admin-theme-provider";
+import "@/shared/theme/admin-theme.css";
 
 /**
  * Root of the admin app — a standalone Vite deployment, separate from the
@@ -15,5 +16,5 @@ export default function AdminApp() {
         <AdminRouter />
       </AdminAuthProvider>
     </AdminThemeProvider>
-  )
+  );
 }

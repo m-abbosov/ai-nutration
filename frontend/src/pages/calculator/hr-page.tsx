@@ -1,24 +1,28 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { calculateHeartRateZones } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
-import { FormulaTable } from './formula-table'
+import { useState } from "react";
 
-const ZONE_KEYS = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'] as const
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+
+import { calculateHeartRateZones } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { FormulaTable } from "./formula-table";
+
+const ZONE_KEYS = ["zone1", "zone2", "zone3", "zone4", "zone5"] as const;
 
 export default function HrPage() {
-  const { t, lang } = useTranslation()
-  const [age, setAge] = useState('28')
-  const [restingHr, setRestingHr] = useState('')
+  const { t, lang } = useTranslation();
+  const [age, setAge] = useState("28");
+  const [restingHr, setRestingHr] = useState("");
 
-  const a = parseInt(age, 10)
-  const rhr = restingHr === '' ? undefined : parseFloat(restingHr)
-  const ok = a > 0 && a < 120 && (rhr === undefined || rhr > 0)
+  const a = parseInt(age, 10);
+  const rhr = restingHr === "" ? undefined : parseFloat(restingHr);
+  const ok = a > 0 && a < 120 && (rhr === undefined || rhr > 0);
 
-  const result = ok ? calculateHeartRateZones(a, rhr) : null
+  const result = ok ? calculateHeartRateZones(a, rhr) : null;
 
   return (
     <CalculatorShell
@@ -57,5 +61,5 @@ export default function HrPage() {
         )
       }
     />
-  )
+  );
 }

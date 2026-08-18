@@ -1,26 +1,28 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Ban, CheckCircle2 } from 'lucide-react'
-import { useAdminUser, useUpdateUserStatus } from '@/shared/api/users'
-import { AdminHeader } from '@/shared/ui/admin-header'
-import { AdminCard, AdminCardHeader, AdminCardTitle } from '@/shared/ui/card'
-import { AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from '@/shared/ui/chart-card'
-import { AdminErrorState } from '@/shared/ui/error-state'
-import { AdminSkeleton } from '@/shared/ui/skeleton'
-import { AdminButton } from '@/shared/ui/button'
-import { StatusBadge, userStatusToneOf } from '@/shared/ui/status-badge'
-import { ConfirmDialog } from '@/shared/ui/confirm-dialog'
-import { IfPermission } from '@/shared/rbac/admin-auth-context'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
-import { fmtNumber } from '@nutriai/shared/lib/format'
+import { useState } from "react";
+
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { Ban, CheckCircle2 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+import { useAdminUser, useUpdateUserStatus } from "@/shared/api/users";
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { IfPermission } from "@/shared/rbac/admin-auth-context";
+import { AdminHeader } from "@/shared/ui/admin-header";
+import { AdminButton } from "@/shared/ui/button";
+import { AdminCard, AdminCardHeader, AdminCardTitle } from "@/shared/ui/card";
+import { AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from "@/shared/ui/chart-card";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { AdminErrorState } from "@/shared/ui/error-state";
+import { AdminSkeleton } from "@/shared/ui/skeleton";
+import { StatusBadge, userStatusToneOf } from "@/shared/ui/status-badge";
 
 export function UserDetailPage() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const { t, lang } = useAdminTranslation()
-  const { data, isLoading, isError, refetch } = useAdminUser(id)
-  const [confirmOpen, setConfirmOpen] = useState(false)
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { t, lang } = useAdminTranslation();
+  const { data, isLoading, isError, refetch } = useAdminUser(id);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -29,31 +31,31 @@ export function UserDetailPage() {
         <AdminSkeleton className="h-40 w-full" />
         <AdminSkeleton className="h-64 w-full" />
       </div>
-    )
+    );
   }
 
   if (isError || !data) {
     return (
       <div>
-        <AdminHeader title={t.userDetail.title} breadcrumbs={[{ label: t.users.title, to: '/users' }, { label: id ?? '' }]} />
+        <AdminHeader title={t.userDetail.title} breadcrumbs={[{ label: t.users.title, to: "/users" }, { label: id ?? "" }]} />
         <AdminErrorState onRetry={() => refetch()} />
       </div>
-    )
+    );
   }
 
-  const { profile, account, nutrition, calorieHistory, aiStats, recentMeals, recentActivity } = data
-  const nextStatus = account.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE'
+  const { profile, account, nutrition, calorieHistory, aiStats, recentMeals, recentActivity } = data;
+  const nextStatus = account.status === "ACTIVE" ? "DISABLED" : "ACTIVE";
 
   return (
     <div>
       <AdminHeader
         title={profile.name}
-        breadcrumbs={[{ label: t.users.title, to: '/users' }, { label: profile.name }]}
+        breadcrumbs={[{ label: t.users.title, to: "/users" }, { label: profile.name }]}
         actions={
           <IfPermission permission="USERS_DISABLE">
-            <AdminButton variant={account.status === 'ACTIVE' ? 'outlineDestructive' : 'primary'} size="sm" onClick={() => setConfirmOpen(true)}>
-              {account.status === 'ACTIVE' ? <Ban className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
-              {account.status === 'ACTIVE' ? t.users.disableUser : t.users.enableUser}
+            <AdminButton variant={account.status === "ACTIVE" ? "outlineDestructive" : "primary"} size="sm" onClick={() => setConfirmOpen(true)}>
+              {account.status === "ACTIVE" ? <Ban className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+              {account.status === "ACTIVE" ? t.users.disableUser : t.users.enableUser}
             </AdminButton>
           </IfPermission>
         }
@@ -70,7 +72,10 @@ export function UserDetailPage() {
             <Field label={t.userDetail.weight} value={profile.weightKg ? `${profile.weightKg} kg` : t.userDetail.notAvailable} />
             <Field label={t.userDetail.goal} value={profile.goal ?? t.userDetail.notAvailable} />
             <Field label={t.userDetail.activityLevel} value={profile.activityLevel ?? t.userDetail.notAvailable} />
-            <Field label={t.userDetail.calorieTarget} value={profile.dailyCalorieTarget ? `${profile.dailyCalorieTarget} kcal` : t.userDetail.notAvailable} />
+            <Field
+              label={t.userDetail.calorieTarget}
+              value={profile.dailyCalorieTarget ? `${profile.dailyCalorieTarget} kcal` : t.userDetail.notAvailable}
+            />
             <Field label={t.userDetail.language} value={profile.language} />
             <Field label={t.userDetail.theme} value={profile.theme} />
           </dl>
@@ -81,13 +86,16 @@ export function UserDetailPage() {
             <AdminCardTitle>{t.userDetail.accountSection}</AdminCardTitle>
           </AdminCardHeader>
           <dl className="grid grid-cols-2 gap-3 text-[12px]">
-            <Field label={t.userDetail.email} value={account.email ?? '—'} />
-            <Field label={t.userDetail.telegramId} value={account.telegramId ?? '—'} />
+            <Field label={t.userDetail.email} value={account.email ?? "—"} />
+            <Field label={t.userDetail.telegramId} value={account.telegramId ?? "—"} />
             <Field label={t.userDetail.authProvider} value={account.authProvider} />
             <Field label={t.userDetail.registered} value={new Date(account.createdAt).toLocaleDateString()} />
-            <Field label={t.userDetail.lastActive} value={account.lastActiveAt ? new Date(account.lastActiveAt).toLocaleDateString() : t.common.never} />
+            <Field
+              label={t.userDetail.lastActive}
+              value={account.lastActiveAt ? new Date(account.lastActiveAt).toLocaleDateString() : t.common.never}
+            />
             <div>
-              <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+              <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
                 {t.userDetail.status}
               </div>
               <div className="mt-0.5">
@@ -134,7 +142,7 @@ export function UserDetailPage() {
                       <AdminChartTooltip
                         active={active}
                         label={label}
-                        items={payload?.map((p) => ({ name: 'kcal', value: Number(p.value), color: adminChartColors[0] }))}
+                        items={payload?.map((p) => ({ name: "kcal", value: Number(p.value), color: adminChartColors[0] }))}
                       />
                     )}
                   />
@@ -154,7 +162,7 @@ export function UserDetailPage() {
             <Field label={t.userDetail.aiFailedCount} value={fmtNumber(aiStats.failedCount, lang)} />
             <Field
               label={t.userDetail.aiAvgResponseTime}
-              value={aiStats.avgResponseTimeMs !== null ? `${fmtNumber(aiStats.avgResponseTimeMs, lang)} ms` : '—'}
+              value={aiStats.avgResponseTimeMs !== null ? `${fmtNumber(aiStats.avgResponseTimeMs, lang)} ms` : "—"}
             />
           </dl>
         </AdminCard>
@@ -166,17 +174,21 @@ export function UserDetailPage() {
             <AdminCardTitle>{t.userDetail.recentMealsSection}</AdminCardTitle>
           </AdminCardHeader>
           {recentMeals.length === 0 ? (
-            <p className="py-6 text-center text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+            <p className="py-6 text-center text-[12px]" style={{ color: "var(--adm-text-3)" }}>
               {t.userDetail.noRecentMeals}
             </p>
           ) : (
             <ul className="flex flex-col">
               {recentMeals.map((meal) => (
-                <li key={meal.id} className="flex items-center justify-between gap-2 border-b py-2 text-[12px] last:border-b-0" style={{ borderColor: 'var(--adm-border)' }}>
-                  <span style={{ color: 'var(--adm-text)' }}>
-                    {meal.emoji ?? ''} {meal.name}
+                <li
+                  key={meal.id}
+                  className="flex items-center justify-between gap-2 border-b py-2 text-[12px] last:border-b-0"
+                  style={{ borderColor: "var(--adm-border)" }}
+                >
+                  <span style={{ color: "var(--adm-text)" }}>
+                    {meal.emoji ?? ""} {meal.name}
                   </span>
-                  <span className="adm-mono" style={{ color: 'var(--adm-text-3)' }}>
+                  <span className="adm-mono" style={{ color: "var(--adm-text-3)" }}>
                     {meal.calories} kcal
                   </span>
                 </li>
@@ -190,15 +202,19 @@ export function UserDetailPage() {
             <AdminCardTitle>{t.userDetail.recentActivitySection}</AdminCardTitle>
           </AdminCardHeader>
           {recentActivity.length === 0 ? (
-            <p className="py-6 text-center text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+            <p className="py-6 text-center text-[12px]" style={{ color: "var(--adm-text-3)" }}>
               {t.userDetail.noRecentActivity}
             </p>
           ) : (
             <ul className="flex flex-col">
               {recentActivity.map((item, i) => (
-                <li key={i} className="flex items-center justify-between gap-2 border-b py-2 text-[12px] last:border-b-0" style={{ borderColor: 'var(--adm-border)' }}>
-                  <span style={{ color: 'var(--adm-text)' }}>{item.label}</span>
-                  <span className="adm-mono text-[11px]" style={{ color: 'var(--adm-text-3)' }}>
+                <li
+                  key={i}
+                  className="flex items-center justify-between gap-2 border-b py-2 text-[12px] last:border-b-0"
+                  style={{ borderColor: "var(--adm-border)" }}
+                >
+                  <span style={{ color: "var(--adm-text)" }}>{item.label}</span>
+                  <span className="adm-mono text-[11px]" style={{ color: "var(--adm-text-3)" }}>
                     {new Date(item.createdAt).toLocaleDateString()}
                   </span>
                 </li>
@@ -216,20 +232,20 @@ export function UserDetailPage() {
         onSuccess={() => navigate(`/users/${profile.id}`, { replace: true })}
       />
     </div>
-  )
+  );
 }
 
 function Field({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+      <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
         {label}
       </div>
-      <div className="mt-0.5 font-medium" style={{ color: 'var(--adm-text)' }}>
+      <div className="mt-0.5 font-medium" style={{ color: "var(--adm-text)" }}>
         {value}
       </div>
     </div>
-  )
+  );
 }
 
 function UserStatusConfirmDialog({
@@ -239,15 +255,15 @@ function UserStatusConfirmDialog({
   nextStatus,
   onSuccess,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  userId: string
-  nextStatus: 'ACTIVE' | 'DISABLED'
-  onSuccess: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  userId: string;
+  nextStatus: "ACTIVE" | "DISABLED";
+  onSuccess: () => void;
 }) {
-  const { t } = useAdminTranslation()
-  const mutation = useUpdateUserStatus(userId)
-  const isDisabling = nextStatus === 'DISABLED'
+  const { t } = useAdminTranslation();
+  const mutation = useUpdateUserStatus(userId);
+  const isDisabling = nextStatus === "DISABLED";
   return (
     <ConfirmDialog
       open={open}
@@ -260,11 +276,11 @@ function UserStatusConfirmDialog({
       onConfirm={() =>
         mutation.mutate(nextStatus, {
           onSuccess: () => {
-            onOpenChange(false)
-            onSuccess()
+            onOpenChange(false);
+            onSuccess();
           },
         })
       }
     />
-  )
+  );
 }

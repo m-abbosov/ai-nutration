@@ -1,20 +1,20 @@
-import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { Dict } from '@nutriai/shared/i18n/types'
-import type { Language, NutritionWeeklyPointDto } from '@nutriai/shared/api/types'
+import type { Language, NutritionWeeklyPointDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import type { Dict } from "@nutriai/shared/i18n/types";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface TrendTooltipProps {
-  active?: boolean
-  payload?: { payload: NutritionWeeklyPointDto }[]
-  label?: string
-  t: Dict
-  lang: Language
+  active?: boolean;
+  payload?: { payload: NutritionWeeklyPointDto }[];
+  label?: string;
+  t: Dict;
+  lang: Language;
 }
 
 function TrendTooltip({ active, payload, label, t, lang }: TrendTooltipProps) {
-  if (!active || !payload?.length) return null
-  const point = payload[0].payload
+  if (!active || !payload?.length) return null;
+  const point = payload[0].payload;
   return (
     <div className="rounded-[13px] border border-line2 bg-surf2 px-3.5 py-2.5 shadow-card">
       <div className="font-mono text-[9.5px] tracking-[.14em] text-tx3">{label}</div>
@@ -23,7 +23,7 @@ function TrendTooltip({ active, payload, label, t, lang }: TrendTooltipProps) {
         <span className="text-[11px] text-tx3">{t.kcal}</span>
       </div>
     </div>
-  )
+  );
 }
 
 export function ProgressTrendChart({
@@ -31,19 +31,19 @@ export function ProgressTrendChart({
   range,
   onRangeChange,
 }: {
-  data: NutritionWeeklyPointDto[]
-  range: 7 | 30 | 90
-  onRangeChange: (range: 7 | 30 | 90) => void
+  data: NutritionWeeklyPointDto[];
+  range: 7 | 30 | 90;
+  onRangeChange: (range: 7 | 30 | 90) => void;
 }) {
-  const { t, lang } = useTranslation()
-  const target = data[0]?.target ?? 2000
-  const avg = data.length ? Math.round(data.reduce((s, p) => s + p.consumed, 0) / data.length) : 0
+  const { t, lang } = useTranslation();
+  const target = data[0]?.target ?? 2000;
+  const avg = data.length ? Math.round(data.reduce((s, p) => s + p.consumed, 0) / data.length) : 0;
 
   const ranges: { value: 7 | 30 | 90; label: string }[] = [
     { value: 7, label: t.r7 },
     { value: 30, label: t.r30 },
     { value: 90, label: t.r90 },
-  ]
+  ];
 
   return (
     <section className="rounded-[20px] border border-line bg-surf p-5 pb-4 md:p-6">
@@ -51,9 +51,7 @@ export function ProgressTrendChart({
         <div className="min-w-[180px] flex-1">
           <div className="text-[14px] font-semibold tracking-[-.01em]">{t.pgTrend}</div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-[26px] font-medium leading-none tracking-[-.03em] tabular-nums md:text-[29px]">
-              {fmtNumber(avg, lang)}
-            </span>
+            <span className="text-[26px] font-medium leading-none tracking-[-.03em] tabular-nums md:text-[29px]">{fmtNumber(avg, lang)}</span>
             <span className="text-[12.5px] text-tx3">
               {t.kcal} · {t.pgAvg}
             </span>
@@ -65,7 +63,7 @@ export function ProgressTrendChart({
               key={r.value}
               onClick={() => onRangeChange(r.value)}
               className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors ${
-                range === r.value ? 'bg-surf2 text-tx' : 'text-tx3'
+                range === r.value ? "bg-surf2 text-tx" : "text-tx3"
               }`}
             >
               {r.label}
@@ -88,31 +86,29 @@ export function ProgressTrendChart({
               tickLine={false}
               axisLine={false}
               interval="preserveStartEnd"
-              tick={{ fill: 'var(--tx3)', fontSize: 9.5, fontFamily: 'IBM Plex Mono, monospace' }}
+              tick={{ fill: "var(--tx3)", fontSize: 9.5, fontFamily: "IBM Plex Mono, monospace" }}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
               width={52}
-              tick={{ fill: 'var(--tx3)', fontSize: 9.5, fontFamily: 'IBM Plex Mono, monospace' }}
+              tick={{ fill: "var(--tx3)", fontSize: 9.5, fontFamily: "IBM Plex Mono, monospace" }}
               tickFormatter={(v: number) => fmtNumber(v, lang)}
             />
             <ReferenceLine y={target} stroke="var(--tx3)" strokeDasharray="4 5" />
-            <Tooltip
-              content={(props: object) => <TrendTooltip {...(props as Partial<TrendTooltipProps>)} t={t} lang={lang} />}
-            />
+            <Tooltip content={(props: object) => <TrendTooltip {...(props as Partial<TrendTooltipProps>)} t={t} lang={lang} />} />
             <Area
               type="monotone"
               dataKey="consumed"
               stroke="var(--acc)"
               strokeWidth={2.2}
               fill="url(#areaG)"
-              dot={{ r: 2.2, fill: 'var(--acc)', strokeWidth: 0 }}
-              activeDot={{ r: 4, fill: 'var(--acc)' }}
+              dot={{ r: 2.2, fill: "var(--acc)", strokeWidth: 0 }}
+              activeDot={{ r: 4, fill: "var(--acc)" }}
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
     </section>
-  )
+  );
 }

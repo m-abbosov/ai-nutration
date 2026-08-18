@@ -1,33 +1,37 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtDecimal } from '@nutriai/shared/lib/format'
-import { cn } from '@nutriai/shared/lib/cn'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { calculatePace, formatMinutesToClock, RACE_PRESETS_KM } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
-import { StatGrid } from './stat-grid'
+import { useState } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { cn } from "@nutriai/shared/lib/cn";
+import { fmtDecimal } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+
+import { RACE_PRESETS_KM, calculatePace, formatMinutesToClock } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { StatGrid } from "./stat-grid";
 
 const PRESETS = [
-  { key: 'fiveK', km: RACE_PRESETS_KM.fiveK },
-  { key: 'tenK', km: RACE_PRESETS_KM.tenK },
-  { key: 'halfMarathon', km: RACE_PRESETS_KM.halfMarathon },
-  { key: 'marathon', km: RACE_PRESETS_KM.marathon },
-] as const
+  { key: "fiveK", km: RACE_PRESETS_KM.fiveK },
+  { key: "tenK", km: RACE_PRESETS_KM.tenK },
+  { key: "halfMarathon", km: RACE_PRESETS_KM.halfMarathon },
+  { key: "marathon", km: RACE_PRESETS_KM.marathon },
+] as const;
 
 export default function PacePage() {
-  const { t, lang } = useTranslation()
-  const [distanceKm, setDistanceKm] = useState('5')
-  const [minutes, setMinutes] = useState('25')
-  const [seconds, setSeconds] = useState('0')
+  const { t, lang } = useTranslation();
+  const [distanceKm, setDistanceKm] = useState("5");
+  const [minutes, setMinutes] = useState("25");
+  const [seconds, setSeconds] = useState("0");
 
-  const d = parseFloat(distanceKm)
-  const m = parseFloat(minutes) || 0
-  const s = parseFloat(seconds) || 0
-  const totalMinutes = m + s / 60
-  const ok = d > 0 && totalMinutes > 0
+  const d = parseFloat(distanceKm);
+  const m = parseFloat(minutes) || 0;
+  const s = parseFloat(seconds) || 0;
+  const totalMinutes = m + s / 60;
+  const ok = d > 0 && totalMinutes > 0;
 
-  const result = ok ? calculatePace(d, totalMinutes) : null
+  const result = ok ? calculatePace(d, totalMinutes) : null;
 
   return (
     <CalculatorShell
@@ -41,8 +45,8 @@ export default function PacePage() {
                 type="button"
                 onClick={() => setDistanceKm(String(p.km))}
                 className={cn(
-                  'rounded-[10px] border px-3 py-1.5 text-[12px] font-medium transition-colors',
-                  Math.abs(d - p.km) < 0.001 ? 'border-acc bg-accT text-acc' : 'border-line text-tx2 hover:border-line2',
+                  "rounded-[10px] border px-3 py-1.5 text-[12px] font-medium transition-colors",
+                  Math.abs(d - p.km) < 0.001 ? "border-acc bg-accT text-acc" : "border-line text-tx2 hover:border-line2",
                 )}
               >
                 {t.calcPages.pace.presets[p.key]}
@@ -69,11 +73,7 @@ export default function PacePage() {
       results={
         result ? (
           <>
-            <ResultHero
-              kicker={t.calcPages.pace.paceMinPerKm}
-              value={formatMinutesToClock(result.paceMinPerKm)}
-              unit="/km"
-            />
+            <ResultHero kicker={t.calcPages.pace.paceMinPerKm} value={formatMinutesToClock(result.paceMinPerKm)} unit="/km" />
             <StatGrid
               cells={[
                 { label: t.calcPages.pace.paceMinPerMi, value: `${formatMinutesToClock(result.paceMinPerMi)} /mi` },
@@ -87,5 +87,5 @@ export default function PacePage() {
         )
       }
     />
-  )
+  );
 }

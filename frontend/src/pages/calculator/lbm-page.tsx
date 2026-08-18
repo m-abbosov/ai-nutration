@@ -1,26 +1,30 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtDecimal } from '@nutriai/shared/lib/format'
-import type { Gender } from '@nutriai/shared/api/types'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
-import { calculateLeanBodyMass } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
-import { FormulaTable } from './formula-table'
-import { StatGrid } from './stat-grid'
+import { useState } from "react";
+
+import type { Gender } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtDecimal } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { calculateLeanBodyMass } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { FormulaTable } from "./formula-table";
+import { StatGrid } from "./stat-grid";
 
 export default function LbmPage() {
-  const { t, lang } = useTranslation()
-  const [gender, setGender] = useState<Gender>('MALE')
-  const [heightCm, setHeightCm] = useState('175')
-  const [weightKg, setWeightKg] = useState('72')
+  const { t, lang } = useTranslation();
+  const [gender, setGender] = useState<Gender>("MALE");
+  const [heightCm, setHeightCm] = useState("175");
+  const [weightKg, setWeightKg] = useState("72");
 
-  const h = parseFloat(heightCm)
-  const w = parseFloat(weightKg)
-  const ok = h > 0 && w > 0
+  const h = parseFloat(heightCm);
+  const w = parseFloat(weightKg);
+  const ok = h > 0 && w > 0;
 
-  const result = ok ? calculateLeanBodyMass(gender, h, w) : null
+  const result = ok ? calculateLeanBodyMass(gender, h, w) : null;
 
   return (
     <CalculatorShell
@@ -70,5 +74,5 @@ export default function LbmPage() {
         )
       }
     />
-  )
+  );
 }

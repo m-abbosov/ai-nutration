@@ -1,29 +1,33 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { ActivityLevel, Gender } from '@nutriai/shared/api/types'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
-import { calculateBmr, calculateTdee } from '@/entities/user/lib/helpers'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
-import { StatGrid } from './stat-grid'
+import { useState } from "react";
+
+import type { ActivityLevel, Gender } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { calculateBmr, calculateTdee } from "@/entities/user/lib/helpers";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { StatGrid } from "./stat-grid";
 
 export default function TdeePage() {
-  const { t, lang } = useTranslation()
-  const [gender, setGender] = useState<Gender>('MALE')
-  const [age, setAge] = useState('28')
-  const [heightCm, setHeightCm] = useState('175')
-  const [weightKg, setWeightKg] = useState('72')
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('MODERATE')
+  const { t, lang } = useTranslation();
+  const [gender, setGender] = useState<Gender>("MALE");
+  const [age, setAge] = useState("28");
+  const [heightCm, setHeightCm] = useState("175");
+  const [weightKg, setWeightKg] = useState("72");
+  const [activityLevel, setActivityLevel] = useState<ActivityLevel>("MODERATE");
 
-  const a = parseInt(age, 10)
-  const h = parseFloat(heightCm)
-  const w = parseFloat(weightKg)
-  const ok = a > 0 && a < 120 && h > 0 && w > 0
+  const a = parseInt(age, 10);
+  const h = parseFloat(heightCm);
+  const w = parseFloat(weightKg);
+  const ok = a > 0 && a < 120 && h > 0 && w > 0;
 
-  const bmr = ok ? calculateBmr(a, h, w, gender) : null
-  const tdee = bmr != null ? calculateTdee(bmr, activityLevel) : null
+  const bmr = ok ? calculateBmr(a, h, w, gender) : null;
+  const tdee = bmr != null ? calculateTdee(bmr, activityLevel) : null;
 
   return (
     <CalculatorShell
@@ -85,5 +89,5 @@ export default function TdeePage() {
         )
       }
     />
-  )
+  );
 }

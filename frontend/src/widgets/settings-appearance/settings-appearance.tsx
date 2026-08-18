@@ -1,21 +1,24 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useThemeContext } from '@/app/providers/theme-provider'
-import { useAuth } from '@/app/providers/auth-provider'
-import { useUpdateMe } from '@/shared/api/users'
-import { LanguageSwitchSelect } from '@/features/language-switch/language-switch'
-import { cn } from '@nutriai/shared/lib/cn'
-import type { Theme } from '@nutriai/shared/api/types'
+import type { Theme } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { cn } from "@nutriai/shared/lib/cn";
+
+import { useAuth } from "@/app/providers/auth-provider";
+import { useThemeContext } from "@/app/providers/theme-provider";
+
+import { useUpdateMe } from "@/shared/api/users";
+
+import { LanguageSwitchSelect } from "@/features/language-switch/language-switch";
 
 export function SettingsAppearance() {
-  const { t } = useTranslation()
-  const { theme, setTheme } = useThemeContext()
-  const { isAuthenticated } = useAuth()
-  const updateMe = useUpdateMe()
+  const { t } = useTranslation();
+  const { theme, setTheme } = useThemeContext();
+  const { isAuthenticated } = useAuth();
+  const updateMe = useUpdateMe();
 
   const choose = (next: Theme) => {
-    setTheme(next)
-    if (isAuthenticated) updateMe.mutate({ theme: next })
-  }
+    setTheme(next);
+    if (isAuthenticated) updateMe.mutate({ theme: next });
+  };
 
   return (
     <>
@@ -28,23 +31,23 @@ export function SettingsAppearance() {
           </div>
           <div className="flex gap-[3px] rounded-[11px] border border-line2 p-[3px]">
             <button
-              onClick={() => choose('LIGHT')}
+              onClick={() => choose("LIGHT")}
               className={cn(
-                'inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors',
-                theme === 'LIGHT' ? 'bg-surf2 text-tx' : 'text-tx3',
+                "inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors",
+                theme === "LIGHT" ? "bg-surf2 text-tx" : "text-tx3",
               )}
             >
-              <span className="h-[11px] w-[11px] rounded-full border border-line2" style={{ background: '#f3f1ec' }} />
+              <span className="h-[11px] w-[11px] rounded-full border border-line2" style={{ background: "#f3f1ec" }} />
               {t.stLight}
             </button>
             <button
-              onClick={() => choose('DARK')}
+              onClick={() => choose("DARK")}
               className={cn(
-                'inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors',
-                theme === 'DARK' ? 'bg-surf2 text-tx' : 'text-tx3',
+                "inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors",
+                theme === "DARK" ? "bg-surf2 text-tx" : "text-tx3",
               )}
             >
-              <span className="h-[11px] w-[11px] rounded-full border border-line2" style={{ background: '#141716' }} />
+              <span className="h-[11px] w-[11px] rounded-full border border-line2" style={{ background: "#141716" }} />
               {t.stDark}
             </button>
           </div>
@@ -58,5 +61,5 @@ export function SettingsAppearance() {
         </div>
       </div>
     </>
-  )
+  );
 }

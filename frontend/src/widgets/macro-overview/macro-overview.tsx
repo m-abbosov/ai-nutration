@@ -1,17 +1,19 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
-import { macroPercent } from '@/entities/meal/lib/helpers'
-import type { NutritionDailyDto } from '@nutriai/shared/api/types'
+import type { NutritionDailyDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+
+import { useMountedTransition } from "@/shared/lib/use-mounted-transition";
+
+import { macroPercent } from "@/entities/meal/lib/helpers";
 
 export function MacroOverview({ daily }: { daily: NutritionDailyDto }) {
-  const { t } = useTranslation()
-  const mounted = useMountedTransition()
+  const { t } = useTranslation();
+  const mounted = useMountedTransition();
 
   const macros = [
-    { key: 'protein', label: t.mProtein, color: 'var(--pro)', bg: 'bg-proT', ...daily.protein },
-    { key: 'carbs', label: t.mCarbs, color: 'var(--carb)', bg: 'bg-carbT', ...daily.carbs },
-    { key: 'fat', label: t.mFat, color: 'var(--fat)', bg: 'bg-fatT', ...daily.fat },
-  ]
+    { key: "protein", label: t.mProtein, color: "var(--pro)", bg: "bg-proT", ...daily.protein },
+    { key: "carbs", label: t.mCarbs, color: "var(--carb)", bg: "bg-carbT", ...daily.carbs },
+    { key: "fat", label: t.mFat, color: "var(--fat)", bg: "bg-fatT", ...daily.fat },
+  ];
 
   return (
     <section className="mt-[30px]">
@@ -21,13 +23,9 @@ export function MacroOverview({ daily }: { daily: NutritionDailyDto }) {
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(196px,1fr))] gap-3.5">
         {macros.map((m, i) => {
-          const pct = macroPercent(m.consumed, m.target)
+          const pct = macroPercent(m.consumed, m.target);
           return (
-            <div
-              key={m.key}
-              className="animate-fu rounded-[17px] border border-line bg-surf p-4"
-              style={{ animationDelay: `${i * 0.06}s` }}
-            >
+            <div key={m.key} className="animate-fu rounded-[17px] border border-line bg-surf p-4" style={{ animationDelay: `${i * 0.06}s` }}>
               <div className="flex items-center gap-2.5">
                 <div className={`grid h-[26px] w-[26px] place-items-center rounded-[9px] ${m.bg}`}>
                   <span className="h-[9px] w-[9px] rounded-full" style={{ background: m.color }} />
@@ -46,13 +44,13 @@ export function MacroOverview({ daily }: { daily: NutritionDailyDto }) {
               <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-line">
                 <div
                   className="h-full rounded-full transition-[width] duration-1000"
-                  style={{ background: m.color, width: mounted ? `${pct}%` : '0%' }}
+                  style={{ background: m.color, width: mounted ? `${pct}%` : "0%" }}
                 />
               </div>
             </div>
-          )
+          );
         })}
       </div>
     </section>
-  )
+  );
 }

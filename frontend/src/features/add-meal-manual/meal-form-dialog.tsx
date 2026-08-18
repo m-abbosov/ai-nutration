@@ -1,16 +1,20 @@
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/dialog'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Button } from '@/shared/ui/button'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
-import { mealTypeLabel, MEAL_TYPE_ORDER } from '@/entities/meal/lib/helpers'
-import { manualMealSchema } from '@/features/add-meal-manual/schema'
-import type { ManualMealFormValues } from '@/features/add-meal-manual/schema'
-import type { MealDto } from '@nutriai/shared/api/types'
+import { useEffect } from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { MealDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { Controller, useForm } from "react-hook-form";
+
+import { Button } from "@/shared/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { manualMealSchema } from "@/features/add-meal-manual/schema";
+import type { ManualMealFormValues } from "@/features/add-meal-manual/schema";
+
+import { MEAL_TYPE_ORDER, mealTypeLabel } from "@/entities/meal/lib/helpers";
 
 export function MealFormDialog({
   open,
@@ -22,17 +26,17 @@ export function MealFormDialog({
   isSubmitting,
   previousMeals,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  description: string
-  defaultValues?: Partial<ManualMealFormValues>
-  onSubmit: (values: ManualMealFormValues) => void
-  isSubmitting?: boolean
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  description: string;
+  defaultValues?: Partial<ManualMealFormValues>;
+  onSubmit: (values: ManualMealFormValues) => void;
+  isSubmitting?: boolean;
   /** When provided (non-empty), shows a picker to prefill the form from an earlier logged meal. */
-  previousMeals?: MealDto[]
+  previousMeals?: MealDto[];
 }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const {
     register,
     control,
@@ -41,17 +45,17 @@ export function MealFormDialog({
     formState: { errors },
   } = useForm<ManualMealFormValues>({
     resolver: zodResolver(manualMealSchema),
-    defaultValues: { mealType: 'BREAKFAST', name: '', calories: 0, protein: 0, carbs: 0, fat: 0, ...defaultValues },
-  })
+    defaultValues: { mealType: "BREAKFAST", name: "", calories: 0, protein: 0, carbs: 0, fat: 0, ...defaultValues },
+  });
 
   useEffect(() => {
-    if (open) reset({ mealType: 'BREAKFAST', name: '', calories: 0, protein: 0, carbs: 0, fat: 0, ...defaultValues })
+    if (open) reset({ mealType: "BREAKFAST", name: "", calories: 0, protein: 0, carbs: 0, fat: 0, ...defaultValues });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
+  }, [open]);
 
   const applyPreviousMeal = (mealId: string) => {
-    const meal = previousMeals?.find((m) => m.id === mealId)
-    if (!meal) return
+    const meal = previousMeals?.find((m) => m.id === mealId);
+    if (!meal) return;
     reset({
       mealType: meal.mealType,
       name: meal.name,
@@ -60,10 +64,10 @@ export function MealFormDialog({
       carbs: meal.carbs,
       fat: meal.fat,
       servingSize: meal.servingSize ?? undefined,
-    })
-  }
+    });
+  };
 
-  const submit = handleSubmit((values) => onSubmit(values))
+  const submit = handleSubmit((values) => onSubmit(values));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -113,31 +117,31 @@ export function MealFormDialog({
           </div>
           <div>
             <Label htmlFor="name">{t.app.mealNameLabel}</Label>
-            <Input id="name" {...register('name')} />
+            <Input id="name" {...register("name")} />
             {errors.name && <p className="mt-1 text-[11px] text-fat">{t.app.required}</p>}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="calories">{t.app.caloriesLabel}</Label>
-              <Input id="calories" type="number" step="1" {...register('calories')} />
+              <Input id="calories" type="number" step="1" {...register("calories")} />
             </div>
             <div>
               <Label htmlFor="servingSize">{t.app.servingSizeLabel}</Label>
-              <Input id="servingSize" {...register('servingSize')} />
+              <Input id="servingSize" {...register("servingSize")} />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label htmlFor="protein">{t.app.proteinLabel}</Label>
-              <Input id="protein" type="number" step="0.1" {...register('protein')} />
+              <Input id="protein" type="number" step="0.1" {...register("protein")} />
             </div>
             <div>
               <Label htmlFor="carbs">{t.app.carbsLabel}</Label>
-              <Input id="carbs" type="number" step="0.1" {...register('carbs')} />
+              <Input id="carbs" type="number" step="0.1" {...register("carbs")} />
             </div>
             <div>
               <Label htmlFor="fat">{t.app.fatLabel}</Label>
-              <Input id="fat" type="number" step="0.1" {...register('fat')} />
+              <Input id="fat" type="number" step="0.1" {...register("fat")} />
             </div>
           </div>
           <div className="mt-2 flex justify-end gap-2.5">
@@ -151,5 +155,5 @@ export function MealFormDialog({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

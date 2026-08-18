@@ -1,13 +1,14 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtDecimal, clamp } from '@nutriai/shared/lib/format'
-import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
-import type { UserDto } from '@nutriai/shared/api/types'
+import type { UserDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { clamp, fmtDecimal } from "@nutriai/shared/lib/format";
+
+import { useMountedTransition } from "@/shared/lib/use-mounted-transition";
 
 /** Current vs. goal weight only — no multi-point weight history in Phase 1
  * (DESIGN_MAPPING.md: "Weight trend multi-point chart ... out of scope"). */
 export function WeightCard({ user }: { user: UserDto }) {
-  const { t, lang } = useTranslation()
-  const mounted = useMountedTransition()
+  const { t, lang } = useTranslation();
+  const mounted = useMountedTransition();
 
   if (!user.weightKg) {
     return (
@@ -15,15 +16,15 @@ export function WeightCard({ user }: { user: UserDto }) {
         <div className="text-[14px] font-semibold tracking-[-.01em]">{t.pgWeight}</div>
         <p className="mt-3 text-[13px] text-tx3">{t.app.onboardingRequired}</p>
       </section>
-    )
+    );
   }
 
-  const goal = user.goalWeightKg
-  const toGoal = goal != null ? Math.abs(user.weightKg - goal) : null
+  const goal = user.goalWeightKg;
+  const toGoal = goal != null ? Math.abs(user.weightKg - goal) : null;
   // Progress bar: how close current weight is to the goal, treating a 10kg
   // span around the goal as "full range" absent any historical starting point.
-  const span = 10
-  const pct = goal != null ? clamp(Math.round((1 - Math.min(toGoal ?? 0, span) / span) * 100), 0, 100) : 0
+  const span = 10;
+  const pct = goal != null ? clamp(Math.round((1 - Math.min(toGoal ?? 0, span) / span) * 100), 0, 100) : 0;
 
   return (
     <section className="rounded-[20px] border border-line bg-surf p-5 md:p-[22px]">
@@ -49,13 +50,10 @@ export function WeightCard({ user }: { user: UserDto }) {
             </span>
           </div>
           <div className="mt-2 h-[5px] overflow-hidden rounded-full bg-line">
-            <div
-              className="h-full rounded-full bg-acc transition-[width] duration-1000"
-              style={{ width: mounted ? `${pct}%` : '0%' }}
-            />
+            <div className="h-full rounded-full bg-acc transition-[width] duration-1000" style={{ width: mounted ? `${pct}%` : "0%" }} />
           </div>
         </div>
       )}
     </section>
-  )
+  );
 }

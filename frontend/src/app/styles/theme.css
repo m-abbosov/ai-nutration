@@ -27,7 +27,7 @@
 }
 
 /* Light theme: explicit choice via data-theme="light" */
-:root[data-theme='light'] {
+:root[data-theme="light"] {
   --bg: #f3f1ec;
   --bg2: #edeae3;
   --surf: #fbfaf7;
@@ -82,7 +82,7 @@
   }
 }
 
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   --bg: #0b0d0c;
   --bg2: #0f1211;
   --surf: #151918;
@@ -125,11 +125,13 @@
   body {
     background: var(--bg);
     color: var(--tx);
-    font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.45;
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.35s ease, color 0.35s ease;
+    transition:
+      background-color 0.35s ease,
+      color 0.35s ease;
     overflow-x: hidden;
   }
   a {
@@ -166,11 +168,11 @@
 }
 
 .font-mono-num {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: "IBM Plex Mono", monospace;
   font-variant-numeric: tabular-nums;
 }
 .font-serif-hero {
-  font-family: 'Instrument Serif', serif;
+  font-family: "Instrument Serif", serif;
 }
 
 @keyframes fu {

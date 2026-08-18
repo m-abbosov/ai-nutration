@@ -1,31 +1,33 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { Power, ShieldCheck } from 'lucide-react'
-import { useAdminTeamMember, useUpdateTeamMember } from '@/shared/api/admin-team'
-import type { AdminRoleName } from '@/shared/api/types'
-import { AdminHeader } from '@/shared/ui/admin-header'
-import { AdminCard, AdminCardHeader, AdminCardTitle } from '@/shared/ui/card'
-import { AdminErrorState } from '@/shared/ui/error-state'
-import { AdminSkeleton } from '@/shared/ui/skeleton'
-import { AdminButton } from '@/shared/ui/button'
-import { StatusBadge } from '@/shared/ui/status-badge'
-import { ConfirmDialog } from '@/shared/ui/confirm-dialog'
-import { AdminSelect, AdminSelectContent, AdminSelectItem, AdminSelectTrigger, AdminSelectValue } from '@/shared/ui/select'
-import { IfPermission, useAdminAuth } from '@/shared/rbac/admin-auth-context'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
+import { useState } from "react";
 
-const ROLES: AdminRoleName[] = ['SUPER_ADMIN', 'ADMIN', 'MODERATOR', 'SUPPORT']
+import { Power, ShieldCheck } from "lucide-react";
+import { useParams } from "react-router-dom";
+
+import { useAdminTeamMember, useUpdateTeamMember } from "@/shared/api/admin-team";
+import type { AdminRoleName } from "@/shared/api/types";
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { IfPermission, useAdminAuth } from "@/shared/rbac/admin-auth-context";
+import { AdminHeader } from "@/shared/ui/admin-header";
+import { AdminButton } from "@/shared/ui/button";
+import { AdminCard, AdminCardHeader, AdminCardTitle } from "@/shared/ui/card";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { AdminErrorState } from "@/shared/ui/error-state";
+import { AdminSelect, AdminSelectContent, AdminSelectItem, AdminSelectTrigger, AdminSelectValue } from "@/shared/ui/select";
+import { AdminSkeleton } from "@/shared/ui/skeleton";
+import { StatusBadge } from "@/shared/ui/status-badge";
+
+const ROLES: AdminRoleName[] = ["SUPER_ADMIN", "ADMIN", "MODERATOR", "SUPPORT"];
 
 export function AdminUserDetailPage() {
-  const { id } = useParams<{ id: string }>()
-  const { t } = useAdminTranslation()
-  const { admin: me } = useAdminAuth()
-  const { data, isLoading, isError, refetch } = useAdminTeamMember(id)
-  const mutation = useUpdateTeamMember(id ?? '')
+  const { id } = useParams<{ id: string }>();
+  const { t } = useAdminTranslation();
+  const { admin: me } = useAdminAuth();
+  const { data, isLoading, isError, refetch } = useAdminTeamMember(id);
+  const mutation = useUpdateTeamMember(id ?? "");
 
-  const [pendingRole, setPendingRole] = useState<AdminRoleName | null>(null)
-  const [pendingActive, setPendingActive] = useState<boolean | null>(null)
-  const [roleSelectValue, setRoleSelectValue] = useState<AdminRoleName | ''>('')
+  const [pendingRole, setPendingRole] = useState<AdminRoleName | null>(null);
+  const [pendingActive, setPendingActive] = useState<boolean | null>(null);
+  const [roleSelectValue, setRoleSelectValue] = useState<AdminRoleName | "">("");
 
   if (isLoading) {
     return (
@@ -33,36 +35,32 @@ export function AdminUserDetailPage() {
         <AdminSkeleton className="h-8 w-64" />
         <AdminSkeleton className="h-40 w-full" />
       </div>
-    )
+    );
   }
 
   if (isError || !data) {
     return (
       <div>
-        <AdminHeader title={t.adminUserDetail.title} breadcrumbs={[{ label: t.adminUsers.title, to: '/admin-users' }]} />
+        <AdminHeader title={t.adminUserDetail.title} breadcrumbs={[{ label: t.adminUsers.title, to: "/admin-users" }]} />
         <AdminErrorState onRetry={() => refetch()} />
       </div>
-    )
+    );
   }
 
-  const isSelf = me?.id === data.id
-  const selfIsSuperAdmin = me?.role.name === 'SUPER_ADMIN'
+  const isSelf = me?.id === data.id;
+  const selfIsSuperAdmin = me?.role.name === "SUPER_ADMIN";
 
-  const roleChangeWouldLockout = isSelf && selfIsSuperAdmin && pendingRole !== null && pendingRole !== 'SUPER_ADMIN'
-  const deactivateWouldLockout = isSelf && selfIsSuperAdmin && pendingActive === false
+  const roleChangeWouldLockout = isSelf && selfIsSuperAdmin && pendingRole !== null && pendingRole !== "SUPER_ADMIN";
+  const deactivateWouldLockout = isSelf && selfIsSuperAdmin && pendingActive === false;
 
   return (
     <div>
       <AdminHeader
         title={data.name}
-        breadcrumbs={[{ label: t.adminUsers.title, to: '/admin-users' }, { label: data.name }]}
+        breadcrumbs={[{ label: t.adminUsers.title, to: "/admin-users" }, { label: data.name }]}
         actions={
           <IfPermission permission="ADMIN_USERS_MANAGE">
-            <AdminButton
-              variant={data.adminActive ? 'outlineDestructive' : 'primary'}
-              size="sm"
-              onClick={() => setPendingActive(!data.adminActive)}
-            >
+            <AdminButton variant={data.adminActive ? "outlineDestructive" : "primary"} size="sm" onClick={() => setPendingActive(!data.adminActive)}>
               <Power className="h-3.5 w-3.5" />
               {data.adminActive ? t.adminUserDetail.deactivate : t.adminUserDetail.activate}
             </AdminButton>
@@ -76,20 +74,20 @@ export function AdminUserDetailPage() {
             <AdminCardTitle>{t.adminUserDetail.roleSection}</AdminCardTitle>
           </AdminCardHeader>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[15px] font-semibold" style={{ color: 'var(--adm-text)' }}>
+            <span className="text-[15px] font-semibold" style={{ color: "var(--adm-text)" }}>
               {data.role}
             </span>
-            <StatusBadge tone={data.adminActive ? 'good' : 'critical'} label={data.adminActive ? t.common.active : t.common.disabled} />
+            <StatusBadge tone={data.adminActive ? "good" : "critical"} label={data.adminActive ? t.common.active : t.common.disabled} />
           </div>
-          <p className="mt-2 text-[11.5px]" style={{ color: 'var(--adm-text-3)' }}>
+          <p className="mt-2 text-[11.5px]" style={{ color: "var(--adm-text-3)" }}>
             {t.adminUserDetail.lastLogin}: {data.lastLoginAt ? new Date(data.lastLoginAt).toLocaleString() : t.common.never}
           </p>
-          <p className="text-[11.5px]" style={{ color: 'var(--adm-text-3)' }}>
+          <p className="text-[11.5px]" style={{ color: "var(--adm-text-3)" }}>
             {t.adminUserDetail.created}: {new Date(data.createdAt).toLocaleDateString()}
           </p>
 
           <IfPermission permission="ADMIN_USERS_MANAGE">
-            <div className="mt-4 flex items-center gap-2 border-t pt-3" style={{ borderColor: 'var(--adm-border)' }}>
+            <div className="mt-4 flex items-center gap-2 border-t pt-3" style={{ borderColor: "var(--adm-border)" }}>
               <AdminSelect value={roleSelectValue || data.role} onValueChange={(v) => setRoleSelectValue(v as AdminRoleName)}>
                 <AdminSelectTrigger className="flex-1">
                   <AdminSelectValue />
@@ -120,7 +118,7 @@ export function AdminUserDetailPage() {
           </AdminCardHeader>
           <div className="flex flex-wrap gap-1.5">
             {data.permissions.length === 0 ? (
-              <span className="text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+              <span className="text-[12px]" style={{ color: "var(--adm-text-3)" }}>
                 —
               </span>
             ) : (
@@ -128,7 +126,7 @@ export function AdminUserDetailPage() {
                 <span
                   key={p}
                   className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-medium"
-                  style={{ background: 'var(--adm-accent-subtle)', color: 'var(--adm-accent)' }}
+                  style={{ background: "var(--adm-accent-subtle)", color: "var(--adm-accent)" }}
                 >
                   <ShieldCheck className="h-2.5 w-2.5" />
                   {p}
@@ -143,15 +141,19 @@ export function AdminUserDetailPage() {
             <AdminCardTitle>{t.adminUserDetail.activitySection}</AdminCardTitle>
           </AdminCardHeader>
           {data.activityLog.length === 0 ? (
-            <p className="py-6 text-center text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+            <p className="py-6 text-center text-[12px]" style={{ color: "var(--adm-text-3)" }}>
               {t.adminUserDetail.noActivity}
             </p>
           ) : (
             <ul className="flex flex-col">
               {data.activityLog.map((entry) => (
-                <li key={entry.id} className="flex items-center justify-between gap-2 border-b py-2 text-[11.5px] last:border-b-0" style={{ borderColor: 'var(--adm-border)' }}>
-                  <span style={{ color: 'var(--adm-text)' }}>{entry.action}</span>
-                  <span className="adm-mono" style={{ color: 'var(--adm-text-3)' }}>
+                <li
+                  key={entry.id}
+                  className="flex items-center justify-between gap-2 border-b py-2 text-[11.5px] last:border-b-0"
+                  style={{ borderColor: "var(--adm-border)" }}
+                >
+                  <span style={{ color: "var(--adm-text)" }}>{entry.action}</span>
+                  <span className="adm-mono" style={{ color: "var(--adm-text-3)" }}>
                     {new Date(entry.createdAt).toLocaleDateString()}
                   </span>
                 </li>
@@ -169,16 +171,16 @@ export function AdminUserDetailPage() {
         disabledReason={roleChangeWouldLockout ? t.adminUserDetail.selfLockoutBlocked : undefined}
         loading={mutation.isPending}
         onConfirm={() => {
-          if (!pendingRole) return
+          if (!pendingRole) return;
           mutation.mutate(
             { role: pendingRole },
             {
               onSuccess: () => {
-                setPendingRole(null)
-                setRoleSelectValue('')
+                setPendingRole(null);
+                setRoleSelectValue("");
               },
             },
-          )
+          );
         }}
       />
 
@@ -191,10 +193,10 @@ export function AdminUserDetailPage() {
         disabledReason={deactivateWouldLockout ? t.adminUserDetail.selfLockoutBlocked : undefined}
         loading={mutation.isPending}
         onConfirm={() => {
-          if (pendingActive === null) return
-          mutation.mutate({ adminActive: pendingActive }, { onSuccess: () => setPendingActive(null) })
+          if (pendingActive === null) return;
+          mutation.mutate({ adminActive: pendingActive }, { onSuccess: () => setPendingActive(null) });
         }}
       />
     </div>
-  )
+  );
 }

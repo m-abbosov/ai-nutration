@@ -1,16 +1,16 @@
-import { useAdminSettings, useToggleFeatureFlag } from '@/shared/api/settings'
-import { AdminHeader } from '@/shared/ui/admin-header'
-import { AdminCard, AdminCardHeader, AdminCardTitle, AdminCardSubtitle } from '@/shared/ui/card'
-import { AdminErrorState, AdminEmptyState } from '@/shared/ui/error-state'
-import { AdminSkeleton } from '@/shared/ui/skeleton'
-import { AdminSwitch } from '@/shared/ui/switch'
-import { IfPermission } from '@/shared/rbac/admin-auth-context'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
+import { useAdminSettings, useToggleFeatureFlag } from "@/shared/api/settings";
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { IfPermission } from "@/shared/rbac/admin-auth-context";
+import { AdminHeader } from "@/shared/ui/admin-header";
+import { AdminCard, AdminCardHeader, AdminCardSubtitle, AdminCardTitle } from "@/shared/ui/card";
+import { AdminEmptyState, AdminErrorState } from "@/shared/ui/error-state";
+import { AdminSkeleton } from "@/shared/ui/skeleton";
+import { AdminSwitch } from "@/shared/ui/switch";
 
 export function SettingsPage() {
-  const { t } = useAdminTranslation()
-  const { data, isLoading, isError, refetch } = useAdminSettings()
-  const toggleFlag = useToggleFeatureFlag()
+  const { t } = useAdminTranslation();
+  const { data, isLoading, isError, refetch } = useAdminSettings();
+  const toggleFlag = useToggleFeatureFlag();
 
   return (
     <div>
@@ -53,7 +53,7 @@ export function SettingsPage() {
                 <span
                   key={`${m.provider}-${m.model}`}
                   className="adm-mono rounded-full px-2.5 py-1 text-[11px] font-medium"
-                  style={{ background: 'var(--adm-neutral-subtle)', color: 'var(--adm-text-2)' }}
+                  style={{ background: "var(--adm-neutral-subtle)", color: "var(--adm-text-2)" }}
                 >
                   {m.provider}: {m.model}
                 </span>
@@ -73,25 +73,25 @@ export function SettingsPage() {
                   <li
                     key={flag.key}
                     className="flex items-center justify-between gap-3 border-b py-3 last:border-b-0"
-                    style={{ borderColor: 'var(--adm-border)' }}
+                    style={{ borderColor: "var(--adm-border)" }}
                   >
                     <div>
-                      <div className="adm-mono text-[12.5px] font-medium" style={{ color: 'var(--adm-text)' }}>
+                      <div className="adm-mono text-[12.5px] font-medium" style={{ color: "var(--adm-text)" }}>
                         {flag.key}
                       </div>
                       {flag.description && (
-                        <div className="mt-0.5 text-[11px]" style={{ color: 'var(--adm-text-3)' }}>
+                        <div className="mt-0.5 text-[11px]" style={{ color: "var(--adm-text-3)" }}>
                           {flag.description}
                         </div>
                       )}
-                      <div className="mt-0.5 text-[10px]" style={{ color: 'var(--adm-text-3)' }}>
+                      <div className="mt-0.5 text-[10px]" style={{ color: "var(--adm-text-3)" }}>
                         {t.settings.flagUpdated}: {new Date(flag.updatedAt).toLocaleString()}
                       </div>
                     </div>
                     <IfPermission
                       permission="SETTINGS_MANAGE"
                       fallback={
-                        <span className="text-[11px]" style={{ color: flag.enabled ? 'var(--adm-good)' : 'var(--adm-text-3)' }}>
+                        <span className="text-[11px]" style={{ color: flag.enabled ? "var(--adm-good)" : "var(--adm-text-3)" }}>
                           {flag.enabled ? t.common.enabled : t.common.disabled}
                         </span>
                       }
@@ -110,18 +110,18 @@ export function SettingsPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+      <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
         {label}
       </div>
-      <div className="mt-0.5 font-medium" style={{ color: 'var(--adm-text)' }}>
+      <div className="mt-0.5 font-medium" style={{ color: "var(--adm-text)" }}>
         {value}
       </div>
     </div>
-  )
+  );
 }

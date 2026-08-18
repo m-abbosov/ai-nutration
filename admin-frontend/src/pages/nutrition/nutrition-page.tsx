@@ -1,29 +1,31 @@
-import { useState } from 'react'
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { useAdminNutrition } from '@/shared/api/nutrition'
-import { AdminHeader } from '@/shared/ui/admin-header'
-import { KpiCard } from '@/shared/ui/kpi-card'
-import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from '@/shared/ui/chart-card'
-import { AdminCard, AdminCardHeader, AdminCardTitle } from '@/shared/ui/card'
-import { DateRangePicker } from '@/shared/ui/date-range-picker'
-import { AdminErrorState } from '@/shared/ui/error-state'
-import { AdminEmptyState } from '@/shared/ui/error-state'
-import { KpiGridSkeleton, ChartSkeleton } from '@/shared/ui/skeleton'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { Range } from '@/shared/api/types'
+import { useState } from "react";
+
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+import { useAdminNutrition } from "@/shared/api/nutrition";
+import type { Range } from "@/shared/api/types";
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { AdminHeader } from "@/shared/ui/admin-header";
+import { AdminCard, AdminCardHeader, AdminCardTitle } from "@/shared/ui/card";
+import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from "@/shared/ui/chart-card";
+import { DateRangePicker } from "@/shared/ui/date-range-picker";
+import { AdminErrorState } from "@/shared/ui/error-state";
+import { AdminEmptyState } from "@/shared/ui/error-state";
+import { KpiCard } from "@/shared/ui/kpi-card";
+import { ChartSkeleton, KpiGridSkeleton } from "@/shared/ui/skeleton";
 
 export function NutritionPage() {
-  const { t, lang } = useAdminTranslation()
-  const [range, setRange] = useState<Range>('30d')
-  const { data, isLoading, isError, refetch } = useAdminNutrition(range)
+  const { t, lang } = useAdminTranslation();
+  const [range, setRange] = useState<Range>("30d");
+  const { data, isLoading, isError, refetch } = useAdminNutrition(range);
 
   const rangeOptions = [
-    { value: '7d' as Range, label: t.ranges.d7 },
-    { value: '30d' as Range, label: t.ranges.d30 },
-    { value: '90d' as Range, label: t.ranges.d90 },
-    { value: '1y' as Range, label: t.ranges.y1 },
-  ]
+    { value: "7d" as Range, label: t.ranges.d7 },
+    { value: "30d" as Range, label: t.ranges.d30 },
+    { value: "90d" as Range, label: t.ranges.d90 },
+    { value: "1y" as Range, label: t.ranges.y1 },
+  ];
 
   return (
     <div>
@@ -104,7 +106,7 @@ export function NutritionPage() {
 
             <AdminChartCard title={t.nutrition.mealTypeDistributionTitle}>
               {data.mealTypeDistribution.length === 0 ? (
-                <div className="flex h-full items-center justify-center text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+                <div className="flex h-full items-center justify-center text-[12px]" style={{ color: "var(--adm-text-3)" }}>
                   {t.common.noData}
                 </div>
               ) : (
@@ -120,12 +122,12 @@ export function NutritionPage() {
                         <AdminChartTooltip
                           active={active}
                           items={payload?.map((p) => {
-                            const idx = data.mealTypeDistribution.findIndex((m) => m.mealType === (p.payload as { mealType: string }).mealType)
+                            const idx = data.mealTypeDistribution.findIndex((m) => m.mealType === (p.payload as { mealType: string }).mealType);
                             return {
                               name: String(p.name),
                               value: Number((p.payload as { percent: number }).percent),
                               color: adminChartColors[idx % adminChartColors.length],
-                            }
+                            };
                           })}
                           formatValue={(v) => `${v}%`}
                         />
@@ -147,22 +149,22 @@ export function NutritionPage() {
             ) : (
               <table className="w-full text-[12px]">
                 <thead>
-                  <tr className="border-b" style={{ borderColor: 'var(--adm-border)' }}>
-                    <th className="px-2 py-1.5 text-left text-[10.5px] font-semibold uppercase" style={{ color: 'var(--adm-text-3)' }}>
+                  <tr className="border-b" style={{ borderColor: "var(--adm-border)" }}>
+                    <th className="px-2 py-1.5 text-left text-[10.5px] font-semibold uppercase" style={{ color: "var(--adm-text-3)" }}>
                       {t.nutrition.colFood}
                     </th>
-                    <th className="px-2 py-1.5 text-right text-[10.5px] font-semibold uppercase" style={{ color: 'var(--adm-text-3)' }}>
+                    <th className="px-2 py-1.5 text-right text-[10.5px] font-semibold uppercase" style={{ color: "var(--adm-text-3)" }}>
                       {t.nutrition.colCount}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.topLoggedFoods.map((food) => (
-                    <tr key={food.name} className="border-b last:border-b-0" style={{ borderColor: 'var(--adm-border)' }}>
-                      <td className="px-2 py-1.5" style={{ color: 'var(--adm-text)' }}>
+                    <tr key={food.name} className="border-b last:border-b-0" style={{ borderColor: "var(--adm-border)" }}>
+                      <td className="px-2 py-1.5" style={{ color: "var(--adm-text)" }}>
                         {food.name}
                       </td>
-                      <td className="adm-mono px-2 py-1.5 text-right" style={{ color: 'var(--adm-text)' }}>
+                      <td className="adm-mono px-2 py-1.5 text-right" style={{ color: "var(--adm-text)" }}>
                         {fmtNumber(food.count, lang)}
                       </td>
                     </tr>
@@ -174,21 +176,21 @@ export function NutritionPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function StatTile({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div className="rounded-[var(--adm-radius-lg)] border p-3" style={{ background: 'var(--adm-surface)', borderColor: 'var(--adm-border)' }}>
+    <div className="rounded-[var(--adm-radius-lg)] border p-3" style={{ background: "var(--adm-surface)", borderColor: "var(--adm-border)" }}>
       <div className="flex items-center gap-1.5">
         <span className="h-2 w-2 rounded-full" style={{ background: color }} />
-        <span className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+        <span className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
           {label}
         </span>
       </div>
-      <div className="adm-mono mt-1.5 text-[16px] font-semibold" style={{ color: 'var(--adm-text)' }}>
+      <div className="adm-mono mt-1.5 text-[16px] font-semibold" style={{ color: "var(--adm-text)" }}>
         {value}
       </div>
     </div>
-  )
+  );
 }

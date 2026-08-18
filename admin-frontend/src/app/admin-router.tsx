@@ -1,34 +1,29 @@
-import { lazy, Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
-import { AdminShell } from '@/app/admin-shell'
-import { AdminFullscreenSpinner } from '@/shared/ui/admin-fullscreen-spinner'
-import { RequireAdminAuth, RequireAdminGuest, RequirePagePermission } from '@/shared/rbac/route-guards'
+import { Suspense, lazy } from "react";
 
-const LoginPage = lazy(() => import('@/pages/login/login-page').then((m) => ({ default: m.AdminLoginPage })))
-const AuthCallbackPage = lazy(() =>
-  import('@/pages/auth-callback/auth-callback-page').then((m) => ({ default: m.AdminAuthCallbackPage })),
-)
-const DashboardPage = lazy(() => import('@/pages/dashboard/dashboard-page').then((m) => ({ default: m.DashboardPage })))
-const UsersPage = lazy(() => import('@/pages/users/users-page').then((m) => ({ default: m.UsersPage })))
-const UserDetailPage = lazy(() => import('@/pages/users/user-detail-page').then((m) => ({ default: m.UserDetailPage })))
-const NutritionPage = lazy(() => import('@/pages/nutrition/nutrition-page').then((m) => ({ default: m.NutritionPage })))
-const AiPage = lazy(() => import('@/pages/ai/ai-page').then((m) => ({ default: m.AiPage })))
-const ConversationsPage = lazy(() =>
-  import('@/pages/conversations/conversations-page').then((m) => ({ default: m.ConversationsPage })),
-)
+import { Route, Routes } from "react-router-dom";
+
+import { AdminShell } from "@/app/admin-shell";
+
+import { RequireAdminAuth, RequireAdminGuest, RequirePagePermission } from "@/shared/rbac/route-guards";
+import { AdminFullscreenSpinner } from "@/shared/ui/admin-fullscreen-spinner";
+
+const LoginPage = lazy(() => import("@/pages/login/login-page").then((m) => ({ default: m.AdminLoginPage })));
+const AuthCallbackPage = lazy(() => import("@/pages/auth-callback/auth-callback-page").then((m) => ({ default: m.AdminAuthCallbackPage })));
+const DashboardPage = lazy(() => import("@/pages/dashboard/dashboard-page").then((m) => ({ default: m.DashboardPage })));
+const UsersPage = lazy(() => import("@/pages/users/users-page").then((m) => ({ default: m.UsersPage })));
+const UserDetailPage = lazy(() => import("@/pages/users/user-detail-page").then((m) => ({ default: m.UserDetailPage })));
+const NutritionPage = lazy(() => import("@/pages/nutrition/nutrition-page").then((m) => ({ default: m.NutritionPage })));
+const AiPage = lazy(() => import("@/pages/ai/ai-page").then((m) => ({ default: m.AiPage })));
+const ConversationsPage = lazy(() => import("@/pages/conversations/conversations-page").then((m) => ({ default: m.ConversationsPage })));
 const ConversationDetailPage = lazy(() =>
-  import('@/pages/conversations/conversation-detail-page').then((m) => ({ default: m.ConversationDetailPage })),
-)
-const AnalyticsPage = lazy(() => import('@/pages/analytics/analytics-page').then((m) => ({ default: m.AnalyticsPage })))
-const SystemPage = lazy(() => import('@/pages/system/system-page').then((m) => ({ default: m.SystemPage })))
-const SystemErrorsPage = lazy(() =>
-  import('@/pages/system/system-errors-page').then((m) => ({ default: m.SystemErrorsPage })),
-)
-const AdminUsersPage = lazy(() => import('@/pages/admin-users/admin-users-page').then((m) => ({ default: m.AdminUsersPage })))
-const AdminUserDetailPage = lazy(() =>
-  import('@/pages/admin-users/admin-user-detail-page').then((m) => ({ default: m.AdminUserDetailPage })),
-)
-const SettingsPage = lazy(() => import('@/pages/settings/settings-page').then((m) => ({ default: m.SettingsPage })))
+  import("@/pages/conversations/conversation-detail-page").then((m) => ({ default: m.ConversationDetailPage })),
+);
+const AnalyticsPage = lazy(() => import("@/pages/analytics/analytics-page").then((m) => ({ default: m.AnalyticsPage })));
+const SystemPage = lazy(() => import("@/pages/system/system-page").then((m) => ({ default: m.SystemPage })));
+const SystemErrorsPage = lazy(() => import("@/pages/system/system-errors-page").then((m) => ({ default: m.SystemErrorsPage })));
+const AdminUsersPage = lazy(() => import("@/pages/admin-users/admin-users-page").then((m) => ({ default: m.AdminUsersPage })));
+const AdminUserDetailPage = lazy(() => import("@/pages/admin-users/admin-user-detail-page").then((m) => ({ default: m.AdminUserDetailPage })));
+const SettingsPage = lazy(() => import("@/pages/settings/settings-page").then((m) => ({ default: m.SettingsPage })));
 
 export function AdminRouter() {
   return (
@@ -163,5 +158,5 @@ export function AdminRouter() {
         </Route>
       </Routes>
     </Suspense>
-  )
+  );
 }

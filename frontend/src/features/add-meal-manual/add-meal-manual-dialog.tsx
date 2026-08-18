@@ -1,11 +1,13 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useAddMeal, useMeals } from '@/shared/api/meals'
-import { MealFormDialog } from '@/features/add-meal-manual/meal-form-dialog'
+import { useTranslation } from "@nutriai/shared/i18n";
+
+import { useAddMeal, useMeals } from "@/shared/api/meals";
+
+import { MealFormDialog } from "@/features/add-meal-manual/meal-form-dialog";
 
 export function AddMealManualDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const { t } = useTranslation()
-  const addMeal = useAddMeal()
-  const { data: previousMeals } = useMeals()
+  const { t } = useTranslation();
+  const addMeal = useAddMeal();
+  const { data: previousMeals } = useMeals();
 
   return (
     <MealFormDialog
@@ -30,5 +32,5 @@ export function AddMealManualDialog({ open, onOpenChange }: { open: boolean; onO
         )
       }
     />
-  )
+  );
 }

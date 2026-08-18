@@ -1,39 +1,43 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtDecimal } from '@nutriai/shared/lib/format'
-import type { Gender } from '@nutriai/shared/api/types'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
-import { calculateBodyFat } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
+import { useState } from "react";
+
+import type { Gender } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtDecimal } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { calculateBodyFat } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 
 const CATEGORY_TONE = {
-  essential: { color: 'var(--pro)', tint: 'var(--proT)' },
-  athletes: { color: 'var(--acc)', tint: 'var(--accT)' },
-  fitness: { color: 'var(--acc)', tint: 'var(--accT)' },
-  average: { color: 'var(--carb)', tint: 'var(--carbT)' },
-  obese: { color: 'var(--fat)', tint: 'var(--fatT)' },
-} as const
+  essential: { color: "var(--pro)", tint: "var(--proT)" },
+  athletes: { color: "var(--acc)", tint: "var(--accT)" },
+  fitness: { color: "var(--acc)", tint: "var(--accT)" },
+  average: { color: "var(--carb)", tint: "var(--carbT)" },
+  obese: { color: "var(--fat)", tint: "var(--fatT)" },
+} as const;
 
-const CATEGORY_ORDER = ['essential', 'athletes', 'fitness', 'average', 'obese'] as const
+const CATEGORY_ORDER = ["essential", "athletes", "fitness", "average", "obese"] as const;
 
 export default function BodyFatPage() {
-  const { t, lang } = useTranslation()
-  const [gender, setGender] = useState<Gender>('MALE')
-  const [heightCm, setHeightCm] = useState('175')
-  const [neckCm, setNeckCm] = useState('38')
-  const [waistCm, setWaistCm] = useState('85')
-  const [hipCm, setHipCm] = useState('95')
+  const { t, lang } = useTranslation();
+  const [gender, setGender] = useState<Gender>("MALE");
+  const [heightCm, setHeightCm] = useState("175");
+  const [neckCm, setNeckCm] = useState("38");
+  const [waistCm, setWaistCm] = useState("85");
+  const [hipCm, setHipCm] = useState("95");
 
-  const isFemale = gender === 'FEMALE'
-  const h = parseFloat(heightCm)
-  const neck = parseFloat(neckCm)
-  const waist = parseFloat(waistCm)
-  const hip = parseFloat(hipCm)
-  const ok = h > 0 && neck > 0 && waist > neck && (!isFemale || (hip > 0 && waist + hip > neck))
+  const isFemale = gender === "FEMALE";
+  const h = parseFloat(heightCm);
+  const neck = parseFloat(neckCm);
+  const waist = parseFloat(waistCm);
+  const hip = parseFloat(hipCm);
+  const ok = h > 0 && neck > 0 && waist > neck && (!isFemale || (hip > 0 && waist + hip > neck));
 
-  const result = ok ? calculateBodyFat(gender, h, neck, waist, isFemale ? hip : undefined) : null
+  const result = ok ? calculateBodyFat(gender, h, neck, waist, isFemale ? hip : undefined) : null;
 
   return (
     <CalculatorShell
@@ -90,14 +94,10 @@ export default function BodyFatPage() {
                 <div
                   key={c}
                   className="flex items-center justify-between rounded-[10px] px-3 py-2 text-[12.5px]"
-                  style={{ background: c === result.category ? CATEGORY_TONE[c].tint : 'transparent' }}
+                  style={{ background: c === result.category ? CATEGORY_TONE[c].tint : "transparent" }}
                 >
-                  <span style={{ color: c === result.category ? CATEGORY_TONE[c].color : 'var(--tx2)' }}>
-                    {t.calcPages.bodyfat.categories[c]}
-                  </span>
-                  {c === result.category && (
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: CATEGORY_TONE[c].color }} />
-                  )}
+                  <span style={{ color: c === result.category ? CATEGORY_TONE[c].color : "var(--tx2)" }}>{t.calcPages.bodyfat.categories[c]}</span>
+                  {c === result.category && <span className="h-1.5 w-1.5 rounded-full" style={{ background: CATEGORY_TONE[c].color }} />}
                 </div>
               ))}
             </div>
@@ -107,5 +107,5 @@ export default function BodyFatPage() {
         )
       }
     />
-  )
+  );
 }

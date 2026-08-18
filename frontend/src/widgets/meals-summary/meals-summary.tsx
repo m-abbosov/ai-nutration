@@ -1,18 +1,19 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber, clamp } from '@nutriai/shared/lib/format'
-import { useMountedTransition } from '@/shared/lib/use-mounted-transition'
-import type { NutritionDailyDto } from '@nutriai/shared/api/types'
+import type { NutritionDailyDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { clamp, fmtNumber } from "@nutriai/shared/lib/format";
+
+import { useMountedTransition } from "@/shared/lib/use-mounted-transition";
 
 export function MealsSummary({ daily }: { daily: NutritionDailyDto }) {
-  const { t, lang } = useTranslation()
-  const mounted = useMountedTransition()
-  const pct = clamp(Math.round((daily.consumed / (daily.target || 1)) * 100), 0, 100)
+  const { t, lang } = useTranslation();
+  const mounted = useMountedTransition();
+  const pct = clamp(Math.round((daily.consumed / (daily.target || 1)) * 100), 0, 100);
 
   return (
     <section className="relative mt-[22px] overflow-hidden rounded-[20px] border border-line bg-surf p-5 md:p-[22px]">
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: 'radial-gradient(90% 140% at 0 0, var(--accT), transparent 58%)' }}
+        style={{ background: "radial-gradient(90% 140% at 0 0, var(--accT), transparent 58%)" }}
       />
       <div className="relative flex flex-wrap items-end gap-6">
         <div className="min-w-[200px] flex-1">
@@ -36,9 +37,9 @@ export function MealsSummary({ daily }: { daily: NutritionDailyDto }) {
         <div
           className="h-full rounded-full transition-[width] duration-1000"
           style={{
-            background: 'linear-gradient(90deg, var(--accD), var(--acc))',
-            width: mounted ? `${pct}%` : '0%',
-            boxShadow: '0 0 12px var(--accG)',
+            background: "linear-gradient(90deg, var(--accD), var(--acc))",
+            width: mounted ? `${pct}%` : "0%",
+            boxShadow: "0 0 12px var(--accG)",
           }}
         />
       </div>
@@ -49,17 +50,14 @@ export function MealsSummary({ daily }: { daily: NutritionDailyDto }) {
         </span>
       </div>
     </section>
-  )
+  );
 }
 
 function MacroPill({ color, bg, label, value }: { color: string; bg: string; label: string; value: string }) {
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] ${bg}`}
-      style={{ color }}
-    >
+    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] ${bg}`} style={{ color }}>
       <span className="h-[5px] w-[5px] rounded-full" style={{ background: color }} />
       {label} {value}
     </span>
-  )
+  );
 }

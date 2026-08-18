@@ -6,10 +6,10 @@ export function GaugeBar({
   ticks,
   legend,
 }: {
-  segments: { color: string; widthPct: number }[]
-  markerPct: number
-  ticks: string[]
-  legend: { color: string; label: string }[]
+  segments: { color: string; widthPct: number }[];
+  markerPct: number;
+  ticks: string[];
+  legend: { color: string; label: string }[];
 }) {
   return (
     <div className="mt-6">
@@ -19,10 +19,7 @@ export function GaugeBar({
         ))}
       </div>
       <div className="relative h-5">
-        <div
-          className="absolute top-[-3px] transition-[left] duration-700"
-          style={{ left: `${markerPct}%`, transform: 'translateX(-50%)' }}
-        >
+        <div className="absolute top-[-3px] transition-[left] duration-700" style={{ left: `${markerPct}%`, transform: "translateX(-50%)" }}>
           <div className="mx-auto h-[13px] w-[2px] rounded-sm bg-tx" />
           <div className="-mt-0.5 h-[9px] w-[9px] rounded-full border-2 border-bg2 bg-tx" />
         </div>
@@ -41,5 +38,5 @@ export function GaugeBar({
         ))}
       </div>
     </div>
-  )
+  );
 }

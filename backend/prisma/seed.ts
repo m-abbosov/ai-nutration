@@ -8,7 +8,11 @@
  * Run with: npm run seed  (wraps `ts-node prisma/seed.ts`, also wired as
  * `prisma.seed` in package.json so `npx prisma db seed` works too).
  */
-import { AdminPermissionKey, AdminRoleName, PrismaClient } from '@prisma/client';
+import {
+  AdminPermissionKey,
+  AdminRoleName,
+  PrismaClient,
+} from '@prisma/client';
 import { calculateCalorieTargets } from '../src/users/calorie.util';
 
 const prisma = new PrismaClient();
@@ -66,7 +70,8 @@ const FEATURE_FLAGS: {
   {
     key: 'AI_CHAT_ENABLED',
     enabled: true,
-    description: 'Whether the AI chat (nutrition coach) feature is available to users',
+    description:
+      'Whether the AI chat (nutrition coach) feature is available to users',
   },
   {
     key: 'RECOMMENDATIONS_ENABLED',
@@ -86,7 +91,8 @@ const FEATURE_FLAGS: {
   {
     key: 'MAINTENANCE_MODE',
     enabled: false,
-    description: 'When on, blocks regular user-facing endpoints with a 503 while admin/auth/health stay reachable',
+    description:
+      'When on, blocks regular user-facing endpoints with a 503 while admin/auth/health stay reachable',
   },
 ];
 
@@ -130,10 +136,16 @@ async function seedAdminPanel(devUserId: string): Promise<void> {
     const desiredPermissionIds = new Set(
       permissionKeys.map((key) => permissionByKey.get(key)!),
     );
-    const currentPermissionIds = new Set(currentGrants.map((g) => g.permissionId));
+    const currentPermissionIds = new Set(
+      currentGrants.map((g) => g.permissionId),
+    );
 
-    const toAdd = [...desiredPermissionIds].filter((id) => !currentPermissionIds.has(id));
-    const toRemove = [...currentPermissionIds].filter((id) => !desiredPermissionIds.has(id));
+    const toAdd = [...desiredPermissionIds].filter(
+      (id) => !currentPermissionIds.has(id),
+    );
+    const toRemove = [...currentPermissionIds].filter(
+      (id) => !desiredPermissionIds.has(id),
+    );
 
     if (toAdd.length) {
       await prisma.adminRolePermission.createMany({
@@ -159,11 +171,17 @@ async function seedAdminPanel(devUserId: string): Promise<void> {
     await prisma.featureFlag.upsert({
       where: { key: flag.key },
       update: { description: flag.description },
-      create: { key: flag.key, enabled: flag.enabled, description: flag.description },
+      create: {
+        key: flag.key,
+        enabled: flag.enabled,
+        description: flag.description,
+      },
     });
   }
 
-  console.log('Seeded admin roles, permissions, feature flags; promoted dev user to SUPER_ADMIN.');
+  console.log(
+    'Seeded admin roles, permissions, feature flags; promoted dev user to SUPER_ADMIN.',
+  );
 }
 
 interface SeedMealItem {
@@ -184,16 +202,86 @@ interface SeedMeal {
 }
 
 // Realistic-ish Uzbek food nutrition estimates (per typical serving).
-const OSH: SeedMealItem = { name: "Osh (Plov)", quantity: '1 plate (~350g)', calories: 650, protein: 22, carbs: 78, fat: 26 };
-const MASTAVA: SeedMealItem = { name: 'Mastava', quantity: '1 bowl (~300ml)', calories: 220, protein: 10, carbs: 24, fat: 9 };
-const SOMSA: SeedMealItem = { name: 'Somsa', quantity: '1 piece (~120g)', calories: 310, protein: 12, carbs: 28, fat: 17 };
-const TOVUQ: SeedMealItem = { name: "Tovuq go'shti (grilled chicken)", quantity: '150g', calories: 250, protein: 38, carbs: 0, fat: 10 };
-const GRECHKA: SeedMealItem = { name: 'Grechka (buckwheat)', quantity: '1 cup cooked (~180g)', calories: 190, protein: 7, carbs: 38, fat: 2 };
-const TUXUM: SeedMealItem = { name: "Qaynatilgan tuxum (boiled egg)", quantity: '2 eggs', calories: 155, protein: 13, carbs: 1, fat: 11 };
-const YOGURT: SeedMealItem = { name: 'Greek yogurt', quantity: '200g', calories: 130, protein: 18, carbs: 8, fat: 3 };
-const ACHICHUK: SeedMealItem = { name: 'Achichuk salad', quantity: '1 bowl (~200g)', calories: 60, protein: 2, carbs: 12, fat: 1 };
-const OLMA: SeedMealItem = { name: "Olma (apple)", quantity: '1 medium', calories: 95, protein: 0.5, carbs: 25, fat: 0.3 };
-const JOXORI: SeedMealItem = { name: "Jo'xori (corn)", quantity: '1 ear', calories: 120, protein: 4, carbs: 27, fat: 1.5 };
+const OSH: SeedMealItem = {
+  name: 'Osh (Plov)',
+  quantity: '1 plate (~350g)',
+  calories: 650,
+  protein: 22,
+  carbs: 78,
+  fat: 26,
+};
+const MASTAVA: SeedMealItem = {
+  name: 'Mastava',
+  quantity: '1 bowl (~300ml)',
+  calories: 220,
+  protein: 10,
+  carbs: 24,
+  fat: 9,
+};
+const SOMSA: SeedMealItem = {
+  name: 'Somsa',
+  quantity: '1 piece (~120g)',
+  calories: 310,
+  protein: 12,
+  carbs: 28,
+  fat: 17,
+};
+const TOVUQ: SeedMealItem = {
+  name: "Tovuq go'shti (grilled chicken)",
+  quantity: '150g',
+  calories: 250,
+  protein: 38,
+  carbs: 0,
+  fat: 10,
+};
+const GRECHKA: SeedMealItem = {
+  name: 'Grechka (buckwheat)',
+  quantity: '1 cup cooked (~180g)',
+  calories: 190,
+  protein: 7,
+  carbs: 38,
+  fat: 2,
+};
+const TUXUM: SeedMealItem = {
+  name: 'Qaynatilgan tuxum (boiled egg)',
+  quantity: '2 eggs',
+  calories: 155,
+  protein: 13,
+  carbs: 1,
+  fat: 11,
+};
+const YOGURT: SeedMealItem = {
+  name: 'Greek yogurt',
+  quantity: '200g',
+  calories: 130,
+  protein: 18,
+  carbs: 8,
+  fat: 3,
+};
+const ACHICHUK: SeedMealItem = {
+  name: 'Achichuk salad',
+  quantity: '1 bowl (~200g)',
+  calories: 60,
+  protein: 2,
+  carbs: 12,
+  fat: 1,
+};
+const OLMA: SeedMealItem = {
+  name: 'Olma (apple)',
+  quantity: '1 medium',
+  calories: 95,
+  protein: 0.5,
+  carbs: 25,
+  fat: 0.3,
+};
+const JOXORI: SeedMealItem = {
+  name: "Jo'xori (corn)",
+  quantity: '1 ear',
+  calories: 120,
+  protein: 4,
+  carbs: 27,
+  fat: 1.5,
+};
 
 function meal(
   mealType: SeedMeal['mealType'],
@@ -246,7 +334,13 @@ function sumTotals(items: SeedMealItem[]) {
 
 function dateOnlyDaysAgo(daysAgo: number): Date {
   const now = new Date();
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - daysAgo));
+  return new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() - daysAgo,
+    ),
+  );
 }
 
 async function main() {
@@ -325,7 +419,9 @@ async function main() {
   }
 
   const mealCount = await prisma.meal.count({ where: { userId: user.id } });
-  console.log(`Seeded user ${user.email} (${user.id}) with ${mealCount} meals across ${DAYS_OF_HISTORY} days.`);
+  console.log(
+    `Seeded user ${user.email} (${user.id}) with ${mealCount} meals across ${DAYS_OF_HISTORY} days.`,
+  );
 
   await seedAdminPanel(user.id);
 }

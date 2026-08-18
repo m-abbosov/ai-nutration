@@ -1,43 +1,31 @@
-import { useState } from 'react'
-import { Activity, AlertTriangle, Bot, Salad, UserPlus, Users } from 'lucide-react'
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
-import { useAdminDashboard } from '@/shared/api/dashboard'
-import { AdminHeader } from '@/shared/ui/admin-header'
-import { KpiCard } from '@/shared/ui/kpi-card'
-import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from '@/shared/ui/chart-card'
-import { AdminCard, AdminCardHeader, AdminCardTitle } from '@/shared/ui/card'
-import { DateRangePicker } from '@/shared/ui/date-range-picker'
-import { AdminErrorState } from '@/shared/ui/error-state'
-import { KpiGridSkeleton, ChartSkeleton } from '@/shared/ui/skeleton'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { Range } from '@/shared/api/types'
+import { useState } from "react";
+
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { Activity, AlertTriangle, Bot, Salad, UserPlus, Users } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+import { useAdminDashboard } from "@/shared/api/dashboard";
+import type { Range } from "@/shared/api/types";
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { AdminHeader } from "@/shared/ui/admin-header";
+import { AdminCard, AdminCardHeader, AdminCardTitle } from "@/shared/ui/card";
+import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from "@/shared/ui/chart-card";
+import { DateRangePicker } from "@/shared/ui/date-range-picker";
+import { AdminErrorState } from "@/shared/ui/error-state";
+import { KpiCard } from "@/shared/ui/kpi-card";
+import { ChartSkeleton, KpiGridSkeleton } from "@/shared/ui/skeleton";
 
 export function DashboardPage() {
-  const { t, lang } = useAdminTranslation()
-  const [range, setRange] = useState<Range>('7d')
-  const { data, isLoading, isError, refetch, isFetching } = useAdminDashboard(range)
+  const { t, lang } = useAdminTranslation();
+  const [range, setRange] = useState<Range>("7d");
+  const { data, isLoading, isError, refetch, isFetching } = useAdminDashboard(range);
 
   const rangeOptions = [
-    { value: '7d' as Range, label: t.ranges.d7 },
-    { value: '30d' as Range, label: t.ranges.d30 },
-    { value: '90d' as Range, label: t.ranges.d90 },
-    { value: '1y' as Range, label: t.ranges.y1 },
-  ]
+    { value: "7d" as Range, label: t.ranges.d7 },
+    { value: "30d" as Range, label: t.ranges.d30 },
+    { value: "90d" as Range, label: t.ranges.d90 },
+    { value: "1y" as Range, label: t.ranges.y1 },
+  ];
 
   return (
     <div>
@@ -60,7 +48,7 @@ export function DashboardPage() {
       {isError && !isLoading && <AdminErrorState onRetry={() => refetch()} />}
 
       {data && (
-        <div className="flex flex-col gap-4" style={{ opacity: isFetching ? 0.7 : 1, transition: 'opacity .15s' }}>
+        <div className="flex flex-col gap-4" style={{ opacity: isFetching ? 0.7 : 1, transition: "opacity .15s" }}>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             <KpiCard
               index={0}
@@ -177,8 +165,8 @@ export function DashboardPage() {
                 <Stat label={t.dashboard.aiSuccess} value={fmtNumber(data.aiUsage.successCount, lang)} tone="good" />
                 <Stat label={t.dashboard.aiFailure} value={fmtNumber(data.aiUsage.failureCount, lang)} tone="critical" />
               </dl>
-              <div className="mt-3 border-t pt-3" style={{ borderColor: 'var(--adm-border)' }}>
-                <div className="mb-1.5 text-[10.5px] font-medium uppercase tracking-wide" style={{ color: 'var(--adm-text-3)' }}>
+              <div className="mt-3 border-t pt-3" style={{ borderColor: "var(--adm-border)" }}>
+                <div className="mb-1.5 text-[10.5px] font-medium uppercase tracking-wide" style={{ color: "var(--adm-text-3)" }}>
                   {t.dashboard.aiTokens}
                 </div>
                 {data.aiUsage.tokenUsage ? (
@@ -188,7 +176,7 @@ export function DashboardPage() {
                     <Stat compact label={t.dashboard.aiTokensTotal} value={fmtNumber(data.aiUsage.tokenUsage.totalTokens, lang)} />
                   </dl>
                 ) : (
-                  <p className="text-[11.5px]" style={{ color: 'var(--adm-text-3)' }}>
+                  <p className="text-[11.5px]" style={{ color: "var(--adm-text-3)" }}>
                     {t.dashboard.aiTokensUnavailable}
                   </p>
                 )}
@@ -211,12 +199,12 @@ export function DashboardPage() {
                         <AdminChartTooltip
                           active={active}
                           items={payload?.map((p) => {
-                            const idx = data.userGoals.findIndex((g) => g.goal === (p.payload as { goal: string }).goal)
+                            const idx = data.userGoals.findIndex((g) => g.goal === (p.payload as { goal: string }).goal);
                             return {
                               name: String(p.name),
                               value: Number((p.payload as { percent: number }).percent),
                               color: adminChartColors[idx % adminChartColors.length],
-                            }
+                            };
                           })}
                           formatValue={(v) => `${v}%`}
                         />
@@ -234,21 +222,9 @@ export function DashboardPage() {
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie
-                      data={data.languageDistribution}
-                      dataKey="count"
-                      nameKey="language"
-                      innerRadius={44}
-                      outerRadius={70}
-                      paddingAngle={2}
-                    >
+                    <Pie data={data.languageDistribution} dataKey="count" nameKey="language" innerRadius={44} outerRadius={70} paddingAngle={2}>
                       {data.languageDistribution.map((entry, i) => (
-                        <Cell
-                          key={entry.language}
-                          fill={adminChartColors[i % adminChartColors.length]}
-                          stroke="var(--adm-surface)"
-                          strokeWidth={2}
-                        />
+                        <Cell key={entry.language} fill={adminChartColors[i % adminChartColors.length]} stroke="var(--adm-surface)" strokeWidth={2} />
                       ))}
                     </Pie>
                     <Tooltip
@@ -256,14 +232,12 @@ export function DashboardPage() {
                         <AdminChartTooltip
                           active={active}
                           items={payload?.map((p) => {
-                            const idx = data.languageDistribution.findIndex(
-                              (g) => g.language === (p.payload as { language: string }).language,
-                            )
+                            const idx = data.languageDistribution.findIndex((g) => g.language === (p.payload as { language: string }).language);
                             return {
                               name: String(p.name),
                               value: Number((p.payload as { percent: number }).percent),
                               color: adminChartColors[idx % adminChartColors.length],
-                            }
+                            };
                           })}
                           formatValue={(v) => `${v}%`}
                         />
@@ -281,7 +255,7 @@ export function DashboardPage() {
               <AdminCardTitle>{t.dashboard.recentActivityTitle}</AdminCardTitle>
             </AdminCardHeader>
             {data.recentActivity.length === 0 ? (
-              <p className="py-6 text-center text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+              <p className="py-6 text-center text-[12px]" style={{ color: "var(--adm-text-3)" }}>
                 {t.dashboard.noActivity}
               </p>
             ) : (
@@ -290,13 +264,13 @@ export function DashboardPage() {
                   <li
                     key={item.id}
                     className="flex items-center justify-between gap-3 border-b py-2 text-[12px] last:border-b-0"
-                    style={{ borderColor: 'var(--adm-border)' }}
+                    style={{ borderColor: "var(--adm-border)" }}
                   >
-                    <span style={{ color: 'var(--adm-text)' }}>
+                    <span style={{ color: "var(--adm-text)" }}>
                       {item.label}
-                      {item.userName && <span style={{ color: 'var(--adm-text-3)' }}> — {item.userName}</span>}
+                      {item.userName && <span style={{ color: "var(--adm-text-3)" }}> — {item.userName}</span>}
                     </span>
-                    <span className="adm-mono flex-none text-[11px]" style={{ color: 'var(--adm-text-3)' }}>
+                    <span className="adm-mono flex-none text-[11px]" style={{ color: "var(--adm-text-3)" }}>
                       {new Date(item.createdAt).toLocaleString()}
                     </span>
                   </li>
@@ -307,30 +281,30 @@ export function DashboardPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-function Stat({ label, value, tone, compact }: { label: string; value: string; tone?: 'good' | 'critical'; compact?: boolean }) {
+function Stat({ label, value, tone, compact }: { label: string; value: string; tone?: "good" | "critical"; compact?: boolean }) {
   return (
     <div>
-      <div className={compact ? 'text-[10px]' : 'text-[10.5px]'} style={{ color: 'var(--adm-text-3)' }}>
+      <div className={compact ? "text-[10px]" : "text-[10.5px]"} style={{ color: "var(--adm-text-3)" }}>
         {label}
       </div>
       <div
-        className={`adm-mono font-semibold ${compact ? 'text-[12px]' : 'text-[14px]'}`}
-        style={{ color: tone === 'good' ? 'var(--adm-good)' : tone === 'critical' ? 'var(--adm-critical)' : 'var(--adm-text)' }}
+        className={`adm-mono font-semibold ${compact ? "text-[12px]" : "text-[14px]"}`}
+        style={{ color: tone === "good" ? "var(--adm-good)" : tone === "critical" ? "var(--adm-critical)" : "var(--adm-text)" }}
       >
         {value}
       </div>
     </div>
-  )
+  );
 }
 
 function NoDataMini() {
-  const { t } = useAdminTranslation()
+  const { t } = useAdminTranslation();
   return (
-    <div className="flex h-full items-center justify-center text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+    <div className="flex h-full items-center justify-center text-[12px]" style={{ color: "var(--adm-text-3)" }}>
       {t.common.noData}
     </div>
-  )
+  );
 }

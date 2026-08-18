@@ -1,27 +1,21 @@
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/dialog'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Button } from '@/shared/ui/button'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
-import { useUpdateMe } from '@/shared/api/users'
-import { editProfileSchema } from '@/features/edit-profile/schema'
-import type { EditProfileFormValues } from '@/features/edit-profile/schema'
-import type { UserDto } from '@nutriai/shared/api/types'
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { UserDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { Controller, useForm } from "react-hook-form";
 
-export function EditProfileDialog({
-  user,
-  open,
-  onOpenChange,
-}: {
-  user: UserDto
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  const { t } = useTranslation()
-  const updateMe = useUpdateMe()
+import { useUpdateMe } from "@/shared/api/users";
+import { Button } from "@/shared/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { editProfileSchema } from "@/features/edit-profile/schema";
+import type { EditProfileFormValues } from "@/features/edit-profile/schema";
+
+export function EditProfileDialog({ user, open, onOpenChange }: { user: UserDto; open: boolean; onOpenChange: (open: boolean) => void }) {
+  const { t } = useTranslation();
+  const updateMe = useUpdateMe();
   const { register, control, handleSubmit } = useForm<EditProfileFormValues>({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
@@ -30,10 +24,10 @@ export function EditProfileDialog({
       weightKg: user.weightKg ?? undefined,
       goalWeightKg: user.goalWeightKg ?? undefined,
       gender: user.gender ?? undefined,
-      activityLevel: user.activityLevel ?? 'MODERATE',
-      goal: user.goal ?? 'MAINTAIN',
+      activityLevel: user.activityLevel ?? "MODERATE",
+      goal: user.goal ?? "MAINTAIN",
     },
-  })
+  });
 
   const submit = handleSubmit((values) => {
     updateMe.mutate(
@@ -41,14 +35,14 @@ export function EditProfileDialog({
         age: values.age,
         heightCm: values.heightCm,
         weightKg: values.weightKg,
-        goalWeightKg: values.goalWeightKg === '' || values.goalWeightKg == null ? undefined : Number(values.goalWeightKg),
+        goalWeightKg: values.goalWeightKg === "" || values.goalWeightKg == null ? undefined : Number(values.goalWeightKg),
         gender: values.gender,
         activityLevel: values.activityLevel,
         goal: values.goal,
       },
       { onSuccess: () => onOpenChange(false) },
-    )
-  })
+    );
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -61,21 +55,21 @@ export function EditProfileDialog({
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label htmlFor="age">{t.app.ageLabel}</Label>
-              <Input id="age" type="number" {...register('age')} />
+              <Input id="age" type="number" {...register("age")} />
             </div>
             <div>
               <Label htmlFor="heightCm">{t.app.heightLabel}</Label>
-              <Input id="heightCm" type="number" {...register('heightCm')} />
+              <Input id="heightCm" type="number" {...register("heightCm")} />
             </div>
             <div>
               <Label htmlFor="weightKg">{t.app.weightLabel}</Label>
-              <Input id="weightKg" type="number" step="0.1" {...register('weightKg')} />
+              <Input id="weightKg" type="number" step="0.1" {...register("weightKg")} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="goalWeightKg">{t.app.goalWeightLabel}</Label>
-              <Input id="goalWeightKg" type="number" step="0.1" {...register('goalWeightKg')} />
+              <Input id="goalWeightKg" type="number" step="0.1" {...register("goalWeightKg")} />
             </div>
             <div>
               <Label htmlFor="gender">{t.app.genderOptional}</Label>
@@ -83,10 +77,7 @@ export function EditProfileDialog({
                 name="gender"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    value={field.value ?? 'NONE'}
-                    onValueChange={(v) => field.onChange(v === 'NONE' ? undefined : v)}
-                  >
+                  <Select value={field.value ?? "NONE"} onValueChange={(v) => field.onChange(v === "NONE" ? undefined : v)}>
                     <SelectTrigger id="gender">
                       <SelectValue />
                     </SelectTrigger>
@@ -151,5 +142,5 @@ export function EditProfileDialog({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

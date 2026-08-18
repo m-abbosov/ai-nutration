@@ -1,14 +1,17 @@
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useAuth } from '@/app/providers/auth-provider'
-import { SettingsAppearance } from '@/widgets/settings-appearance/settings-appearance'
-import { SettingsAi } from '@/widgets/settings-ai/settings-ai'
-import { SettingsNotifications } from '@/widgets/settings-notifications/settings-notifications'
-import { SettingsAccount } from '@/widgets/settings-account/settings-account'
-import { Skeleton } from '@/shared/ui/skeleton'
+import { useTranslation } from "@nutriai/shared/i18n";
+
+import { useAuth } from "@/app/providers/auth-provider";
+
+import { Skeleton } from "@/shared/ui/skeleton";
+
+import { SettingsAccount } from "@/widgets/settings-account/settings-account";
+import { SettingsAi } from "@/widgets/settings-ai/settings-ai";
+import { SettingsAppearance } from "@/widgets/settings-appearance/settings-appearance";
+import { SettingsNotifications } from "@/widgets/settings-notifications/settings-notifications";
 
 export function SettingsPage() {
-  const { t } = useTranslation()
-  const { user, isLoading } = useAuth()
+  const { t } = useTranslation();
+  const { user, isLoading } = useAuth();
 
   return (
     <div className="animate-fu max-w-[760px] px-5 pb-[70px] pt-[22px] md:px-[34px]">
@@ -30,5 +33,5 @@ export function SettingsPage() {
         </>
       )}
     </div>
-  )
+  );
 }

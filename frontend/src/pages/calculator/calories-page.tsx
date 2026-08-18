@@ -1,28 +1,32 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { ActivityLevel, Gender, Goal } from '@nutriai/shared/api/types'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
-import { previewTargets } from '@/entities/user/lib/helpers'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
+import { useState } from "react";
+
+import type { ActivityLevel, Gender, Goal } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { previewTargets } from "@/entities/user/lib/helpers";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 
 export default function CaloriesPage() {
-  const { t, lang } = useTranslation()
-  const [gender, setGender] = useState<Gender>('MALE')
-  const [age, setAge] = useState('28')
-  const [heightCm, setHeightCm] = useState('175')
-  const [weightKg, setWeightKg] = useState('72')
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('MODERATE')
-  const [goal, setGoal] = useState<Goal>('MAINTAIN')
+  const { t, lang } = useTranslation();
+  const [gender, setGender] = useState<Gender>("MALE");
+  const [age, setAge] = useState("28");
+  const [heightCm, setHeightCm] = useState("175");
+  const [weightKg, setWeightKg] = useState("72");
+  const [activityLevel, setActivityLevel] = useState<ActivityLevel>("MODERATE");
+  const [goal, setGoal] = useState<Goal>("MAINTAIN");
 
-  const a = parseInt(age, 10)
-  const h = parseFloat(heightCm)
-  const w = parseFloat(weightKg)
-  const ok = a > 0 && a < 120 && h > 0 && w > 0
+  const a = parseInt(age, 10);
+  const h = parseFloat(heightCm);
+  const w = parseFloat(weightKg);
+  const ok = a > 0 && a < 120 && h > 0 && w > 0;
 
-  const result = ok ? previewTargets({ age: a, heightCm: h, weightKg: w, gender, activityLevel, goal }) : null
+  const result = ok ? previewTargets({ age: a, heightCm: h, weightKg: w, gender, activityLevel, goal }) : null;
 
   return (
     <CalculatorShell
@@ -88,15 +92,11 @@ export default function CaloriesPage() {
       }
       results={
         result ? (
-          <ResultHero
-            kicker={t.calcPages.calories.resultLabel}
-            value={fmtNumber(result.dailyCalorieTarget, lang)}
-            unit={t.kcal}
-          />
+          <ResultHero kicker={t.calcPages.calories.resultLabel} value={fmtNumber(result.dailyCalorieTarget, lang)} unit={t.kcal} />
         ) : (
           <ResultPlaceholder title={t.calcPages.resultEmptyTitle} body={t.calcPages.resultEmptyBody} />
         )
       }
     />
-  )
+  );
 }

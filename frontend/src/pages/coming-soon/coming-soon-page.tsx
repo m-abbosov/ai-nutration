@@ -1,17 +1,20 @@
-import { Link, useParams } from 'react-router-dom'
-import { Sparkles } from 'lucide-react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { findCalculator } from '@/entities/calculator/lib/calculators'
-import { LogoMark } from '@/shared/ui/nav-icons'
-import { ThemeToggle } from '@/features/theme-toggle/theme-toggle'
-import { Button } from '@/shared/ui/button'
-import { EmptyState } from '@/shared/ui/state-blocks'
+import { useTranslation } from "@nutriai/shared/i18n";
+import { Sparkles } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+
+import { Button } from "@/shared/ui/button";
+import { LogoMark } from "@/shared/ui/nav-icons";
+import { EmptyState } from "@/shared/ui/state-blocks";
+
+import { ThemeToggle } from "@/features/theme-toggle/theme-toggle";
+
+import { findCalculator } from "@/entities/calculator/lib/calculators";
 
 export function ComingSoonPage() {
-  const { t } = useTranslation()
-  const { slug } = useParams<{ slug: string }>()
-  const calc = findCalculator(slug)
-  const name = calc ? t.landing.calculators[calc.id]?.name : undefined
+  const { t } = useTranslation();
+  const { slug } = useParams<{ slug: string }>();
+  const calc = findCalculator(slug);
+  const name = calc ? t.landing.calculators[calc.id]?.name : undefined;
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">
@@ -46,5 +49,5 @@ export function ComingSoonPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

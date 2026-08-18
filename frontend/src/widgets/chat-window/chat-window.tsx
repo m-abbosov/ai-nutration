@@ -1,16 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { MoreHorizontal, ArrowUp, Menu, TriangleAlert } from 'lucide-react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { useAuth } from '@/app/providers/auth-provider'
-import { useMessages, useSendMessage } from '@/shared/api/chat'
-import { useCreateConversation } from '@/shared/api/chat'
-import { NutritionResultCard } from '@/widgets/chat-window/nutrition-result-card'
-import { RecommendationsCard } from '@/widgets/chat-window/recommendations-card'
-import { MealEditSuggestionCard } from '@/widgets/chat-window/meal-edit-suggestion-card'
-import { ErrorState } from '@/shared/ui/state-blocks'
-import { Skeleton } from '@/shared/ui/skeleton'
-import { cn } from '@nutriai/shared/lib/cn'
+import { useEffect, useRef, useState } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { cn } from "@nutriai/shared/lib/cn";
+import { ArrowUp, Menu, MoreHorizontal, TriangleAlert } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { useAuth } from "@/app/providers/auth-provider";
+
+import { useMessages, useSendMessage } from "@/shared/api/chat";
+import { useCreateConversation } from "@/shared/api/chat";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { ErrorState } from "@/shared/ui/state-blocks";
+
+import { MealEditSuggestionCard } from "@/widgets/chat-window/meal-edit-suggestion-card";
+import { NutritionResultCard } from "@/widgets/chat-window/nutrition-result-card";
+import { RecommendationsCard } from "@/widgets/chat-window/recommendations-card";
 
 const AiAvatar = ({ size = 28 }: { size?: number }) => (
   <div
@@ -18,73 +22,64 @@ const AiAvatar = ({ size = 28 }: { size?: number }) => (
     style={{
       width: size,
       height: size,
-      background: 'radial-gradient(circle at 32% 28%, var(--acc), var(--accD) 62%, var(--surf2))',
-      boxShadow: 'inset 0 0 6px rgba(255,255,255,.3)',
+      background: "radial-gradient(circle at 32% 28%, var(--acc), var(--accD) 62%, var(--surf2))",
+      boxShadow: "inset 0 0 6px rgba(255,255,255,.3)",
     }}
   />
-)
+);
 
-export function ChatWindow({
-  conversationId,
-  onOpenHistory,
-}: {
-  conversationId?: string
-  onOpenHistory?: () => void
-}) {
-  const { t } = useTranslation()
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [draft, setDraft] = useState('')
-  const [addedIds, setAddedIds] = useState<Set<string>>(new Set())
+export function ChatWindow({ conversationId, onOpenHistory }: { conversationId?: string; onOpenHistory?: () => void }) {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [draft, setDraft] = useState("");
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
 
-  const { data: messages, isLoading, isError, refetch } = useMessages(conversationId)
-  const sendMessage = useSendMessage()
-  const createConversation = useCreateConversation()
+  const { data: messages, isLoading, isError, refetch } = useMessages(conversationId);
+  const sendMessage = useSendMessage();
+  const createConversation = useCreateConversation();
 
-  const aiConfigured = !!user?.aiProvider
-  const aiWarning = user?.aiKeyStatus && user.aiKeyStatus !== 'OK' ? t.aiKeyStatusLabel[user.aiKeyStatus] : null
+  const aiConfigured = !!user?.aiProvider;
+  const aiWarning = user?.aiKeyStatus && user.aiKeyStatus !== "OK" ? t.aiKeyStatusLabel[user.aiKeyStatus] : null;
 
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-  }, [messages, sendMessage.isPending])
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, sendMessage.isPending]);
 
   const submit = async (content: string) => {
-    const text = content.trim()
-    if (!text || sendMessage.isPending || !aiConfigured) return
-    setDraft('')
-    let targetId = conversationId
+    const text = content.trim();
+    if (!text || sendMessage.isPending || !aiConfigured) return;
+    setDraft("");
+    let targetId = conversationId;
     if (!targetId) {
-      const conv = await createConversation.mutateAsync()
-      targetId = conv.id
-      navigate(`/chat/${conv.id}`)
+      const conv = await createConversation.mutateAsync();
+      targetId = conv.id;
+      navigate(`/chat/${conv.id}`);
     }
-    sendMessage.mutate({ conversationId: targetId, content: text })
-  }
+    sendMessage.mutate({ conversationId: targetId, content: text });
+  };
 
   const quickActions = [
-    { emoji: '🍳', label: t.qa0, bg: 'bg-carbT' },
-    { emoji: '🍲', label: t.qa1, bg: 'bg-accT' },
-    { emoji: '🔥', label: t.qa2, bg: 'bg-fatT' },
-    { emoji: '📊', label: t.qa3, bg: 'bg-proT' },
-  ]
-  const suggestions = [t.sugg1, t.sugg2, t.sugg3]
+    { emoji: "🍳", label: t.qa0, bg: "bg-carbT" },
+    { emoji: "🍲", label: t.qa1, bg: "bg-accT" },
+    { emoji: "🔥", label: t.qa2, bg: "bg-fatT" },
+    { emoji: "📊", label: t.qa3, bg: "bg-proT" },
+  ];
+  const suggestions = [t.sugg1, t.sugg2, t.sugg3];
 
-  const isEmpty = !conversationId || (messages && messages.length === 0)
+  const isEmpty = !conversationId || (messages && messages.length === 0);
 
   return (
     <div className="relative flex min-w-0 flex-1 flex-col">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[280px]"
-        style={{ background: 'radial-gradient(90% 100% at 50% 0, var(--accT), transparent 70%)' }}
+        style={{ background: "radial-gradient(90% 100% at 50% 0, var(--accT), transparent 70%)" }}
       />
 
       <div className="relative flex items-center gap-[11px] border-b border-line px-5 py-3.5 md:px-[26px]">
         {onOpenHistory && (
-          <button
-            onClick={onOpenHistory}
-            className="grid h-9 w-9 flex-none place-items-center rounded-[11px] border border-line text-tx2 lg:hidden"
-          >
+          <button onClick={onOpenHistory} className="grid h-9 w-9 flex-none place-items-center rounded-[11px] border border-line text-tx2 lg:hidden">
             <Menu className="h-[15px] w-[15px]" />
           </button>
         )}
@@ -107,7 +102,7 @@ export function ChatWindow({
             <div className="relative mb-6 h-[104px] w-[104px]">
               <div
                 className="absolute -inset-4 animate-halo rounded-full blur-[18px]"
-                style={{ background: 'radial-gradient(circle, var(--accG), transparent 66%)' }}
+                style={{ background: "radial-gradient(circle, var(--accG), transparent 66%)" }}
               />
               <svg viewBox="0 0 104 104" className="absolute inset-0 animate-spin-slow">
                 <circle cx="52" cy="52" r="50" fill="none" stroke="var(--line2)" strokeWidth="1" strokeDasharray="3 7" />
@@ -115,8 +110,8 @@ export function ChatWindow({
               <div
                 className="absolute inset-[14px] animate-drift rounded-full"
                 style={{
-                  background: 'radial-gradient(circle at 34% 26%, var(--acc), var(--accD) 55%, var(--surf) 96%)',
-                  boxShadow: 'inset 0 0 18px rgba(255,255,255,.25), 0 8px 28px -8px var(--accG)',
+                  background: "radial-gradient(circle at 34% 26%, var(--acc), var(--accD) 55%, var(--surf) 96%)",
+                  boxShadow: "inset 0 0 18px rgba(255,255,255,.25), 0 8px 28px -8px var(--accG)",
                 }}
               />
             </div>
@@ -132,9 +127,7 @@ export function ChatWindow({
                   disabled={!aiConfigured}
                   className="flex items-center gap-[11px] rounded-2xl border border-line bg-surf px-3.5 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-line2 hover:bg-surf2 disabled:pointer-events-none disabled:opacity-50"
                 >
-                  <span className={cn('grid h-[30px] w-[30px] flex-none place-items-center rounded-[10px] text-[14px]', qa.bg)}>
-                    {qa.emoji}
-                  </span>
+                  <span className={cn("grid h-[30px] w-[30px] flex-none place-items-center rounded-[10px] text-[14px]", qa.bg)}>{qa.emoji}</span>
                   <span className="min-w-0 flex-1 text-[13px] font-medium">{qa.label}</span>
                   <span className="font-mono text-tx3">→</span>
                 </button>
@@ -160,7 +153,7 @@ export function ChatWindow({
           <div className="mx-auto flex max-w-[700px] flex-col gap-[22px]">
             {messages.map((m) => (
               <div key={m.id} className="animate-fu">
-                {m.role === 'USER' ? (
+                {m.role === "USER" ? (
                   <div className="flex justify-end">
                     <div className="max-w-[70%] rounded-[17px_17px_5px_17px] border border-line2 bg-accT px-[15px] py-[11px] text-[13.5px] leading-[1.5]">
                       {m.content}
@@ -173,15 +166,15 @@ export function ChatWindow({
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-pretty text-[14px] leading-[1.6]">{m.content}</div>
-                      {m.metadata?.kind === 'nutrition_card' && (
+                      {m.metadata?.kind === "nutrition_card" && (
                         <NutritionResultCard
                           analysis={m.metadata.data}
                           added={addedIds.has(m.id)}
                           onAdded={() => setAddedIds((prev) => new Set(prev).add(m.id))}
                         />
                       )}
-                      {m.metadata?.kind === 'recommendations' && <RecommendationsCard items={m.metadata.data} />}
-                      {m.metadata?.kind === 'meal_edit_suggestion' && (
+                      {m.metadata?.kind === "recommendations" && <RecommendationsCard items={m.metadata.data} />}
+                      {m.metadata?.kind === "meal_edit_suggestion" && (
                         <MealEditSuggestionCard
                           suggestion={m.metadata.data}
                           applied={addedIds.has(m.id)}
@@ -245,8 +238,8 @@ export function ChatWindow({
           </div>
           <form
             onSubmit={(e) => {
-              e.preventDefault()
-              submit(draft)
+              e.preventDefault();
+              submit(draft);
             }}
             className="flex items-center gap-2.5 rounded-[17px] border border-line2 bg-surf py-2 pl-4 pr-2 shadow-card"
           >
@@ -270,5 +263,5 @@ export function ChatWindow({
         </div>
       </div>
     </div>
-  )
+  );
 }

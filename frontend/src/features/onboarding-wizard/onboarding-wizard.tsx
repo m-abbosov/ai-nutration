@@ -1,46 +1,50 @@
-import { useState } from 'react'
-import type { ReactNode } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import { LogoMark } from '@/shared/ui/nav-icons'
-import { Button } from '@/shared/ui/button'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
-import { cn } from '@nutriai/shared/lib/cn'
-import { useSubmitOnboarding, useSetAiKey } from '@/shared/api/users'
-import { previewTargets } from '@/entities/user/lib/helpers'
-import type { ActivityLevel, AiProvider, Goal } from '@nutriai/shared/api/types'
-import { onboardingSchema, STEP_FIELDS } from '@/features/onboarding-wizard/schema'
-import type { OnboardingFormValues } from '@/features/onboarding-wizard/schema'
+import { useState } from "react";
+import type { ReactNode } from "react";
 
-const AI_PROVIDERS: AiProvider[] = ['GEMINI', 'OPENAI', 'CLAUDE']
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { ActivityLevel, AiProvider, Goal } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { cn } from "@nutriai/shared/lib/cn";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { AnimatePresence, motion } from "framer-motion";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+
+import { useSetAiKey, useSubmitOnboarding } from "@/shared/api/users";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { LogoMark } from "@/shared/ui/nav-icons";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { STEP_FIELDS, onboardingSchema } from "@/features/onboarding-wizard/schema";
+import type { OnboardingFormValues } from "@/features/onboarding-wizard/schema";
+
+import { previewTargets } from "@/entities/user/lib/helpers";
+
+const AI_PROVIDERS: AiProvider[] = ["GEMINI", "OPENAI", "CLAUDE"];
 
 const GOALS: { value: Goal; deltaLabel: string }[] = [
-  { value: 'LOSE', deltaLabel: '−0,4 kg' },
-  { value: 'MAINTAIN', deltaLabel: '0,0 kg' },
-  { value: 'GAIN', deltaLabel: '+0,3 kg' },
-]
+  { value: "LOSE", deltaLabel: "−0,4 kg" },
+  { value: "MAINTAIN", deltaLabel: "0,0 kg" },
+  { value: "GAIN", deltaLabel: "+0,3 kg" },
+];
 
 const ACTIVITIES: { value: ActivityLevel; mult: string }[] = [
-  { value: 'SEDENTARY', mult: '1,2' },
-  { value: 'LIGHT', mult: '1,375' },
-  { value: 'MODERATE', mult: '1,55' },
-  { value: 'ACTIVE', mult: '1,725' },
-]
+  { value: "SEDENTARY", mult: "1,2" },
+  { value: "LIGHT", mult: "1,375" },
+  { value: "MODERATE", mult: "1,55" },
+  { value: "ACTIVE", mult: "1,725" },
+];
 
 export function OnboardingWizard() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const [step, setStep] = useState(0)
-  const submitOnboarding = useSubmitOnboarding()
-  const setAiKey = useSetAiKey()
-  const [aiProvider, setAiProvider] = useState<AiProvider>('GEMINI')
-  const [aiApiKey, setAiApiKey] = useState('')
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [step, setStep] = useState(0);
+  const submitOnboarding = useSubmitOnboarding();
+  const setAiKey = useSetAiKey();
+  const [aiProvider, setAiProvider] = useState<AiProvider>("GEMINI");
+  const [aiApiKey, setAiApiKey] = useState("");
 
   const {
     register,
@@ -52,11 +56,11 @@ export function OnboardingWizard() {
     formState: { errors },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
-    mode: 'onChange',
-    defaultValues: { goal: 'LOSE', activityLevel: 'MODERATE', age: 25, heightCm: 170, weightKg: 70 },
-  })
+    mode: "onChange",
+    defaultValues: { goal: "LOSE", activityLevel: "MODERATE", age: 25, heightCm: 170, weightKg: 70 },
+  });
 
-  const values = watch()
+  const values = watch();
   const preview =
     values.age && values.heightCm && values.weightKg
       ? previewTargets({
@@ -67,24 +71,21 @@ export function OnboardingWizard() {
           activityLevel: values.activityLevel,
           goal: values.goal,
         })
-      : null
+      : null;
 
   const goNext = async () => {
-    const fields = STEP_FIELDS[step]
-    const valid = fields.length === 0 || (await trigger(fields))
-    if (!valid) return
-    if (step < 4) setStep((s) => s + 1)
-  }
-  const goBack = () => setStep((s) => Math.max(0, s - 1))
+    const fields = STEP_FIELDS[step];
+    const valid = fields.length === 0 || (await trigger(fields));
+    if (!valid) return;
+    if (step < 4) setStep((s) => s + 1);
+  };
+  const goBack = () => setStep((s) => Math.max(0, s - 1));
 
-  const skipAiStep = () => setStep((s) => s + 1)
+  const skipAiStep = () => setStep((s) => s + 1);
   const saveAiKeyAndContinue = () => {
-    if (!aiApiKey.trim()) return
-    setAiKey.mutate(
-      { provider: aiProvider, apiKey: aiApiKey.trim() },
-      { onSuccess: () => setStep((s) => s + 1) },
-    )
-  }
+    if (!aiApiKey.trim()) return;
+    setAiKey.mutate({ provider: aiProvider, apiKey: aiApiKey.trim() }, { onSuccess: () => setStep((s) => s + 1) });
+  };
 
   const onSubmit = handleSubmit((data) => {
     submitOnboarding.mutate(
@@ -95,19 +96,19 @@ export function OnboardingWizard() {
         gender: data.gender,
         activityLevel: data.activityLevel,
         goal: data.goal,
-        goalWeightKg: data.goalWeightKg === '' || data.goalWeightKg == null ? undefined : Number(data.goalWeightKg),
+        goalWeightKg: data.goalWeightKg === "" || data.goalWeightKg == null ? undefined : Number(data.goalWeightKg),
       },
-      { onSuccess: () => navigate('/dashboard', { replace: true }) },
-    )
-  })
+      { onSuccess: () => navigate("/dashboard", { replace: true }) },
+    );
+  });
 
-  const dots = [0, 1, 2, 3, 4]
+  const dots = [0, 1, 2, 3, 4];
 
   return (
     <div className="relative flex min-h-screen flex-col items-center overflow-hidden bg-bg px-5 pb-10 pt-[34px]">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[420px]"
-        style={{ background: 'radial-gradient(70% 100% at 50% 0, var(--accT), transparent 66%)' }}
+        style={{ background: "radial-gradient(70% 100% at 50% 0, var(--accT), transparent 66%)" }}
       />
       <div className="relative w-full max-w-[544px]">
         <div className="flex items-center justify-center gap-2.5">
@@ -126,9 +127,9 @@ export function OnboardingWizard() {
               <span
                 key={i}
                 className={cn(
-                  'h-[5px] rounded-full transition-all duration-300',
-                  i <= step ? 'bg-acc' : 'bg-line2',
-                  i === step ? 'w-[22px]' : 'w-[7px]',
+                  "h-[5px] rounded-full transition-all duration-300",
+                  i <= step ? "bg-acc" : "bg-line2",
+                  i === step ? "w-[22px]" : "w-[7px]",
                 )}
               />
             ))}
@@ -143,26 +144,26 @@ export function OnboardingWizard() {
                 <p className="m-0 mt-2 text-center text-[13.5px] text-tx2">{t.onQ1s}</p>
                 <div className="mt-6 flex flex-col gap-2.5">
                   {GOALS.map(({ value, deltaLabel }) => {
-                    const active = values.goal === value
-                    const labelKey = value === 'LOSE' ? 'onG1' : value === 'MAINTAIN' ? 'onG2' : 'onG3'
-                    const subKey = value === 'LOSE' ? 'onG1s' : value === 'MAINTAIN' ? 'onG2s' : 'onG3s'
+                    const active = values.goal === value;
+                    const labelKey = value === "LOSE" ? "onG1" : value === "MAINTAIN" ? "onG2" : "onG3";
+                    const subKey = value === "LOSE" ? "onG1s" : value === "MAINTAIN" ? "onG2s" : "onG3s";
                     return (
                       <button
                         key={value}
                         type="button"
-                        onClick={() => setValue('goal', value, { shouldValidate: true })}
+                        onClick={() => setValue("goal", value, { shouldValidate: true })}
                         className={cn(
-                          'flex items-center gap-3.5 rounded-2xl border px-[17px] py-4 text-left transition-all hover:-translate-y-px',
-                          active ? 'border-acc bg-accT' : 'border-line bg-surf',
+                          "flex items-center gap-3.5 rounded-2xl border px-[17px] py-4 text-left transition-all hover:-translate-y-px",
+                          active ? "border-acc bg-accT" : "border-line bg-surf",
                         )}
                       >
                         <span
                           className={cn(
-                            'grid h-[19px] w-[19px] flex-none place-items-center rounded-full border-[1.5px]',
-                            active ? 'border-acc' : 'border-line2',
+                            "grid h-[19px] w-[19px] flex-none place-items-center rounded-full border-[1.5px]",
+                            active ? "border-acc" : "border-line2",
                           )}
                         >
-                          <span className={cn('h-[9px] w-[9px] rounded-full', active ? 'bg-acc' : 'bg-transparent')} />
+                          <span className={cn("h-[9px] w-[9px] rounded-full", active ? "bg-acc" : "bg-transparent")} />
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block text-[14.5px] font-medium">{t[labelKey]}</span>
@@ -170,7 +171,7 @@ export function OnboardingWizard() {
                         </span>
                         <span className="whitespace-nowrap font-mono text-[11.5px] text-tx2">{deltaLabel}</span>
                       </button>
-                    )
+                    );
                   })}
                 </div>
               </motion.div>
@@ -185,14 +186,14 @@ export function OnboardingWizard() {
                     <input
                       type="number"
                       className="w-16 bg-transparent text-right text-[18px] font-medium outline-none [appearance:textfield]"
-                      {...register('age')}
+                      {...register("age")}
                     />
                   </MetricRow>
                   <MetricRow label={t.app.heightLabel} unit="cm" error={errors.heightCm?.message}>
                     <input
                       type="number"
                       className="w-16 bg-transparent text-right text-[18px] font-medium outline-none [appearance:textfield]"
-                      {...register('heightCm')}
+                      {...register("heightCm")}
                     />
                   </MetricRow>
                   <MetricRow label={t.app.weightLabel} unit={t.pgKg} error={errors.weightKg?.message}>
@@ -200,7 +201,7 @@ export function OnboardingWizard() {
                       type="number"
                       step="0.1"
                       className="w-16 bg-transparent text-right text-[18px] font-medium outline-none [appearance:textfield]"
-                      {...register('weightKg')}
+                      {...register("weightKg")}
                     />
                   </MetricRow>
                   <MetricRow label={t.app.genderOptional}>
@@ -208,10 +209,7 @@ export function OnboardingWizard() {
                       name="gender"
                       control={control}
                       render={({ field }) => (
-                        <Select
-                          value={field.value ?? 'NONE'}
-                          onValueChange={(v) => field.onChange(v === 'NONE' ? undefined : v)}
-                        >
+                        <Select value={field.value ?? "NONE"} onValueChange={(v) => field.onChange(v === "NONE" ? undefined : v)}>
                           <SelectTrigger className="w-auto border-none bg-transparent p-0 text-right text-[13px] font-medium hover:border-none">
                             <SelectValue />
                           </SelectTrigger>
@@ -230,7 +228,7 @@ export function OnboardingWizard() {
                       step="0.1"
                       placeholder="—"
                       className="w-16 bg-transparent text-right text-[13px] font-medium outline-none placeholder:text-tx3 [appearance:textfield]"
-                      {...register('goalWeightKg')}
+                      {...register("goalWeightKg")}
                     />
                   </MetricRow>
                 </div>
@@ -243,30 +241,30 @@ export function OnboardingWizard() {
                 <p className="m-0 mt-2 text-center text-[13.5px] text-tx2">{t.onQ3s}</p>
                 <div className="mt-6 flex flex-col gap-2.5">
                   {ACTIVITIES.map(({ value, mult }, i) => {
-                    const active = values.activityLevel === value
-                    const labelKey = (['onA1', 'onA2', 'onA3', 'onA4'] as const)[i]
+                    const active = values.activityLevel === value;
+                    const labelKey = (["onA1", "onA2", "onA3", "onA4"] as const)[i];
                     return (
                       <button
                         key={value}
                         type="button"
-                        onClick={() => setValue('activityLevel', value, { shouldValidate: true })}
+                        onClick={() => setValue("activityLevel", value, { shouldValidate: true })}
                         className={cn(
-                          'flex items-center gap-3.5 rounded-2xl border px-[17px] py-3.5 text-left transition-colors',
-                          active ? 'border-acc bg-accT' : 'border-line bg-surf',
+                          "flex items-center gap-3.5 rounded-2xl border px-[17px] py-3.5 text-left transition-colors",
+                          active ? "border-acc bg-accT" : "border-line bg-surf",
                         )}
                       >
                         <span
                           className={cn(
-                            'grid h-[17px] w-[17px] flex-none place-items-center rounded-full border-[1.5px]',
-                            active ? 'border-acc' : 'border-line2',
+                            "grid h-[17px] w-[17px] flex-none place-items-center rounded-full border-[1.5px]",
+                            active ? "border-acc" : "border-line2",
                           )}
                         >
-                          <span className={cn('h-2 w-2 rounded-full', active ? 'bg-acc' : 'bg-transparent')} />
+                          <span className={cn("h-2 w-2 rounded-full", active ? "bg-acc" : "bg-transparent")} />
                         </span>
                         <span className="min-w-0 flex-1 text-[14px] font-medium">{t[labelKey]}</span>
                         <span className="font-mono text-[11px] text-tx3">×{mult}</span>
                       </button>
-                    )
+                    );
                   })}
                 </div>
               </motion.div>
@@ -274,9 +272,7 @@ export function OnboardingWizard() {
 
             {step === 3 && (
               <motion.div key="ai-key" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                <h2 className="m-0 text-center text-[25px] font-medium tracking-[-.025em] md:text-[27px]">
-                  {t.app.aiOnboardingTitle}
-                </h2>
+                <h2 className="m-0 text-center text-[25px] font-medium tracking-[-.025em] md:text-[27px]">{t.app.aiOnboardingTitle}</h2>
                 <p className="m-0 mt-2 text-center text-[13.5px] text-tx2">{t.app.aiOnboardingSub}</p>
                 <div className="mt-6 flex flex-col gap-3 rounded-[18px] border border-line bg-surf p-[18px]">
                   <div>
@@ -311,7 +307,7 @@ export function OnboardingWizard() {
                 <div className="relative mx-auto mb-1.5 h-[184px] w-[184px]">
                   <div
                     className="absolute inset-[12%] animate-halo rounded-full blur-[20px]"
-                    style={{ background: 'radial-gradient(circle, var(--accG), transparent 66%)' }}
+                    style={{ background: "radial-gradient(circle, var(--accG), transparent 66%)" }}
                   />
                   <svg viewBox="0 0 184 184" className="relative h-full w-full">
                     <circle cx="92" cy="92" r="76" fill="none" stroke="var(--line2)" strokeWidth="9" />
@@ -326,26 +322,24 @@ export function OnboardingWizard() {
                       pathLength={100}
                       strokeDasharray="100 100"
                       transform="rotate(-90 92 92)"
-                      style={{ filter: 'drop-shadow(0 0 8px var(--accG))' }}
+                      style={{ filter: "drop-shadow(0 0 8px var(--accG))" }}
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <div className="font-mono text-[38px] font-medium leading-none tracking-[-.035em]">
-                      {preview ? fmtNumber(preview.dailyCalorieTarget, 'EN') : '—'}
+                      {preview ? fmtNumber(preview.dailyCalorieTarget, "EN") : "—"}
                     </div>
                     <div className="mt-[5px] text-[11.5px] text-tx2">{t.onKcal}</div>
                   </div>
                 </div>
-                <h2 className="m-0 mt-3.5 font-serif text-[28px] font-normal tracking-[-.01em] md:text-[31px]">
-                  {t.onDone}
-                </h2>
+                <h2 className="m-0 mt-3.5 font-serif text-[28px] font-normal tracking-[-.01em] md:text-[31px]">{t.onDone}</h2>
                 <p className="m-0 mt-2 text-[13.5px] text-tx2">{t.onDoneS}</p>
                 {preview && (
                   <>
                     <div className="mt-6 flex h-[11px] gap-0.5 overflow-hidden rounded-full">
-                      <div className="rounded-full bg-pro" style={{ width: '25%' }} />
-                      <div className="rounded-full bg-carb" style={{ width: '45%' }} />
-                      <div className="rounded-full bg-fat" style={{ width: '30%' }} />
+                      <div className="rounded-full bg-pro" style={{ width: "25%" }} />
+                      <div className="rounded-full bg-carb" style={{ width: "45%" }} />
+                      <div className="rounded-full bg-fat" style={{ width: "30%" }} />
                     </div>
                     <div className="mt-3.5 flex flex-wrap justify-center gap-5">
                       <SplitLegend color="bg-pro" label={t.mProtein} value={`${preview.proteinG} ${t.g}`} />
@@ -354,9 +348,7 @@ export function OnboardingWizard() {
                     </div>
                   </>
                 )}
-                {submitOnboarding.isError && (
-                  <p className="mt-4 text-[12.5px] text-fat">{t.app.error}</p>
-                )}
+                {submitOnboarding.isError && <p className="mt-4 text-[12.5px] text-fat">{t.app.error}</p>}
               </motion.div>
             )}
           </AnimatePresence>
@@ -367,8 +359,8 @@ export function OnboardingWizard() {
             type="button"
             onClick={goBack}
             className={cn(
-              'rounded-xl border border-line2 px-[18px] py-3 text-[13px] font-medium text-tx2 transition-colors hover:bg-surf hover:text-tx',
-              step === 0 && 'invisible',
+              "rounded-xl border border-line2 px-[18px] py-3 text-[13px] font-medium text-tx2 transition-colors hover:bg-surf hover:text-tx",
+              step === 0 && "invisible",
             )}
           >
             {t.onBack}
@@ -399,20 +391,10 @@ export function OnboardingWizard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function MetricRow({
-  label,
-  unit,
-  error,
-  children,
-}: {
-  label: string
-  unit?: string
-  error?: string
-  children: ReactNode
-}) {
+function MetricRow({ label, unit, error, children }: { label: string; unit?: string; error?: string; children: ReactNode }) {
   return (
     <div className="flex items-center gap-3.5 bg-surf px-[18px] py-3.5">
       <span className="flex-1 text-[13.5px] text-tx2">{label}</span>
@@ -422,14 +404,14 @@ function MetricRow({
       </span>
       {error && <span className="text-[10.5px] text-fat">{error}</span>}
     </div>
-  )
+  );
 }
 
 function SplitLegend({ color, label, value }: { color: string; label: string; value: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-[12px] text-tx2">
-      <span className={cn('h-[7px] w-[7px] rounded-sm', color)} />
+      <span className={cn("h-[7px] w-[7px] rounded-sm", color)} />
       {label} <span className="font-mono text-[11.5px] text-tx">{value}</span>
     </span>
-  )
+  );
 }

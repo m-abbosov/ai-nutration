@@ -1,14 +1,16 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { X } from 'lucide-react'
-import { ChatSidebar } from '@/widgets/chat-sidebar/chat-sidebar'
-import { ChatWindow } from '@/widgets/chat-window/chat-window'
-import { useTranslation } from '@nutriai/shared/i18n'
+import { useState } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { X } from "lucide-react";
+import { useParams } from "react-router-dom";
+
+import { ChatSidebar } from "@/widgets/chat-sidebar/chat-sidebar";
+import { ChatWindow } from "@/widgets/chat-window/chat-window";
 
 export function ChatPage() {
-  const { conversationId } = useParams<{ conversationId?: string }>()
-  const { t } = useTranslation()
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const { conversationId } = useParams<{ conversationId?: string }>();
+  const { t } = useTranslation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <div className="flex h-full animate-fi">
@@ -40,5 +42,5 @@ export function ChatPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

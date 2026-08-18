@@ -1,42 +1,46 @@
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { Bell } from 'lucide-react'
-import { useTranslation, localeTags } from '@nutriai/shared/i18n'
-import { useAuth } from '@/app/providers/auth-provider'
-import { ThemeToggle } from '@/features/theme-toggle/theme-toggle'
-import { Avatar } from '@/shared/ui/avatar'
+import { useMemo } from "react";
+
+import { localeTags, useTranslation } from "@nutriai/shared/i18n";
+import { Bell } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import { useAuth } from "@/app/providers/auth-provider";
+
+import { Avatar } from "@/shared/ui/avatar";
+
+import { ThemeToggle } from "@/features/theme-toggle/theme-toggle";
 
 export function AppHeader() {
-  const { t, lang } = useTranslation()
-  const { user } = useAuth()
+  const { t, lang } = useTranslation();
+  const { user } = useAuth();
 
   const dateLabel = useMemo(() => {
-    const now = new Date()
+    const now = new Date();
     // Browsers' Intl data for uz-UZ is missing full month/weekday names (falls back to
     // e.g. "M08"/"Sat"), so Uzbek is spelled out manually from the translation dictionary
     // instead of trusting Intl.DateTimeFormat here. RU/EN have complete Intl coverage.
-    if (lang === 'UZ') {
-      const weekdayIdx = (now.getDay() + 6) % 7
-      return `${t.dayFull[weekdayIdx]}, ${now.getDate()}-${t.monthFull[now.getMonth()]}, ${now.getFullYear()}`
+    if (lang === "UZ") {
+      const weekdayIdx = (now.getDay() + 6) % 7;
+      return `${t.dayFull[weekdayIdx]}, ${now.getDate()}-${t.monthFull[now.getMonth()]}, ${now.getFullYear()}`;
     }
     try {
       return new Intl.DateTimeFormat(localeTags[lang], {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        weekday: 'long',
-      }).format(now)
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        weekday: "long",
+      }).format(now);
     } catch {
-      return now.toDateString()
+      return now.toDateString();
     }
-  }, [lang, t])
+  }, [lang, t]);
 
   return (
     <header className="z-30 flex flex-none flex-wrap items-end gap-5 border-b border-line bg-glass px-[22px] py-[18px] pt-[26px] backdrop-blur-[14px] md:px-[34px]">
       <div className="min-w-[240px] flex-1">
         <h1 className="m-0 text-[22px] font-medium leading-[1.15] tracking-[-.02em] md:text-[26px]">
           {t.greet}
-          {user?.name ? `, ${user.name}` : ''}
+          {user?.name ? `, ${user.name}` : ""}
         </h1>
         <p className="m-0 mt-[5px] text-[13.5px] text-tx2">{t.greetSub}</p>
       </div>
@@ -54,5 +58,5 @@ export function AppHeader() {
         </Link>
       </div>
     </header>
-  )
+  );
 }

@@ -1,31 +1,33 @@
-import { useState } from 'react'
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { useAdminAnalytics } from '@/shared/api/analytics'
-import { AdminHeader } from '@/shared/ui/admin-header'
-import { KpiCard } from '@/shared/ui/kpi-card'
-import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from '@/shared/ui/chart-card'
-import { AdminCard, AdminCardHeader, AdminCardTitle } from '@/shared/ui/card'
-import { DateRangePicker } from '@/shared/ui/date-range-picker'
-import { AdminErrorState } from '@/shared/ui/error-state'
-import { KpiGridSkeleton, ChartSkeleton } from '@/shared/ui/skeleton'
-import { useAdminTranslation } from '@/shared/i18n/use-admin-translation'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { AnalyticsRange } from '@/shared/api/types'
+import { useState } from "react";
+
+import { fmtNumber } from "@nutriai/shared/lib/format";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+import { useAdminAnalytics } from "@/shared/api/analytics";
+import type { AnalyticsRange } from "@/shared/api/types";
+import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
+import { AdminHeader } from "@/shared/ui/admin-header";
+import { AdminCard, AdminCardHeader, AdminCardTitle } from "@/shared/ui/card";
+import { AdminChartCard, AdminChartTooltip, adminChartAxis, adminChartColors, adminChartGrid } from "@/shared/ui/chart-card";
+import { DateRangePicker } from "@/shared/ui/date-range-picker";
+import { AdminErrorState } from "@/shared/ui/error-state";
+import { KpiCard } from "@/shared/ui/kpi-card";
+import { ChartSkeleton, KpiGridSkeleton } from "@/shared/ui/skeleton";
 
 export function AnalyticsPage() {
-  const { t, lang } = useAdminTranslation()
-  const [range, setRange] = useState<AnalyticsRange>('30d')
-  const [customFrom, setCustomFrom] = useState('')
-  const [customTo, setCustomTo] = useState('')
+  const { t, lang } = useAdminTranslation();
+  const [range, setRange] = useState<AnalyticsRange>("30d");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
 
-  const { data, isLoading, isError, refetch } = useAdminAnalytics({ range, from: customFrom, to: customTo })
+  const { data, isLoading, isError, refetch } = useAdminAnalytics({ range, from: customFrom, to: customTo });
 
   const rangeOptions = [
-    { value: '7d' as AnalyticsRange, label: t.ranges.d7 },
-    { value: '30d' as AnalyticsRange, label: t.ranges.d30 },
-    { value: '90d' as AnalyticsRange, label: t.ranges.d90 },
-    { value: 'custom' as AnalyticsRange, label: t.ranges.custom },
-  ]
+    { value: "7d" as AnalyticsRange, label: t.ranges.d7 },
+    { value: "30d" as AnalyticsRange, label: t.ranges.d30 },
+    { value: "90d" as AnalyticsRange, label: t.ranges.d90 },
+    { value: "custom" as AnalyticsRange, label: t.ranges.custom },
+  ];
 
   return (
     <div>
@@ -40,8 +42,8 @@ export function AnalyticsPage() {
             customFrom={customFrom}
             customTo={customTo}
             onCustomChange={(f, to) => {
-              setCustomFrom(f)
-              setCustomTo(to)
+              setCustomFrom(f);
+              setCustomTo(to);
             }}
           />
         }
@@ -93,11 +95,11 @@ export function AnalyticsPage() {
                 <RetentionTile label={t.analytics.retentionDay7} value={data.userAnalytics.retention.day7} notEnough={t.analytics.notEnoughData} />
                 <RetentionTile label={t.analytics.retentionDay30} value={data.userAnalytics.retention.day30} notEnough={t.analytics.notEnoughData} />
               </div>
-              <div className="mt-4 border-t pt-3" style={{ borderColor: 'var(--adm-border)' }}>
-                <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+              <div className="mt-4 border-t pt-3" style={{ borderColor: "var(--adm-border)" }}>
+                <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
                   {t.analytics.inactiveUsers}
                 </div>
-                <div className="adm-mono mt-0.5 text-[18px] font-semibold" style={{ color: 'var(--adm-text)' }}>
+                <div className="adm-mono mt-0.5 text-[18px] font-semibold" style={{ color: "var(--adm-text)" }}>
                   {fmtNumber(data.userAnalytics.inactiveUsers, lang)}
                 </div>
               </div>
@@ -144,37 +146,37 @@ export function AnalyticsPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function RetentionTile({ label, value, notEnough }: { label: string; value: number | null; notEnough: string }) {
   return (
-    <div className="rounded-[var(--adm-radius-md)] border p-3 text-center" style={{ borderColor: 'var(--adm-border)' }}>
-      <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+    <div className="rounded-[var(--adm-radius-md)] border p-3 text-center" style={{ borderColor: "var(--adm-border)" }}>
+      <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
         {label}
       </div>
       {value === null ? (
-        <div className="mt-1 text-[12px]" style={{ color: 'var(--adm-text-3)' }}>
+        <div className="mt-1 text-[12px]" style={{ color: "var(--adm-text-3)" }}>
           {notEnough}
         </div>
       ) : (
-        <div className="adm-mono mt-1 text-[18px] font-semibold" style={{ color: 'var(--adm-text)' }}>
+        <div className="adm-mono mt-1 text-[18px] font-semibold" style={{ color: "var(--adm-text)" }}>
           {value.toFixed(1)}%
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10.5px]" style={{ color: 'var(--adm-text-3)' }}>
+      <div className="text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
         {label}
       </div>
-      <div className="adm-mono mt-0.5 font-semibold" style={{ color: 'var(--adm-text)' }}>
+      <div className="adm-mono mt-0.5 font-semibold" style={{ color: "var(--adm-text)" }}>
         {value}
       </div>
     </div>
-  )
+  );
 }

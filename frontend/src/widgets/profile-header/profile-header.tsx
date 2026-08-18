@@ -1,20 +1,23 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { EditProfileDialog } from '@/features/edit-profile/edit-profile-dialog'
-import { Button } from '@/shared/ui/button'
-import { Avatar } from '@/shared/ui/avatar'
-import type { UserDto } from '@nutriai/shared/api/types'
+import { useState } from "react";
+
+import type { UserDto } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+
+import { Avatar } from "@/shared/ui/avatar";
+import { Button } from "@/shared/ui/button";
+
+import { EditProfileDialog } from "@/features/edit-profile/edit-profile-dialog";
 
 export function ProfileHeader({ user, streakDays, dayPct }: { user: UserDto; streakDays: number; dayPct: number }) {
-  const { t } = useTranslation()
-  const [editing, setEditing] = useState(false)
-  const arc = Math.max(0, Math.min(100, dayPct))
+  const { t } = useTranslation();
+  const [editing, setEditing] = useState(false);
+  const arc = Math.max(0, Math.min(100, dayPct));
 
   return (
     <section className="relative overflow-hidden rounded-[22px] border border-line bg-surf p-6">
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: 'radial-gradient(70% 120% at 10% 0, var(--accT), transparent 62%)' }}
+        style={{ background: "radial-gradient(70% 120% at 10% 0, var(--accT), transparent 62%)" }}
       />
       <div className="relative flex flex-wrap items-center gap-5">
         <div className="relative h-[74px] w-[74px] flex-none">
@@ -54,5 +57,5 @@ export function ProfileHeader({ user, streakDays, dayPct }: { user: UserDto; str
       </div>
       {editing && <EditProfileDialog user={user} open={editing} onOpenChange={setEditing} />}
     </section>
-  )
+  );
 }

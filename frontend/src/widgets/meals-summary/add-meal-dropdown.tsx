@@ -1,13 +1,15 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Plus, Pencil } from 'lucide-react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { AddMealManualDialog } from '@/features/add-meal-manual/add-meal-manual-dialog'
+import { useState } from "react";
+
+import { useTranslation } from "@nutriai/shared/i18n";
+import { Pencil, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import { AddMealManualDialog } from "@/features/add-meal-manual/add-meal-manual-dialog";
 
 export function AddMealDropdown() {
-  const { t } = useTranslation()
-  const [open, setOpen] = useState(false)
-  const [manualOpen, setManualOpen] = useState(false)
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [manualOpen, setManualOpen] = useState(false);
 
   return (
     <div className="relative">
@@ -29,7 +31,7 @@ export function AddMealDropdown() {
             >
               <span
                 className="h-8 w-8 flex-none rounded-full"
-                style={{ background: 'radial-gradient(circle at 32% 28%, var(--acc), var(--accD) 60%, var(--surf2))' }}
+                style={{ background: "radial-gradient(circle at 32% 28%, var(--acc), var(--accD) 60%, var(--surf2))" }}
               />
               <span className="min-w-0 flex-1">
                 <span className="block text-[13px] font-semibold">{t.optAI}</span>
@@ -39,8 +41,8 @@ export function AddMealDropdown() {
             </Link>
             <button
               onClick={() => {
-                setOpen(false)
-                setManualOpen(true)
+                setOpen(false);
+                setManualOpen(true);
               }}
               className="flex w-full items-center gap-3 rounded-[13px] p-2.5 text-left transition-colors hover:bg-surfH"
             >
@@ -57,5 +59,5 @@ export function AddMealDropdown() {
       )}
       <AddMealManualDialog open={manualOpen} onOpenChange={setManualOpen} />
     </div>
-  )
+  );
 }

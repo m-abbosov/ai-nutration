@@ -1,22 +1,26 @@
-import { useState } from 'react'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { fmtNumber } from '@nutriai/shared/lib/format'
-import type { ActivityLevel } from '@nutriai/shared/api/types'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
-import { calculateProtein } from '@/entities/calculator/lib/formulas'
-import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from './calculator-shell'
+import { useState } from "react";
+
+import type { ActivityLevel } from "@nutriai/shared/api/types";
+import { useTranslation } from "@nutriai/shared/i18n";
+import { fmtNumber } from "@nutriai/shared/lib/format";
+
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+
+import { calculateProtein } from "@/entities/calculator/lib/formulas";
+
+import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 
 export default function ProteinPage() {
-  const { t, lang } = useTranslation()
-  const [weightKg, setWeightKg] = useState('72')
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('MODERATE')
+  const { t, lang } = useTranslation();
+  const [weightKg, setWeightKg] = useState("72");
+  const [activityLevel, setActivityLevel] = useState<ActivityLevel>("MODERATE");
 
-  const w = parseFloat(weightKg)
-  const ok = w > 0
+  const w = parseFloat(weightKg);
+  const ok = w > 0;
 
-  const result = ok ? calculateProtein(w, activityLevel) : null
+  const result = ok ? calculateProtein(w, activityLevel) : null;
 
   return (
     <CalculatorShell
@@ -57,5 +61,5 @@ export default function ProteinPage() {
         )
       }
     />
-  )
+  );
 }

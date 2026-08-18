@@ -1,18 +1,20 @@
-import { motion } from 'framer-motion'
-import { useTranslation } from '@nutriai/shared/i18n'
-import { LogoMark } from '@/shared/ui/nav-icons'
-import { GoogleSignInButton } from '@/features/auth/google-sign-in/google-sign-in-button'
-import { TelegramSignInWidget } from '@/features/auth/telegram-sign-in/telegram-sign-in-widget'
+import { useTranslation } from "@nutriai/shared/i18n";
+import { motion } from "framer-motion";
+
+import { LogoMark } from "@/shared/ui/nav-icons";
+
+import { GoogleSignInButton } from "@/features/auth/google-sign-in/google-sign-in-button";
+import { TelegramSignInWidget } from "@/features/auth/telegram-sign-in/telegram-sign-in-widget";
 
 export function LoginPage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="flex min-h-screen flex-wrap bg-bg">
       <div className="relative flex min-h-[280px] flex-1 basis-[420px] flex-col overflow-hidden bg-bg2 p-8 md:p-11">
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: 'radial-gradient(90% 70% at 18% 22%, var(--accT), transparent 60%)' }}
+          style={{ background: "radial-gradient(90% 70% at 18% 22%, var(--accT), transparent 60%)" }}
         />
         <div className="relative flex items-center gap-2.5">
           <LogoMark />
@@ -21,9 +23,7 @@ export function LoginPage() {
           </span>
         </div>
         <div className="relative flex flex-1 items-center py-10">
-          <p className="m-0 max-w-[19ch] font-serif text-[28px] leading-[1.3] tracking-[-.015em] md:text-[34px]">
-            {t.auQuote}
-          </p>
+          <p className="m-0 max-w-[19ch] font-serif text-[28px] leading-[1.3] tracking-[-.015em] md:text-[34px]">{t.auQuote}</p>
         </div>
         <div className="relative flex flex-wrap gap-8 border-t border-line pt-[22px]">
           <div>
@@ -41,7 +41,7 @@ export function LoginPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
           className="w-full max-w-[376px]"
         >
           <h2 className="m-0 text-[27px] font-medium tracking-[-.025em]">{t.auTitle}</h2>
@@ -59,5 +59,5 @@ export function LoginPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

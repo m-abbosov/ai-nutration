@@ -1,4 +1,4 @@
-import type { ActivityLevel, Gender, Goal, UserDto } from '@nutriai/shared/api/types'
+import type { ActivityLevel, Gender, Goal, UserDto } from "@nutriai/shared/api/types";
 
 /** Activity multipliers, ported verbatim from docs/API_CONTRACT.md / DESIGN_MAPPING.md. */
 export const ACTIVITY_MULTIPLIER: Record<ActivityLevel, number> = {
@@ -6,28 +6,28 @@ export const ACTIVITY_MULTIPLIER: Record<ActivityLevel, number> = {
   LIGHT: 1.375,
   MODERATE: 1.55,
   ACTIVE: 1.725,
-}
+};
 
 /** Weekly rate shown on onboarding/profile, matching the design's −0.4 / 0.0 / +0.3 kg figures. */
 export const GOAL_WEEKLY_RATE_KG: Record<Goal, number> = {
   LOSE: -0.4,
   MAINTAIN: 0,
   GAIN: 0.3,
-}
+};
 
 export function bmi(weightKg: number | null, heightCm: number | null): number | null {
-  if (!weightKg || !heightCm) return null
-  const heightM = heightCm / 100
-  return weightKg / (heightM * heightM)
+  if (!weightKg || !heightCm) return null;
+  const heightM = heightCm / 100;
+  return weightKg / (heightM * heightM);
 }
 
 export function isOnboarded(user: UserDto | undefined | null): boolean {
-  return !!user?.onboardingCompletedAt
+  return !!user?.onboardingCompletedAt;
 }
 
 export function userInitial(user: UserDto | undefined | null): string {
-  const name = user?.name?.trim()
-  return name ? name[0].toUpperCase() : '?'
+  const name = user?.name?.trim();
+  return name ? name[0].toUpperCase() : "?";
 }
 
 /** Default macro split (25/45/30) used by onboarding preview + profile fallback. */
@@ -36,17 +36,17 @@ export function defaultMacroSplit(targetKcal: number) {
     proteinG: Math.round((targetKcal * 0.25) / 4),
     carbsG: Math.round((targetKcal * 0.45) / 4),
     fatG: Math.round((targetKcal * 0.3) / 9),
-  }
+  };
 }
 
 /** Mifflin-St Jeor BMR, from docs/API_CONTRACT.md — same formula as backend/src/users/calorie.util.ts. */
 export function calculateBmr(age: number, heightCm: number, weightKg: number, gender?: Gender): number {
-  const base = 10 * weightKg + 6.25 * heightCm - 5 * age
-  return gender === 'FEMALE' ? base - 161 : gender === 'OTHER' ? base + 5 - 78 : base + 5
+  const base = 10 * weightKg + 6.25 * heightCm - 5 * age;
+  return gender === "FEMALE" ? base - 161 : gender === "OTHER" ? base + 5 - 78 : base + 5;
 }
 
 export function calculateTdee(bmrValue: number, activityLevel: ActivityLevel): number {
-  return bmrValue * ACTIVITY_MULTIPLIER[activityLevel]
+  return bmrValue * ACTIVITY_MULTIPLIER[activityLevel];
 }
 
 /**
@@ -56,16 +56,16 @@ export function calculateTdee(bmrValue: number, activityLevel: ActivityLevel): n
  * render the onboarding result screen before/while the request is in flight.
  */
 export function previewTargets(input: {
-  age: number
-  heightCm: number
-  weightKg: number
-  gender?: Gender
-  activityLevel: ActivityLevel
-  goal: Goal
+  age: number;
+  heightCm: number;
+  weightKg: number;
+  gender?: Gender;
+  activityLevel: ActivityLevel;
+  goal: Goal;
 }) {
-  const { age, heightCm, weightKg, gender, activityLevel, goal } = input
-  const bmrValue = calculateBmr(age, heightCm, weightKg, gender)
-  const tdee = calculateTdee(bmrValue, activityLevel)
-  const target = Math.round(goal === 'LOSE' ? tdee - 500 : goal === 'GAIN' ? tdee + 300 : tdee)
-  return { dailyCalorieTarget: target, ...defaultMacroSplit(target) }
+  const { age, heightCm, weightKg, gender, activityLevel, goal } = input;
+  const bmrValue = calculateBmr(age, heightCm, weightKg, gender);
+  const tdee = calculateTdee(bmrValue, activityLevel);
+  const target = Math.round(goal === "LOSE" ? tdee - 500 : goal === "GAIN" ? tdee + 300 : tdee);
+  return { dailyCalorieTarget: target, ...defaultMacroSplit(target) };
 }
