@@ -2,12 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 import { useTranslation } from "@nutriai/shared/i18n";
 import { cn } from "@nutriai/shared/lib/cn";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
-import { CALCS, CALC_CATEGORY_COLOR, CALC_CATEGORY_TINT } from "@/entities/calculator/lib/calculators";
-
-import { LandingCalculators } from "./ui/landing-calculators.tsx";
-import { LandingHeader } from "./ui/landing-header.tsx";
 import {
   BmiFloatIcon,
   BodyFatFloatIcon,
@@ -17,7 +14,14 @@ import {
   FeatureOrbIcon,
   ProteinFloatIcon,
   StepsFloatIcon,
-} from "./ui/landing-icons.tsx";
+} from "@/shared/ui/site-icons.tsx";
+
+import { SiteFooter } from "@/widgets/site-footer/site-footer";
+import { SiteHeader } from "@/widgets/site-header/site-header";
+
+import { CALC_CATEGORY_COLOR, CALC_CATEGORY_TINT } from "@/entities/calculator/lib/calculators";
+
+import { LandingCalculators } from "./ui/landing-calculators.tsx";
 
 const WEEK = [1980, 2140, 1870, 2020, 1760, 2310, 2180];
 const WEEK_DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -96,9 +100,23 @@ export function LandingPage() {
     accent: ix < 2,
   }));
 
+  const url = typeof window !== "undefined" ? window.location.origin + "/" : "/";
+
   return (
     <div className="min-h-screen bg-bg">
-      <LandingHeader />
+      <Helmet>
+        <title>{t.landing.seo.title}</title>
+        <meta name="description" content={t.landing.seo.description} />
+        <link rel="canonical" href={url} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={t.landing.seo.title} />
+        <meta property="og:description" content={t.landing.seo.description} />
+        <meta property="og:url" content={url} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={t.landing.seo.title} />
+        <meta name="twitter:description" content={t.landing.seo.description} />
+      </Helmet>
+      <SiteHeader />
 
       <main id="top">
         {/* Hero */}
@@ -468,67 +486,7 @@ export function LandingPage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-line bg-bg2">
-        <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-[34px] px-[26px] pb-[34px] pt-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2.5">
-              <svg width="24" height="24" viewBox="0 0 26 26">
-                <circle
-                  cx="13"
-                  cy="13"
-                  r="9.5"
-                  fill="none"
-                  stroke="var(--acc)"
-                  strokeWidth="1.6"
-                  strokeDasharray="45 60"
-                  strokeLinecap="round"
-                  transform="rotate(-90 13 13)"
-                />
-                <circle cx="13" cy="13" r="3.4" fill="var(--acc)" />
-              </svg>
-              <span className="text-[15px] font-semibold tracking-[-.015em]">
-                AI <span className="text-acc">Nutrition</span>
-              </span>
-            </div>
-            <p className="mt-3.5 max-w-[32ch] text-[12.5px] leading-[1.6] text-tx3 text-pretty">{t.landing.footer.blurb}</p>
-          </div>
-          {(["health", "nutrition", "fitness"] as const).map((cat) => (
-            <div key={cat} className="min-w-0">
-              <div className="mb-3.5 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-sm" style={{ background: CALC_CATEGORY_COLOR[cat] }} />
-                <span className="font-mono text-[9px] tracking-[.16em] text-tx3">
-                  {
-                    {
-                      health: t.landing.calc.filterHealth,
-                      nutrition: t.landing.calc.filterNutrition,
-                      fitness: t.landing.calc.filterFitness,
-                    }[cat]
-                  }
-                </span>
-              </div>
-              <div className="flex flex-col gap-2">
-                {CALCS.filter((c) => c.cat === cat).map((c) => (
-                  <Link
-                    key={c.id}
-                    to={`/calculators/${c.id}`}
-                    className="overflow-hidden text-ellipsis whitespace-nowrap text-[12.5px] text-tx2 hover:text-acc"
-                  >
-                    {t.landing.calculators[c.id]?.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mx-auto max-w-[1280px] px-[26px] pb-[34px]">
-          <div className="flex flex-wrap items-center gap-4 border-t border-line pt-[22px]">
-            <span className="text-[11.5px] text-tx3">© 2026 AI Nutrition</span>
-            <span className="flex-1" />
-            <span className="max-w-[64ch] text-[11.5px] text-tx3 text-pretty">{t.landing.footer.disclaimer}</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

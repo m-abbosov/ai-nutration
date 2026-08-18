@@ -1,5 +1,7 @@
 import { useTranslation } from "@nutriai/shared/i18n";
 
+import { useSelectedDate } from "@/app/providers/selected-date-provider";
+
 import { useDashboard } from "@/shared/api/dashboard";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ErrorState } from "@/shared/ui/state-blocks";
@@ -12,7 +14,8 @@ import { WeeklyChart } from "@/widgets/weekly-chart/weekly-chart";
 
 export function DashboardPage() {
   const { t } = useTranslation();
-  const { data, isLoading, isError, refetch } = useDashboard();
+  const { date } = useSelectedDate();
+  const { data, isLoading, isError, refetch } = useDashboard(date);
 
   return (
     <div className="animate-fu px-5 pb-[60px] pt-1.5 md:px-[34px]">

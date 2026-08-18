@@ -6,6 +6,7 @@ import { AdminModule } from './admin/admin.module';
 import { AiModule } from './ai/ai.module';
 import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
+import { CalculatorsModule } from './calculators/calculators.module';
 import { ChatModule } from './chat/chat.module';
 import { FeatureFlagsModule } from './common/feature-flags/feature-flags.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -35,6 +36,7 @@ import { UsersModule } from './users/users.module';
     AiModule,
     AuthModule,
     UsersModule,
+    CalculatorsModule,
     MealsModule,
     NutritionModule,
     DashboardModule,

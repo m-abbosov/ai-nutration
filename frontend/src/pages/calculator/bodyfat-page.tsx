@@ -4,13 +4,14 @@ import type { Gender } from "@nutriai/shared/api/types";
 import { useTranslation } from "@nutriai/shared/i18n";
 import { fmtDecimal } from "@nutriai/shared/lib/format";
 
-import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
 import { calculateBodyFat } from "@/entities/calculator/lib/formulas";
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { GirthField, HeightField, UnitToggle, useUnitSystem } from "./unit-fields";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 const CATEGORY_TONE = {
   essential: { color: "var(--pro)", tint: "var(--proT)" },
@@ -24,6 +25,7 @@ const CATEGORY_ORDER = ["essential", "athletes", "fitness", "average", "obese"] 
 
 export default function BodyFatPage() {
   const { t, lang } = useTranslation();
+  const [unit, setUnit] = useUnitSystem();
   const [gender, setGender] = useState<Gender>("MALE");
   const [heightCm, setHeightCm] = useState("175");
   const [neckCm, setNeckCm] = useState("38");
@@ -38,12 +40,14 @@ export default function BodyFatPage() {
   const ok = h > 0 && neck > 0 && waist > neck && (!isFemale || (hip > 0 && waist + hip > neck));
 
   const result = ok ? calculateBodyFat(gender, h, neck, waist, isFemale ? hip : undefined) : null;
+  useLogCalculatorUsage("bodyfat", { gender, heightCm: h, neckCm: neck, waistCm: waist, hipCm: isFemale ? hip : undefined, unit }, result);
 
   return (
     <CalculatorShell
       calcId="bodyfat"
       inputs={
         <div>
+          <UnitToggle unit={unit} onChange={setUnit} />
           <div className="grid grid-cols-2 gap-3.5">
             <div className="col-span-2">
               <Label>{t.app.genderLabelField}</Label>
@@ -57,24 +61,10 @@ export default function BodyFatPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="height">{t.calcPages.fields.height} · CM</Label>
-              <Input id="height" type="number" value={heightCm} onChange={(e) => setHeightCm(e.target.value)} />
-            </div>
-            <div>
-              <Label htmlFor="neck">{t.calcPages.fields.neck} · CM</Label>
-              <Input id="neck" type="number" value={neckCm} onChange={(e) => setNeckCm(e.target.value)} />
-            </div>
-            <div>
-              <Label htmlFor="waist">{t.calcPages.fields.waist} · CM</Label>
-              <Input id="waist" type="number" value={waistCm} onChange={(e) => setWaistCm(e.target.value)} />
-            </div>
-            {isFemale && (
-              <div>
-                <Label htmlFor="hip">{t.calcPages.fields.hip} · CM</Label>
-                <Input id="hip" type="number" value={hipCm} onChange={(e) => setHipCm(e.target.value)} />
-              </div>
-            )}
+            <HeightField id="height" unit={unit} heightCm={heightCm} onHeightCmChange={setHeightCm} />
+            <GirthField id="neck" label={t.calcPages.fields.neck} unit={unit} valueCm={neckCm} onValueCmChange={setNeckCm} />
+            <GirthField id="waist" label={t.calcPages.fields.waist} unit={unit} valueCm={waistCm} onValueCmChange={setWaistCm} />
+            {isFemale && <GirthField id="hip" label={t.calcPages.fields.hip} unit={unit} valueCm={hipCm} onValueCmChange={setHipCm} />}
           </div>
           {isFemale && <p className="mt-2 text-[11.5px] text-tx3">{t.calcPages.bodyfat.hipHint}</p>}
           {!ok && <ErrorBanner message={t.calcPages.invalidInput} />}

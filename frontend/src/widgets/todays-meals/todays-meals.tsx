@@ -1,25 +1,21 @@
-import { useState } from "react";
-
-import { localeTags, useTranslation } from "@nutriai/shared/i18n";
-import { formatDateLabel, shiftDateISO, todayLocalISO } from "@nutriai/shared/lib/format";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "@nutriai/shared/i18n";
 import { Link } from "react-router-dom";
+
+import { useSelectedDate } from "@/app/providers/selected-date-provider";
 
 import { useMeals } from "@/shared/api/meals";
 import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ErrorState } from "@/shared/ui/state-blocks";
 
+import { DateNav } from "@/widgets/date-nav/date-nav";
 import { MealCard } from "@/widgets/meal-timeline/meal-card";
 
 export function TodaysMeals() {
-  const { t, lang } = useTranslation();
-  const [date, setDate] = useState(todayLocalISO());
+  const { t } = useTranslation();
+  const { date } = useSelectedDate();
   const { data: meals, isLoading, isError, refetch } = useMeals(date);
 
-  const isToday = date === todayLocalISO();
-  const label = formatDateLabel(date, localeTags[lang], t.app.today, t.app.yesterday);
   const sorted = meals ? [...meals].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) : [];
   const dayTotal = sorted.reduce((sum, m) => sum + m.calories, 0);
 
@@ -32,35 +28,8 @@ export function TodaysMeals() {
         </Link>
       </div>
 
-      <div className="mb-4 flex items-center gap-2">
-        <button
-          title={t.app.previousDay}
-          onClick={() => setDate((d) => shiftDateISO(d, -1))}
-          className="grid h-8 w-8 flex-none place-items-center rounded-[9px] border border-line text-tx3 transition-colors hover:bg-surf2 hover:text-tx"
-        >
-          <ChevronLeft className="h-3.5 w-3.5" />
-        </button>
-        <Input
-          type="date"
-          value={date}
-          max={todayLocalISO()}
-          onChange={(e) => e.target.value && setDate(e.target.value)}
-          className="w-auto flex-none px-2.5 py-1.5 text-[12px]"
-        />
-        <button
-          title={t.app.nextDay}
-          disabled={isToday}
-          onClick={() => setDate((d) => shiftDateISO(d, 1))}
-          className="grid h-8 w-8 flex-none place-items-center rounded-[9px] border border-line text-tx3 transition-colors hover:bg-surf2 hover:text-tx disabled:pointer-events-none disabled:opacity-40"
-        >
-          <ChevronRight className="h-3.5 w-3.5" />
-        </button>
-        <span className="ml-1 flex-1 truncate font-mono text-[10px] tracking-[.1em] text-tx3">{label}</span>
-        {!isToday && (
-          <Button variant="ghost" size="sm" onClick={() => setDate(todayLocalISO())}>
-            {t.app.backToToday}
-          </Button>
-        )}
+      <div className="mb-4">
+        <DateNav />
       </div>
 
       {isLoading && (

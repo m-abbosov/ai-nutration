@@ -11,6 +11,8 @@ import { RACE_PRESETS_KM, calculatePace, formatMinutesToClock } from "@/entities
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 import { StatGrid } from "./stat-grid";
+import { DistanceField, UnitToggle, useUnitSystem } from "./unit-fields";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 const PRESETS = [
   { key: "fiveK", km: RACE_PRESETS_KM.fiveK },
@@ -21,6 +23,7 @@ const PRESETS = [
 
 export default function PacePage() {
   const { t, lang } = useTranslation();
+  const [unit, setUnit] = useUnitSystem();
   const [distanceKm, setDistanceKm] = useState("5");
   const [minutes, setMinutes] = useState("25");
   const [seconds, setSeconds] = useState("0");
@@ -32,12 +35,14 @@ export default function PacePage() {
   const ok = d > 0 && totalMinutes > 0;
 
   const result = ok ? calculatePace(d, totalMinutes) : null;
+  useLogCalculatorUsage("pace", { distanceKm: d, minutes: m, seconds: s, unit }, result);
 
   return (
     <CalculatorShell
       calcId="pace"
       inputs={
         <div>
+          <UnitToggle unit={unit} onChange={setUnit} />
           <div className="flex flex-wrap gap-2">
             {PRESETS.map((p) => (
               <button
@@ -55,8 +60,13 @@ export default function PacePage() {
           </div>
           <div className="mt-3.5 grid grid-cols-2 gap-3.5">
             <div className="col-span-2">
-              <Label htmlFor="distance">{t.calcPages.pace.distanceKm}</Label>
-              <Input id="distance" type="number" value={distanceKm} onChange={(e) => setDistanceKm(e.target.value)} />
+              <DistanceField
+                id="distance"
+                label={t.calcPages.pace.distanceKm}
+                unit={unit}
+                distanceKm={distanceKm}
+                onDistanceKmChange={setDistanceKm}
+              />
             </div>
             <div>
               <Label htmlFor="minutes">{t.calcPages.fields.time} · min</Label>

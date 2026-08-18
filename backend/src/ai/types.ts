@@ -34,6 +34,15 @@ export interface AiTodayMeal {
 /** A meal from the last ~7 days, WITH its id — so the AI coach can
  * reference an already-logged meal when the user asks to correct/edit it.
  * Never used for anything except `mealEdit` targeting. */
+export interface AiRecentMealItem {
+  name: string;
+  quantity: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
 export interface AiRecentMeal {
   id: string;
   date: string;
@@ -43,6 +52,7 @@ export interface AiRecentMeal {
   protein: number;
   carbs: number;
   fat: number;
+  items: AiRecentMealItem[];
 }
 
 export interface AiContext {

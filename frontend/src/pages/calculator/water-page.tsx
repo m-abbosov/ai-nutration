@@ -10,9 +10,12 @@ import { Switch } from "@/shared/ui/switch";
 import { calculateWaterLiters } from "@/entities/calculator/lib/formulas";
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { UnitToggle, WeightField, useUnitSystem } from "./unit-fields";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 export default function WaterPage() {
   const { t, lang } = useTranslation();
+  const [unit, setUnit] = useUnitSystem();
   const [weightKg, setWeightKg] = useState("72");
   const [exerciseMinutes, setExerciseMinutes] = useState("30");
   const [hotClimate, setHotClimate] = useState(false);
@@ -22,16 +25,17 @@ export default function WaterPage() {
   const ok = w > 0;
 
   const liters = ok ? calculateWaterLiters(w, ex, hotClimate) : null;
+  useLogCalculatorUsage("water", { weightKg: w, exerciseMinutes: ex, hotClimate, unit }, liters != null ? { liters } : null);
 
   return (
     <CalculatorShell
       calcId="water"
       inputs={
         <div>
+          <UnitToggle unit={unit} onChange={setUnit} />
           <div className="grid grid-cols-2 gap-3.5">
             <div className="col-span-2">
-              <Label htmlFor="weight">{t.calcPages.fields.weight} · KG</Label>
-              <Input id="weight" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
+              <WeightField id="weight" label={t.calcPages.fields.weight} unit={unit} weightKg={weightKg} onWeightKgChange={setWeightKg} />
             </div>
             <div className="col-span-2">
               <Label htmlFor="exercise">

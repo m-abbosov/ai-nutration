@@ -162,6 +162,14 @@ export class ChatService {
                   fat: target.fat,
                   servingSize: target.servingSize,
                   date: target.date,
+                  items: target.items.map((item) => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    calories: item.calories,
+                    protein: item.protein,
+                    carbs: item.carbs,
+                    fat: item.fat,
+                  })),
                 },
               },
             };

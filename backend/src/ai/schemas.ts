@@ -55,6 +55,7 @@ export const MealEditSchema = z.object({
       carbs: z.number().min(0).max(1000).optional(),
       fat: z.number().min(0).max(1000).optional(),
       servingSize: z.string().max(60).optional(),
+      items: z.array(MealItemSchema).min(1).optional(),
     })
     .refine((c) => Object.keys(c).length > 0, {
       message: 'changes must include at least one field',

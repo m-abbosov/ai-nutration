@@ -21,11 +21,20 @@ export interface ManualMealPayload {
   servingSize?: string;
 }
 
+export interface MealItemInput {
+  name: string;
+  quantity: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
 export interface AiMealPayload {
   mealType: MealType;
   name: string;
   source: "AI";
-  items: { name: string; quantity: string; calories: number; protein: number; carbs: number; fat: number }[];
+  items: MealItemInput[];
 }
 
 function invalidateMealDependents(qc: ReturnType<typeof useQueryClient>) {
@@ -45,7 +54,8 @@ export function useAddMeal() {
 export function useUpdateMeal() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...payload }: Partial<ManualMealPayload> & { id: string }) => api.patch<MealDto>(`/meals/${id}`, payload),
+    mutationFn: ({ id, ...payload }: Partial<ManualMealPayload> & { id: string; items?: MealItemInput[] }) =>
+      api.patch<MealDto>(`/meals/${id}`, payload),
     onSuccess: () => invalidateMealDependents(qc),
   });
 }

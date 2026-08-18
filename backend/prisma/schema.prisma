@@ -225,6 +225,28 @@ model AiRequestLog {
   @@map("ai_request_logs")
 }
 
+// Records every completed calculation on a public /calculators/:slug page,
+// for admin-panel analytics (most-used calculator, usage over time). Written
+// for anonymous AND signed-in visitors (calculator pages need no auth);
+// userId is null for anonymous use. Never blocks the calculator UI — a
+// logging failure is swallowed server-side (see calculators.service.ts).
+model CalculatorUsageLog {
+  id     String  @id @default(cuid())
+  userId String?
+  user   User?   @relation("CalculatorUsageLogsByUser", fields: [userId], references: [id], onDelete: SetNull)
+
+  calculatorId String
+  inputs       Json
+  result       Json
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([calculatorId, createdAt])
+  @@index([userId, createdAt])
+  @@map("calculator_usage_logs")
+}
+
 enum SystemLogSeverity {
   INFO
   WARNING
@@ -311,9 +333,10 @@ model User {
   meals         Meal[]
   conversations Conversation[]
 
-  auditLogs           AuditLog[]     @relation("AuditLogsByAdmin")
-  updatedFeatureFlags FeatureFlag[]  @relation("FeatureFlagUpdatedBy")
-  aiRequestLogs       AiRequestLog[] @relation("AiRequestLogsByUser")
+  auditLogs           AuditLog[]            @relation("AuditLogsByAdmin")
+  updatedFeatureFlags FeatureFlag[]         @relation("FeatureFlagUpdatedBy")
+  aiRequestLogs       AiRequestLog[]        @relation("AiRequestLogsByUser")
+  calculatorUsageLogs CalculatorUsageLog[]  @relation("CalculatorUsageLogsByUser")
 
   @@map("users")
 }

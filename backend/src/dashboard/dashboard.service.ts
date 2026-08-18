@@ -116,10 +116,13 @@ export class DashboardService {
     return streak;
   }
 
-  async getDashboard(userId: string): Promise<DashboardResponseDto> {
+  async getDashboard(
+    userId: string,
+    date?: string,
+  ): Promise<DashboardResponseDto> {
     const [user, daily, weekly, streakDays] = await Promise.all([
       this.prisma.user.findUniqueOrThrow({ where: { id: userId } }),
-      this.nutritionService.getDaily(userId),
+      this.nutritionService.getDaily(userId, date),
       this.nutritionService.getWeekly(userId, 7),
       this.computeStreakDays(userId),
     ]);

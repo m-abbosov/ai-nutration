@@ -10,9 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MET_ACTIVITIES, type MetActivityId, calculateCaloriesBurned } from "@/entities/calculator/lib/formulas";
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { UnitToggle, WeightField, useUnitSystem } from "./unit-fields";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 export default function BurnedPage() {
   const { t, lang } = useTranslation();
+  const [unit, setUnit] = useUnitSystem();
   const [activityId, setActivityId] = useState<MetActivityId>("runModerate");
   const [weightKg, setWeightKg] = useState("72");
   const [durationMinutes, setDurationMinutes] = useState("30");
@@ -23,12 +26,14 @@ export default function BurnedPage() {
 
   const activity = MET_ACTIVITIES.find((a) => a.id === activityId)!;
   const kcal = ok ? calculateCaloriesBurned(activity.met, w, dur) : null;
+  useLogCalculatorUsage("burned", { activityId, weightKg: w, durationMinutes: dur, unit }, kcal != null ? { kcal } : null);
 
   return (
     <CalculatorShell
       calcId="burned"
       inputs={
         <div>
+          <UnitToggle unit={unit} onChange={setUnit} />
           <div className="grid grid-cols-2 gap-3.5">
             <div className="col-span-2">
               <Label>{t.calcPages.fields.activity}</Label>
@@ -45,10 +50,7 @@ export default function BurnedPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="weight">{t.calcPages.fields.weight} · KG</Label>
-              <Input id="weight" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
-            </div>
+            <WeightField id="weight" label={t.calcPages.fields.weight} unit={unit} weightKg={weightKg} onWeightKgChange={setWeightKg} />
             <div>
               <Label htmlFor="duration">{t.calcPages.fields.time} · min</Label>
               <Input id="duration" type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value)} />

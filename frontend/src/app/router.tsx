@@ -19,14 +19,7 @@ import { AppShell } from "@/widgets/app-shell/app-shell";
 export function AppRouter() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <RequireGuest>
-            <LandingPage />
-          </RequireGuest>
-        }
-      />
+      <Route path="/" element={<LandingPage />} />
       <Route
         path="/login"
         element={

@@ -3,14 +3,14 @@ import { useState } from "react";
 import { useTranslation } from "@nutriai/shared/i18n";
 import { fmtDecimal } from "@nutriai/shared/lib/format";
 
-import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
-
 import { calculateBmi } from "@/entities/calculator/lib/formulas";
+import { kgToLb } from "@/entities/calculator/lib/units";
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 import { GaugeBar } from "./gauge-bar";
 import { StatGrid } from "./stat-grid";
+import { HeightField, UnitToggle, WeightField, useUnitSystem } from "./unit-fields";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 const CATEGORY_TONE = {
   under: { color: "var(--pro)", tint: "var(--proT)" },
@@ -21,6 +21,7 @@ const CATEGORY_TONE = {
 
 export default function BmiPage() {
   const { t, lang } = useTranslation();
+  const [unit, setUnit] = useUnitSystem();
   const [heightCm, setHeightCm] = useState("175");
   const [weightKg, setWeightKg] = useState("72");
 
@@ -31,21 +32,17 @@ export default function BmiPage() {
   const ok = hOk && wOk && heightCm !== "" && weightKg !== "";
 
   const result = ok ? calculateBmi(h, w) : null;
+  useLogCalculatorUsage("bmi", { heightCm: h, weightKg: w, unit }, result);
 
   return (
     <CalculatorShell
       calcId="bmi"
       inputs={
         <div>
+          <UnitToggle unit={unit} onChange={setUnit} />
           <div className="grid grid-cols-2 gap-3.5">
-            <div>
-              <Label htmlFor="height">{t.calcPages.fields.height} · CM</Label>
-              <Input id="height" type="number" value={heightCm} onChange={(e) => setHeightCm(e.target.value)} />
-            </div>
-            <div>
-              <Label htmlFor="weight">{t.calcPages.fields.weight} · KG</Label>
-              <Input id="weight" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
-            </div>
+            <HeightField id="height" unit={unit} heightCm={heightCm} onHeightCmChange={setHeightCm} />
+            <WeightField id="weight" label={t.calcPages.fields.weight} unit={unit} weightKg={weightKg} onWeightKgChange={setWeightKg} />
           </div>
           {!ok && (heightCm !== "" || weightKg !== "") && <ErrorBanner message={t.calcPages.invalidInput} />}
         </div>
@@ -78,7 +75,10 @@ export default function BmiPage() {
               cells={[
                 {
                   label: t.calcPages.bmi.healthyRange,
-                  value: `${fmtDecimal(result.healthyMinKg, lang, 1)} – ${fmtDecimal(result.healthyMaxKg, lang, 1)} kg`,
+                  value:
+                    unit === "us"
+                      ? `${fmtDecimal(kgToLb(result.healthyMinKg), lang, 1)} – ${fmtDecimal(kgToLb(result.healthyMaxKg), lang, 1)} lb`
+                      : `${fmtDecimal(result.healthyMinKg, lang, 1)} – ${fmtDecimal(result.healthyMaxKg, lang, 1)} kg`,
                 },
                 { label: t.calcPages.bmi.bmiPrime, value: fmtDecimal(result.bmiPrime, lang, 2) },
                 { label: t.calcPages.bmi.ponderalIndex, value: `${fmtDecimal(result.ponderalIndex, lang, 1)} kg/m³` },

@@ -36,6 +36,8 @@ export function MealEditSuggestionCard({
     rows.push({ label: t.app.fatLabel, from: `${Math.round(current.fat)} ${t.g}`, to: `${Math.round(changes.fat)} ${t.g}` });
   if (changes.servingSize !== undefined) rows.push({ label: t.app.servingSizeLabel, from: current.servingSize ?? "—", to: changes.servingSize });
 
+  const itemsChanged = changes.items !== undefined;
+
   return (
     <div className="mt-3.5 max-w-[400px] overflow-hidden rounded-[18px] border border-line bg-surf shadow-card">
       <div className="flex items-center gap-2.5 border-b border-line px-4 pb-3.5 pt-[15px]">
@@ -54,6 +56,23 @@ export function MealEditSuggestionCard({
             <span className="min-w-0 flex-1 truncate text-right font-medium text-tx">{r.to}</span>
           </div>
         ))}
+        {itemsChanged && (
+          <div>
+            <span className="text-tx2">{t.app.mealItemsLabel}</span>
+            <div className="mt-1.5 flex flex-col gap-1">
+              {current.items.map((item, i) => (
+                <div key={`from-${i}`} className="truncate text-[11.5px] text-tx3 line-through">
+                  {item.name} — {fmtNumber(item.calories, lang)} {t.kcal}
+                </div>
+              ))}
+              {changes.items!.map((item, i) => (
+                <div key={`to-${i}`} className="truncate text-[11.5px] font-medium text-tx">
+                  {item.name} — {fmtNumber(item.calories, lang)} {t.kcal}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <div className="px-4 pb-4">
         <ApplyMealEditButton suggestion={suggestion} applied={applied} onApplied={onApplied} />

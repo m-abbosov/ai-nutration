@@ -10,6 +10,7 @@ import { calculateHeartRateZones } from "@/entities/calculator/lib/formulas";
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 import { FormulaTable } from "./formula-table";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 const ZONE_KEYS = ["zone1", "zone2", "zone3", "zone4", "zone5"] as const;
 
@@ -23,6 +24,7 @@ export default function HrPage() {
   const ok = a > 0 && a < 120 && (rhr === undefined || rhr > 0);
 
   const result = ok ? calculateHeartRateZones(a, rhr) : null;
+  useLogCalculatorUsage("hr", { age: a, restingHr: rhr }, result);
 
   return (
     <CalculatorShell

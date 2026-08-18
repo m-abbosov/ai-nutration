@@ -4,16 +4,18 @@ import type { ActivityLevel } from "@nutriai/shared/api/types";
 import { useTranslation } from "@nutriai/shared/i18n";
 import { fmtNumber } from "@nutriai/shared/lib/format";
 
-import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
 import { calculateProtein } from "@/entities/calculator/lib/formulas";
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
+import { UnitToggle, WeightField, useUnitSystem } from "./unit-fields";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 export default function ProteinPage() {
   const { t, lang } = useTranslation();
+  const [unit, setUnit] = useUnitSystem();
   const [weightKg, setWeightKg] = useState("72");
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>("MODERATE");
 
@@ -21,16 +23,17 @@ export default function ProteinPage() {
   const ok = w > 0;
 
   const result = ok ? calculateProtein(w, activityLevel) : null;
+  useLogCalculatorUsage("protein", { weightKg: w, activityLevel, unit }, result);
 
   return (
     <CalculatorShell
       calcId="protein"
       inputs={
         <div>
+          <UnitToggle unit={unit} onChange={setUnit} />
           <div className="grid grid-cols-2 gap-3.5">
             <div className="col-span-2">
-              <Label htmlFor="weight">{t.calcPages.fields.weight} · KG</Label>
-              <Input id="weight" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
+              <WeightField id="weight" label={t.calcPages.fields.weight} unit={unit} weightKg={weightKg} onWeightKgChange={setWeightKg} />
             </div>
             <div className="col-span-2">
               <Label>{t.prAct}</Label>

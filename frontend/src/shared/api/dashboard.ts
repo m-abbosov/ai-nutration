@@ -3,9 +3,10 @@ import { queryKeys } from "@nutriai/shared/api/query-client";
 import type { DashboardDto } from "@nutriai/shared/api/types";
 import { useQuery } from "@tanstack/react-query";
 
-export function useDashboard() {
+export function useDashboard(date?: string) {
+  const qs = date ? `?date=${date}` : "";
   return useQuery({
-    queryKey: queryKeys.dashboard,
-    queryFn: () => api.get<DashboardDto>("/dashboard"),
+    queryKey: date ? [...queryKeys.dashboard, date] : queryKeys.dashboard,
+    queryFn: () => api.get<DashboardDto>(`/dashboard${qs}`),
   });
 }

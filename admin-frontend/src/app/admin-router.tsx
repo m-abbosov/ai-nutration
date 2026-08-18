@@ -14,6 +14,7 @@ const UsersPage = lazy(() => import("@/pages/users/users-page").then((m) => ({ d
 const UserDetailPage = lazy(() => import("@/pages/users/user-detail-page").then((m) => ({ default: m.UserDetailPage })));
 const NutritionPage = lazy(() => import("@/pages/nutrition/nutrition-page").then((m) => ({ default: m.NutritionPage })));
 const AiPage = lazy(() => import("@/pages/ai/ai-page").then((m) => ({ default: m.AiPage })));
+const CalculatorsPage = lazy(() => import("@/pages/calculators/calculators-page").then((m) => ({ default: m.CalculatorsPage })));
 const ConversationsPage = lazy(() => import("@/pages/conversations/conversations-page").then((m) => ({ default: m.ConversationsPage })));
 const ConversationDetailPage = lazy(() =>
   import("@/pages/conversations/conversation-detail-page").then((m) => ({ default: m.ConversationDetailPage })),
@@ -91,6 +92,14 @@ export function AdminRouter() {
             element={
               <RequirePagePermission permission="AI_READ">
                 <AiPage />
+              </RequirePagePermission>
+            }
+          />
+          <Route
+            path="calculators"
+            element={
+              <RequirePagePermission permission="ANALYTICS_READ">
+                <CalculatorsPage />
               </RequirePagePermission>
             }
           />

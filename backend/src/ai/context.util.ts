@@ -51,6 +51,14 @@ export function buildAiContext(
       protein: meal.protein,
       carbs: meal.carbs,
       fat: meal.fat,
+      items: meal.items.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        calories: item.calories,
+        protein: item.protein,
+        carbs: item.carbs,
+        fat: item.fat,
+      })),
     })),
     now: new Date(),
   };

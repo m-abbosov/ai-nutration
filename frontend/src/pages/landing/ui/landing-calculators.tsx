@@ -4,9 +4,9 @@ import { useTranslation } from "@nutriai/shared/i18n";
 import { cn } from "@nutriai/shared/lib/cn";
 import { Link } from "react-router-dom";
 
-import { CALCS, CALC_CATEGORY_COLOR, CALC_CATEGORY_TINT, type CalculatorCategory } from "@/entities/calculator/lib/calculators.ts";
+import { CalcIcon, ClearIcon, SearchIcon } from "@/shared/ui/site-icons.tsx";
 
-import { CalcIcon, ClearIcon, SearchIcon } from "./landing-icons.tsx";
+import { CALCS, CALC_CATEGORY_COLOR, CALC_CATEGORY_TINT, type CalculatorCategory } from "@/entities/calculator/lib/calculators.ts";
 
 type Filter = "all" | CalculatorCategory;
 

@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
 import { useTranslation } from "@nutriai/shared/i18n";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
-import { LogoMark } from "@/shared/ui/nav-icons";
-
-import { ThemeToggle } from "@/features/theme-toggle/theme-toggle";
+import { SiteFooter } from "@/widgets/site-footer/site-footer";
+import { SiteHeader } from "@/widgets/site-header/site-header";
 
 import { CALCS, CALC_CATEGORY_COLOR, findCalculator } from "@/entities/calculator/lib/calculators";
 
@@ -19,22 +19,39 @@ export function CalculatorShell({ calcId, inputs, results }: { calcId: string; i
   const { t } = useTranslation();
   const calc = findCalculator(calcId);
   const meta = t.landing.calculators[calcId];
+  const seo = t.calcPages.seo[calcId];
   const related = calc ? CALCS.filter((c) => c.cat === calc.cat && c.id !== calcId).slice(0, 3) : [];
+  const url = typeof window !== "undefined" ? `${window.location.origin}/calculators/${calcId}` : `/calculators/${calcId}`;
 
   return (
     <div className="min-h-screen bg-bg">
-      <header className="border-b border-line">
-        <div className="mx-auto flex max-w-[1100px] items-center gap-2.5 px-5 py-[13px] md:px-8">
-          <Link to="/" className="flex items-center gap-2.5 text-tx">
-            <LogoMark />
-            <span className="text-[16px] font-semibold tracking-[-.015em]">
-              AI <span className="text-acc">Nutrition</span>
-            </span>
-          </Link>
-          <div className="flex-1" />
-          <ThemeToggle />
-        </div>
-      </header>
+      {seo && (
+        <Helmet>
+          <title>{seo.title}</title>
+          <meta name="description" content={seo.description} />
+          <link rel="canonical" href={url} />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={seo.title} />
+          <meta property="og:description" content={seo.description} />
+          <meta property="og:url" content={url} />
+          <meta name="twitter:card" content="summary" />
+          <meta name="twitter:title" content={seo.title} />
+          <meta name="twitter:description" content={seo.description} />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: seo.title,
+              description: seo.description,
+              url,
+              applicationCategory: "HealthApplication",
+              operatingSystem: "Any",
+              offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            })}
+          </script>
+        </Helmet>
+      )}
+      <SiteHeader />
 
       <main className="mx-auto max-w-[1100px] animate-fu px-5 py-10 md:px-8">
         {calc && <div className="font-mono text-[9.5px] tracking-[.18em] text-tx3">{t.landing.calc[FILTER_LABEL_KEY[calc.cat]]}</div>}
@@ -68,6 +85,8 @@ export function CalculatorShell({ calcId, inputs, results }: { calcId: string; i
           </div>
         )}
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

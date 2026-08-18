@@ -66,7 +66,9 @@ export function MealCard({ meal, dayTotal }: { meal: MealDto; dayTotal: number }
                   {meal.items.map((it) => (
                     <div key={it.id} className="flex items-center gap-2.5 bg-surf px-3.5 py-2.5">
                       <span className="min-w-0 flex-1 truncate text-[13px]">{it.name}</span>
-                      <span className="font-mono text-[11.5px] text-tx2 tabular-nums">{fmtNumber(it.calories, lang)}</span>
+                      <span className="font-mono text-[11.5px] text-tx2 tabular-nums">
+                        {fmtNumber(it.calories, lang)} {t.kcal}
+                      </span>
                     </div>
                   ))}
                 </div>

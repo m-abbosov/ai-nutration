@@ -21,10 +21,17 @@ function formatContext(context: AiContext): string {
 
   const recentMealsList = recentMeals.length
     ? recentMeals
-        .map(
-          (m) =>
-            `- id="${m.id}" | ${m.date} ${m.mealType}: ${m.name} (${m.calories} kcal, P${m.protein}g/C${m.carbs}g/F${m.fat}g)`,
-        )
+        .map((m) => {
+          const itemsList = m.items.length
+            ? m.items
+                .map(
+                  (item) =>
+                    `    - ${item.name} (${item.quantity}): ${item.calories} kcal, P${item.protein}g/C${item.carbs}g/F${item.fat}g`,
+                )
+                .join('\n')
+            : '';
+          return `- id="${m.id}" | ${m.date} ${m.mealType}: ${m.name} (${m.calories} kcal, P${m.protein}g/C${m.carbs}g/F${m.fat}g)${itemsList ? '\n' + itemsList : ''}`;
+        })
         .join('\n')
     : '(no meals logged in the last 7 days)';
 
@@ -92,7 +99,8 @@ no commentary outside the JSON:
       "protein"?: number,
       "carbs"?: number,
       "fat"?: number,
-      "servingSize"?: string
+      "servingSize"?: string,
+      "items"?: [{ "name": string, "quantity": string, "calories": number, "protein": number, "carbs": number, "fat": number }]
     }
   }
 }
@@ -107,8 +115,11 @@ ${greetingRule}
   was bigger, make it 800 kcal", "fix the calories on yesterday's breakfast", "change my dinner name to X"),
   find the matching entry in the "Recently logged meals" list below and populate "mealEdit" with its exact
   "id" (copy it character-for-character — NEVER invent or guess an id) and only the fields that should
-  change in "changes" (at least one). If you cannot confidently identify which logged meal the user means,
-  leave "mealEdit" null and ask a clarifying question in "reply" instead.
+  change in "changes" (at least one). If the user wants to change the individual food items within the
+  meal (e.g. "swap the rice for potatoes", "add a fried egg to that breakfast"), populate "items" with the
+  FULL replacement list of items for the meal (not a partial diff) — omitting "items" leaves the meal's
+  existing items untouched. If you cannot confidently identify which logged meal the user means, leave
+  "mealEdit" null and ask a clarifying question in "reply" instead.
 - "reply" is always a short, natural-language, helpful answer in ${language}.
 - Exactly one of "mealAnalysis", "recommendations", "mealEdit" may be non-null at a time — never more than one.
 - All numbers are non-negative and realistic (a single meal is rarely above 2000 kcal).

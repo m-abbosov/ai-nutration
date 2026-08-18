@@ -5,19 +5,22 @@ import { langFlag, langName, useTranslation } from "@nutriai/shared/i18n";
 import { cn } from "@nutriai/shared/lib/cn";
 import { Link } from "react-router-dom";
 
+import { useAuth } from "@/app/providers/auth-provider";
+
+import { Avatar } from "@/shared/ui/avatar.tsx";
 import { LogoMark } from "@/shared/ui/nav-icons.tsx";
+import { BurgerIcon, ChevronDownIcon } from "@/shared/ui/site-icons.tsx";
 
 import { ThemeToggle } from "@/features/theme-toggle/theme-toggle.tsx";
 
 import { CALCS, CALC_CATEGORY_COLOR, type CalculatorCategory } from "@/entities/calculator/lib/calculators.ts";
 
-import { BurgerIcon, ChevronDownIcon } from "./landing-icons.tsx";
-
 const CATEGORIES: CalculatorCategory[] = ["health", "nutrition", "fitness"];
 const LANGS: Language[] = ["UZ", "RU", "EN"];
 
-export function LandingHeader() {
+export function SiteHeader() {
   const { t, lang, setLang } = useTranslation();
+  const { isAuthenticated, user } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
   const [calcOpen, setCalcOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -163,18 +166,26 @@ export function LandingHeader() {
 
         <ThemeToggle className="grid h-[34px] w-[34px] flex-none place-items-center rounded-[10px] border border-line text-tx2 hover:bg-surf2 hover:text-tx" />
 
-        <Link
-          to="/login"
-          className="hidden whitespace-nowrap rounded-[10px] px-[13px] py-[9px] text-[13px] font-medium text-tx2 hover:bg-surf2 hover:text-tx lg:block"
-        >
-          {t.landing.nav.signIn}
-        </Link>
-        <Link
-          to="/login"
-          className="hidden whitespace-nowrap rounded-[11px] bg-acc px-4 py-2.5 text-[13px] font-semibold text-[#04120e] shadow-[0_8px_22px_-12px_var(--accG)] transition-[filter] hover:brightness-[1.08] sm:inline-flex"
-        >
-          {t.landing.nav.getStarted}
-        </Link>
+        {isAuthenticated ? (
+          <Link to="/profile" title={t.navProf} className="flex-none">
+            <Avatar user={user} className="h-[34px] w-[34px]" textClassName="text-[13px]" />
+          </Link>
+        ) : (
+          <>
+            <Link
+              to="/login"
+              className="hidden whitespace-nowrap rounded-[10px] px-[13px] py-[9px] text-[13px] font-medium text-tx2 hover:bg-surf2 hover:text-tx lg:block"
+            >
+              {t.landing.nav.signIn}
+            </Link>
+            <Link
+              to="/login"
+              className="hidden whitespace-nowrap rounded-[11px] bg-acc px-4 py-2.5 text-[13px] font-semibold text-[#04120e] shadow-[0_8px_22px_-12px_var(--accG)] transition-[filter] hover:brightness-[1.08] sm:inline-flex"
+            >
+              {t.landing.nav.getStarted}
+            </Link>
+          </>
+        )}
         <button
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="Menu"
@@ -214,9 +225,20 @@ export function LandingHeader() {
               </button>
             ))}
             <span className="flex-1" />
-            <Link to="/login" onClick={closeAll} className="rounded-[11px] bg-acc px-[17px] py-[11px] text-[13px] font-semibold text-[#04120e]">
-              {t.landing.nav.getStarted}
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                to="/profile"
+                onClick={closeAll}
+                className="flex items-center gap-2 rounded-[11px] bg-surf2 px-[13px] py-[9px] text-[13px] font-medium"
+              >
+                <Avatar user={user} className="h-6 w-6" textClassName="text-[11px]" />
+                {t.navProf}
+              </Link>
+            ) : (
+              <Link to="/login" onClick={closeAll} className="rounded-[11px] bg-acc px-[17px] py-[11px] text-[13px] font-semibold text-[#04120e]">
+                {t.landing.nav.getStarted}
+              </Link>
+            )}
           </div>
         </div>
       )}

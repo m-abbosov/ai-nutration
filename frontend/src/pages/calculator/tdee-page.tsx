@@ -12,9 +12,12 @@ import { calculateBmr, calculateTdee } from "@/entities/user/lib/helpers";
 
 import { CalculatorShell, ErrorBanner, ResultHero, ResultPlaceholder } from "./calculator-shell";
 import { StatGrid } from "./stat-grid";
+import { HeightField, UnitToggle, WeightField, useUnitSystem } from "./unit-fields";
+import { useLogCalculatorUsage } from "./use-log-usage";
 
 export default function TdeePage() {
   const { t, lang } = useTranslation();
+  const [unit, setUnit] = useUnitSystem();
   const [gender, setGender] = useState<Gender>("MALE");
   const [age, setAge] = useState("28");
   const [heightCm, setHeightCm] = useState("175");
@@ -28,12 +31,18 @@ export default function TdeePage() {
 
   const bmr = ok ? calculateBmr(a, h, w, gender) : null;
   const tdee = bmr != null ? calculateTdee(bmr, activityLevel) : null;
+  useLogCalculatorUsage(
+    "tdee",
+    { gender, age: a, heightCm: h, weightKg: w, activityLevel, unit },
+    tdee != null && bmr != null ? { bmr, tdee } : null,
+  );
 
   return (
     <CalculatorShell
       calcId="tdee"
       inputs={
         <div>
+          <UnitToggle unit={unit} onChange={setUnit} />
           <div className="grid grid-cols-2 gap-3.5">
             <div className="col-span-2">
               <Label>{t.app.genderLabelField}</Label>
@@ -52,13 +61,9 @@ export default function TdeePage() {
               <Label htmlFor="age">{t.calcPages.fields.age}</Label>
               <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} />
             </div>
-            <div>
-              <Label htmlFor="height">{t.calcPages.fields.height} · CM</Label>
-              <Input id="height" type="number" value={heightCm} onChange={(e) => setHeightCm(e.target.value)} />
-            </div>
+            <HeightField id="height" unit={unit} heightCm={heightCm} onHeightCmChange={setHeightCm} />
             <div className="col-span-2">
-              <Label htmlFor="weight">{t.calcPages.fields.weight} · KG</Label>
-              <Input id="weight" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
+              <WeightField id="weight" label={t.calcPages.fields.weight} unit={unit} weightKg={weightKg} onWeightKgChange={setWeightKg} />
             </div>
             <div className="col-span-2">
               <Label>{t.prAct}</Label>

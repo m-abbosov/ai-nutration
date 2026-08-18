@@ -1,18 +1,22 @@
 import { useTranslation } from "@nutriai/shared/i18n";
 
+import { useSelectedDate } from "@/app/providers/selected-date-provider";
+
 import { useDailyNutrition } from "@/shared/api/nutrition";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ErrorState } from "@/shared/ui/state-blocks";
 
 import { RequestRecommendationButton } from "@/features/request-recommendation/request-recommendation-button";
 
+import { DateNav } from "@/widgets/date-nav/date-nav";
 import { MealTimeline } from "@/widgets/meal-timeline/meal-timeline";
 import { AddMealDropdown } from "@/widgets/meals-summary/add-meal-dropdown";
 import { MealsSummary } from "@/widgets/meals-summary/meals-summary";
 
 export function MealsPage() {
   const { t } = useTranslation();
-  const { data, isLoading, isError, refetch } = useDailyNutrition();
+  const { date } = useSelectedDate();
+  const { data, isLoading, isError, refetch } = useDailyNutrition(date);
 
   return (
     <div className="animate-fu px-5 pb-[70px] pt-[22px] md:px-[34px]">
@@ -25,6 +29,10 @@ export function MealsPage() {
           <RequestRecommendationButton />
           <AddMealDropdown />
         </div>
+      </div>
+
+      <div className="mt-4">
+        <DateNav />
       </div>
 
       {isLoading && (

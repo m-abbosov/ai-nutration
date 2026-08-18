@@ -1,4 +1,6 @@
+import { useLogout } from "@nutriai/shared/api/auth";
 import { useTranslation } from "@nutriai/shared/i18n";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/app/providers/auth-provider";
 
@@ -16,6 +18,13 @@ export function ProfilePage() {
   const { user, isLoading } = useAuth();
   const { data: dashboard } = useDashboard();
   const mounted = useMountedTransition();
+  const navigate = useNavigate();
+  const logout = useLogout();
+
+  const handleSignOut = () => {
+    if (!window.confirm(t.app.signOutConfirm)) return;
+    logout.mutate(undefined, { onSettled: () => navigate("/login", { replace: true }) });
+  };
 
   if (isLoading || !user) {
     return (
@@ -70,6 +79,16 @@ export function ProfilePage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="mt-[26px]">
+        <button
+          onClick={handleSignOut}
+          className="flex w-full items-center gap-3 rounded-[18px] border border-line bg-surf px-[18px] py-[15px] text-left transition-colors hover:bg-surfH"
+        >
+          <span className="flex-1 text-[13.5px] font-medium text-fat">{t.stOut}</span>
+          <span className="font-mono text-[11px] text-tx3">→</span>
+        </button>
       </section>
     </div>
   );

@@ -1,6 +1,4 @@
-import { useMemo } from "react";
-
-import { localeTags, useTranslation } from "@nutriai/shared/i18n";
+import { useTranslation } from "@nutriai/shared/i18n";
 import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -10,30 +8,11 @@ import { Avatar } from "@/shared/ui/avatar";
 
 import { ThemeToggle } from "@/features/theme-toggle/theme-toggle";
 
-export function AppHeader() {
-  const { t, lang } = useTranslation();
-  const { user } = useAuth();
+import { DateNav } from "@/widgets/date-nav/date-nav";
 
-  const dateLabel = useMemo(() => {
-    const now = new Date();
-    // Browsers' Intl data for uz-UZ is missing full month/weekday names (falls back to
-    // e.g. "M08"/"Sat"), so Uzbek is spelled out manually from the translation dictionary
-    // instead of trusting Intl.DateTimeFormat here. RU/EN have complete Intl coverage.
-    if (lang === "UZ") {
-      const weekdayIdx = (now.getDay() + 6) % 7;
-      return `${t.dayFull[weekdayIdx]}, ${now.getDate()}-${t.monthFull[now.getMonth()]}, ${now.getFullYear()}`;
-    }
-    try {
-      return new Intl.DateTimeFormat(localeTags[lang], {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        weekday: "long",
-      }).format(now);
-    } catch {
-      return now.toDateString();
-    }
-  }, [lang, t]);
+export function AppHeader() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
 
   return (
     <header className="z-30 flex flex-none flex-wrap items-end gap-5 border-b border-line bg-glass px-[22px] py-[18px] pt-[26px] backdrop-blur-[14px] md:px-[34px]">
@@ -45,9 +24,8 @@ export function AppHeader() {
         <p className="m-0 mt-[5px] text-[13.5px] text-tx2">{t.greetSub}</p>
       </div>
       <div className="flex items-center gap-2.5">
-        <div className="hidden items-center gap-2 whitespace-nowrap rounded-[10px] border border-line px-3 py-[7px] font-mono text-[11px] text-tx2 sm:flex">
-          <span className="h-[5px] w-[5px] animate-pulse-soft rounded-full bg-acc" />
-          {dateLabel}
+        <div className="hidden sm:block">
+          <DateNav compact />
         </div>
         <ThemeToggle />
         <button className="grid h-[34px] w-[34px] place-items-center rounded-[10px] border border-line text-tx2 transition-colors hover:bg-surf2 hover:text-tx">
