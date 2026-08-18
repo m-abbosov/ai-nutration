@@ -41,6 +41,10 @@ export class AdminSettingsService {
             provider: 'CLAUDE',
             model: this.configService.get('CLAUDE_MODEL', { infer: true }),
           },
+          {
+            provider: 'GROQ',
+            model: this.configService.get('GROQ_MODEL', { infer: true }),
+          },
         ],
       },
       featureFlags: flags.map((flag) => this.toFlagDto(flag)),

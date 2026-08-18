@@ -28,6 +28,7 @@ const envSchema = z.object({
   GEMINI_MODEL: z.string().optional().default('gemini-flash-lite-latest'),
   OPENAI_MODEL: z.string().optional().default('gpt-4o-mini'),
   CLAUDE_MODEL: z.string().optional().default('claude-sonnet-4-5'),
+  GROQ_MODEL: z.string().optional().default('llama-3.3-70b-versatile'),
 
   FRONTEND_URL: z.string().default('http://localhost:5173'),
   ADMIN_FRONTEND_URL: z.string().default('http://localhost:5174'),

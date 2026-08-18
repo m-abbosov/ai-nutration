@@ -163,6 +163,7 @@ export const ru: Dict = {
     GEMINI: "Gemini",
     OPENAI: "ChatGPT (OpenAI)",
     CLAUDE: "Claude (Anthropic)",
+    GROQ: "Groq",
   },
   aiKeyStatusLabel: {
     OK: "Подключено",
@@ -292,6 +293,12 @@ export const ru: Dict = {
     aiApiKeyLabel: "API-токен",
     aiApiKeyPh: "Вставьте свой API-токен",
     aiGetKeyLink: (provider) => `Где получить API-ключ ${provider}`,
+    aiFreeBadge: "Бесплатно",
+    aiPaidBadge: "Платно",
+    aiBillingDialogTitle: (provider) => `${provider} — платный API`,
+    aiBillingDialogBody: (provider) =>
+      `Чтобы получить API-ключ ${provider}, нужно привязать карту прямо на платформе ${provider}. Все списания идут напрямую в ${provider} — эти деньги никогда не поступают нам. Мы используем вставленный вами ключ только для отправки запросов от вашего имени.`,
+    aiBillingDialogCta: "Понятно",
     aiSaveKey: "Сохранить",
     aiRemoveKey: "Удалить токен",
     aiNotConfigured: "Не подключено",

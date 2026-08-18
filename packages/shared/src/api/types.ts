@@ -8,7 +8,7 @@ export type MealType = "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER";
 export type MealSource = "MANUAL" | "AI";
 export type Language = "UZ" | "RU" | "EN";
 export type Theme = "LIGHT" | "DARK";
-export type AiProvider = "GEMINI" | "OPENAI" | "CLAUDE";
+export type AiProvider = "GEMINI" | "OPENAI" | "CLAUDE" | "GROQ";
 export type AiKeyStatus = "OK" | "EXHAUSTED" | "INVALID";
 
 export interface UserDto {

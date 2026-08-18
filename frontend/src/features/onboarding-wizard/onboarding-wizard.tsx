@@ -12,6 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { useSetAiKey, useSubmitOnboarding } from "@/shared/api/users";
+import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
@@ -21,10 +22,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { STEP_FIELDS, onboardingSchema } from "@/features/onboarding-wizard/schema";
 import type { OnboardingFormValues } from "@/features/onboarding-wizard/schema";
 
-import { AI_PROVIDER_KEY_URL } from "@/entities/user/lib/ai-provider-links";
+import { AI_PROVIDER_IS_FREE, AI_PROVIDER_KEY_URL } from "@/entities/user/lib/ai-provider-links";
 import { previewTargets } from "@/entities/user/lib/helpers";
+import { AiBillingDialog } from "@/entities/user/ui/ai-billing-dialog";
 
-const AI_PROVIDERS: AiProvider[] = ["GEMINI", "OPENAI", "CLAUDE"];
+const AI_PROVIDERS: AiProvider[] = ["GEMINI", "GROQ", "OPENAI", "CLAUDE"];
 
 const GOALS: { value: Goal; deltaLabel: string }[] = [
   { value: "LOSE", deltaLabel: "−0,4 kg" },
@@ -47,6 +49,12 @@ export function OnboardingWizard() {
   const setAiKey = useSetAiKey();
   const [aiProvider, setAiProvider] = useState<AiProvider>("GEMINI");
   const [aiApiKey, setAiApiKey] = useState("");
+  const [billingDialogProvider, setBillingDialogProvider] = useState<AiProvider | null>(null);
+
+  const handleAiProviderChange = (v: AiProvider) => {
+    setAiProvider(v);
+    if (!AI_PROVIDER_IS_FREE[v]) setBillingDialogProvider(v);
+  };
 
   const {
     register,
@@ -279,14 +287,19 @@ export function OnboardingWizard() {
                 <div className="mt-6 flex flex-col gap-3 rounded-[18px] border border-line bg-surf p-[18px]">
                   <div>
                     <Label htmlFor="onboarding-ai-provider">{t.app.aiApiKeyLabel}</Label>
-                    <Select value={aiProvider} onValueChange={(v) => setAiProvider(v as AiProvider)}>
+                    <Select value={aiProvider} onValueChange={(v) => handleAiProviderChange(v as AiProvider)}>
                       <SelectTrigger id="onboarding-ai-provider">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         {AI_PROVIDERS.map((p) => (
                           <SelectItem key={p} value={p}>
-                            {t.aiProviderLabel[p]}
+                            <span className="flex items-center gap-2">
+                              {t.aiProviderLabel[p]}
+                              <Badge className={AI_PROVIDER_IS_FREE[p] ? undefined : "bg-fatT text-fat"}>
+                                {AI_PROVIDER_IS_FREE[p] ? t.app.aiFreeBadge : t.app.aiPaidBadge}
+                              </Badge>
+                            </span>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -401,6 +414,7 @@ export function OnboardingWizard() {
           )}
         </div>
       </div>
+      {billingDialogProvider && <AiBillingDialog provider={billingDialogProvider} open onOpenChange={(o) => !o && setBillingDialogProvider(null)} />}
     </div>
   );
 }

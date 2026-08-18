@@ -62,6 +62,7 @@ enum AiProvider {
   GEMINI
   OPENAI
   CLAUDE
+  GROQ
 }
 
 enum AiKeyStatus {

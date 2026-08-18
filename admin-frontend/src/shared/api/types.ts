@@ -20,7 +20,7 @@ export type AdminPermissionKey =
   | "AUDIT_LOGS_READ";
 export type AdminUserStatus = "ACTIVE" | "DISABLED";
 export type AiEndpoint = "CHAT" | "RECOMMENDATION";
-export type AiProvider = "GEMINI" | "OPENAI" | "CLAUDE";
+export type AiProvider = "GEMINI" | "OPENAI" | "CLAUDE" | "GROQ";
 export type AiRequestStatus = "SUCCESS" | "ERROR";
 export type SystemLogSeverity = "INFO" | "WARNING" | "ERROR";
 export type Range = "7d" | "30d" | "90d" | "1y";

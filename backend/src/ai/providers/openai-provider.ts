@@ -9,13 +9,16 @@ export class OpenAiProvider implements AiProviderClient {
   constructor(
     private readonly apiKey: string,
     public readonly model: string,
+    /** Overridden for OpenAI-compatible providers (e.g. Groq) that reuse this
+     * same request/response/error shape via a different endpoint. */
+    private readonly baseURL?: string,
   ) {}
 
   async generateJson(
     prompt: string,
   ): Promise<{ text: string; usage: ProviderUsage | null }> {
     try {
-      const client = new OpenAI({ apiKey: this.apiKey });
+      const client = new OpenAI({ apiKey: this.apiKey, baseURL: this.baseURL });
       const result = await client.chat.completions.create({
         model: this.model,
         messages: [{ role: 'user', content: prompt }],

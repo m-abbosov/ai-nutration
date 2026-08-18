@@ -164,6 +164,7 @@ export const uz: Dict = {
     GEMINI: "Gemini",
     OPENAI: "ChatGPT (OpenAI)",
     CLAUDE: "Claude (Anthropic)",
+    GROQ: "Groq",
   },
   aiKeyStatusLabel: {
     OK: "Ulangan",
@@ -295,6 +296,12 @@ export const uz: Dict = {
     aiApiKeyPh: "API tokeningizni joylashtiring",
     aiGetKeyLink: (provider) =>
       `${provider} uchun API kalitni qayerdan olish mumkin`,
+    aiFreeBadge: "Bepul",
+    aiPaidBadge: "Pullik",
+    aiBillingDialogTitle: (provider) => `${provider} — pullik API`,
+    aiBillingDialogCta: "Tushunarli",
+    aiBillingDialogBody: (provider) =>
+      `${provider} API kalitini olish uchun ${provider}ning o'z tizimida kartangizni ulashingiz kerak bo'ladi. To'lov to'g'ridan-to'g'ri ${provider}ga o'tadi — bu pul bizga hech qachon kelmaydi. Biz faqat siz kiritgan kalit orqali sizning nomingizdan so'rov yuboramiz.`,
     aiSaveKey: "Saqlash",
     aiRemoveKey: "Tokenni o'chirish",
     aiNotConfigured: "Ulanmagan",

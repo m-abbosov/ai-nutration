@@ -163,6 +163,7 @@ export const en: Dict = {
     GEMINI: "Gemini",
     OPENAI: "ChatGPT (OpenAI)",
     CLAUDE: "Claude (Anthropic)",
+    GROQ: "Groq",
   },
   aiKeyStatusLabel: {
     OK: "Connected",
@@ -292,6 +293,12 @@ export const en: Dict = {
     aiApiKeyLabel: "API key",
     aiApiKeyPh: "Paste your API key",
     aiGetKeyLink: (provider) => `Get an API key for ${provider}`,
+    aiFreeBadge: "Free",
+    aiPaidBadge: "Paid",
+    aiBillingDialogTitle: (provider) => `${provider} is a paid API`,
+    aiBillingDialogBody: (provider) =>
+      `To get a ${provider} API key you'll need to add a card on ${provider}'s own platform. Any charges are billed directly by ${provider} — we never receive any of that money. We only use the key you paste here to make requests on your behalf.`,
+    aiBillingDialogCta: "Got it",
     aiSaveKey: "Save",
     aiRemoveKey: "Remove key",
     aiNotConfigured: "Not connected",

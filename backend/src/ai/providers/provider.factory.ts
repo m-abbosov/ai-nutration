@@ -7,6 +7,10 @@ import { GeminiProvider } from './gemini-provider';
 import { OpenAiProvider } from './openai-provider';
 import { ClaudeProvider } from './claude-provider';
 
+// Groq's API is OpenAI-compatible (same request/response/error shape) at a
+// different base URL, so it reuses OpenAiProvider rather than a new class.
+const GROQ_BASE_URL = 'https://api.groq.com/openai/v1';
+
 @Injectable()
 export class ProviderFactory {
   constructor(private readonly configService: ConfigService<EnvConfig, true>) {}
@@ -27,6 +31,12 @@ export class ProviderFactory {
         return new ClaudeProvider(
           apiKey,
           this.configService.get('CLAUDE_MODEL', { infer: true }),
+        );
+      case 'GROQ':
+        return new OpenAiProvider(
+          apiKey,
+          this.configService.get('GROQ_MODEL', { infer: true }),
+          GROQ_BASE_URL,
         );
     }
   }

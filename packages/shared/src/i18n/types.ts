@@ -150,7 +150,7 @@ export interface Dict {
   goalLabel: Record<"LOSE" | "MAINTAIN" | "GAIN", string>;
   activityLabel: Record<"SEDENTARY" | "LIGHT" | "MODERATE" | "ACTIVE", string>;
   genderLabel: Record<"MALE" | "FEMALE" | "OTHER", string>;
-  aiProviderLabel: Record<"GEMINI" | "OPENAI" | "CLAUDE", string>;
+  aiProviderLabel: Record<"GEMINI" | "OPENAI" | "CLAUDE" | "GROQ", string>;
   aiKeyStatusLabel: Record<"OK" | "EXHAUSTED" | "INVALID", string>;
 
   stTitle: string;
@@ -277,6 +277,11 @@ export interface Dict {
     aiApiKeyLabel: string;
     aiApiKeyPh: string;
     aiGetKeyLink: (provider: string) => string;
+    aiFreeBadge: string;
+    aiPaidBadge: string;
+    aiBillingDialogTitle: (provider: string) => string;
+    aiBillingDialogBody: (provider: string) => string;
+    aiBillingDialogCta: string;
     aiSaveKey: string;
     aiRemoveKey: string;
     aiNotConfigured: string;
