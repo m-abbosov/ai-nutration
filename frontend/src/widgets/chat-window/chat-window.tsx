@@ -7,6 +7,7 @@ import { useMessages, useSendMessage } from '@/shared/api/chat'
 import { useCreateConversation } from '@/shared/api/chat'
 import { NutritionResultCard } from '@/widgets/chat-window/nutrition-result-card'
 import { RecommendationsCard } from '@/widgets/chat-window/recommendations-card'
+import { MealEditSuggestionCard } from '@/widgets/chat-window/meal-edit-suggestion-card'
 import { ErrorState } from '@/shared/ui/state-blocks'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { cn } from '@nutriai/shared/lib/cn'
@@ -180,6 +181,13 @@ export function ChatWindow({
                         />
                       )}
                       {m.metadata?.kind === 'recommendations' && <RecommendationsCard items={m.metadata.data} />}
+                      {m.metadata?.kind === 'meal_edit_suggestion' && (
+                        <MealEditSuggestionCard
+                          suggestion={m.metadata.data}
+                          applied={addedIds.has(m.id)}
+                          onApplied={() => setAddedIds((prev) => new Set(prev).add(m.id))}
+                        />
+                      )}
                     </div>
                   </div>
                 )}

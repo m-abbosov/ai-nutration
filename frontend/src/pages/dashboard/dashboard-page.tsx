@@ -21,7 +21,7 @@ export function DashboardPage() {
           <DashboardHero daily={data.daily} streakDays={data.streakDays} />
           <MacroOverview daily={data.daily} />
           <div className="mt-[34px] grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] items-start gap-6">
-            <TodaysMeals meals={data.daily.meals} />
+            <TodaysMeals />
             <AiInsightCard daily={data.daily} insight={data.insight} />
           </div>
           <WeeklyChart data={data.weekly} />

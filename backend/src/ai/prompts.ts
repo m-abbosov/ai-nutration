@@ -8,7 +8,7 @@ const LANGUAGE_NAME: Record<Language, string> = {
 };
 
 function formatContext(context: AiContext): string {
-  const { profile, today, todaysMeals, now } = context;
+  const { profile, today, todaysMeals, recentMeals, now } = context;
 
   const mealsList = todaysMeals.length
     ? todaysMeals
@@ -18,6 +18,15 @@ function formatContext(context: AiContext): string {
         )
         .join('\n')
     : '(no meals logged yet today)';
+
+  const recentMealsList = recentMeals.length
+    ? recentMeals
+        .map(
+          (m) =>
+            `- id="${m.id}" | ${m.date} ${m.mealType}: ${m.name} (${m.calories} kcal, P${m.protein}g/C${m.carbs}g/F${m.fat}g)`,
+        )
+        .join('\n')
+    : '(no meals logged in the last 7 days)';
 
   return `
 User profile:
@@ -35,6 +44,9 @@ Today's nutrition so far:
 
 Today's logged meals:
 ${mealsList}
+
+Recently logged meals, last 7 days (for corrections/edits only — each has its own "id"):
+${recentMealsList}
 
 Current date/time: ${now.toISOString()}
 `.trim();
@@ -70,17 +82,35 @@ no commentary outside the JSON:
     "items": [{ "name": string, "quantity": string, "calories": number, "protein": number, "carbs": number, "fat": number }],
     "total": { "calories": number, "protein": number, "carbs": number, "fat": number }
   },
-  "recommendations": null | [{ "name": string, "estimatedCalories": number, "protein": number | null, "carbs": number | null, "fat": number | null, "reason": string }]
+  "recommendations": null | [{ "name": string, "estimatedCalories": number, "protein": number | null, "carbs": number | null, "fat": number | null, "reason": string }],
+  "mealEdit": null | {
+    "mealId": string,
+    "changes": {
+      "name"?: string,
+      "mealType"?: "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER",
+      "calories"?: number,
+      "protein"?: number,
+      "carbs"?: number,
+      "fat"?: number,
+      "servingSize"?: string
+    }
+  }
 }
 
 Rules:
 ${greetingRule}
-- If the user described a meal/food they ate (e.g. "I had two eggs and toast"), analyze it and
+- If the user described a NEW meal/food they ate (e.g. "I had two eggs and toast"), analyze it and
   populate "mealAnalysis" with realistic nutrition estimates. Otherwise "mealAnalysis" must be null.
 - If the user is asking what to eat / for food suggestions, populate "recommendations" with AT LEAST 3
   entries. Otherwise "recommendations" must be null.
+- If the user is asking to CORRECT or CHANGE a meal they ALREADY logged (e.g. "actually the lunch I logged
+  was bigger, make it 800 kcal", "fix the calories on yesterday's breakfast", "change my dinner name to X"),
+  find the matching entry in the "Recently logged meals" list below and populate "mealEdit" with its exact
+  "id" (copy it character-for-character — NEVER invent or guess an id) and only the fields that should
+  change in "changes" (at least one). If you cannot confidently identify which logged meal the user means,
+  leave "mealEdit" null and ask a clarifying question in "reply" instead.
 - "reply" is always a short, natural-language, helpful answer in ${language}.
-- Never include both mealAnalysis and recommendations populated at the same time.
+- Exactly one of "mealAnalysis", "recommendations", "mealEdit" may be non-null at a time — never more than one.
 - All numbers are non-negative and realistic (a single meal is rarely above 2000 kcal).
 
 ${formatContext(context)}

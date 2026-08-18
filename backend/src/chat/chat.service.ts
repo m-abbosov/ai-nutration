@@ -11,6 +11,7 @@ import { fallbackMessageFor } from '../ai/ai-fallback-messages';
 import { UserAiCredentialsService } from '../ai/user-ai-credentials.service';
 import { FeatureFlagsService } from '../common/feature-flags/feature-flags.service';
 import { PrismaService } from '../database/prisma.service';
+import { MealsService } from '../meals/meals.service';
 import { NutritionService } from '../nutrition/nutrition.service';
 import {
   toChatMessageResponseDto,
@@ -32,6 +33,7 @@ export class ChatService {
     private readonly aiService: AiService,
     private readonly userAiCredentials: UserAiCredentialsService,
     private readonly featureFlags: FeatureFlagsService,
+    private readonly mealsService: MealsService,
   ) {}
 
   async listConversations(userId: string): Promise<ConversationResponseDto[]> {
@@ -100,9 +102,10 @@ export class ChatService {
       },
     });
 
-    const [user, daily] = await Promise.all([
+    const [user, daily, recentMeals] = await Promise.all([
       this.prisma.user.findUniqueOrThrow({ where: { id: userId } }),
       this.nutritionService.getDaily(userId),
+      this.mealsService.findRecent(userId),
     ]);
 
     const credentials = this.userAiCredentials.resolve(user);
@@ -114,7 +117,7 @@ export class ChatService {
     if (!credentials) {
       assistantContent = fallbackMessageFor('NOT_CONFIGURED', user.language);
     } else {
-      const context = buildAiContext(user, daily);
+      const context = buildAiContext(user, daily, recentMeals);
       const generation = await this.aiService.generateChatReply(
         context,
         content,
@@ -136,6 +139,33 @@ export class ChatService {
             kind: 'recommendations',
             data: generation.data.recommendations,
           };
+        } else if (generation.data.mealEdit) {
+          // Defensive: only ever surface an edit suggestion for a meal id
+          // that genuinely appears in this user's own recent-meals list —
+          // never trust an AI-supplied id directly, even though the update
+          // endpoint itself would also reject a foreign/unknown id.
+          const target = recentMeals.find(
+            (m) => m.id === generation.data.mealEdit!.mealId,
+          );
+          if (target) {
+            metadata = {
+              kind: 'meal_edit_suggestion',
+              data: {
+                mealId: target.id,
+                changes: generation.data.mealEdit.changes,
+                current: {
+                  name: target.name,
+                  mealType: target.mealType,
+                  calories: target.calories,
+                  protein: target.protein,
+                  carbs: target.carbs,
+                  fat: target.fat,
+                  servingSize: target.servingSize,
+                  date: target.date,
+                },
+              },
+            };
+          }
         }
         if (user.aiKeyStatus && user.aiKeyStatus !== 'OK') {
           await this.userAiCredentials.recordStatus(userId, 'OK', null);

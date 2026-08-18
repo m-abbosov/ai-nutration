@@ -113,9 +113,35 @@ export interface RecommendationDto {
   reason: string
 }
 
+export interface MealEditChangesDto {
+  name?: string
+  mealType?: MealType
+  calories?: number
+  protein?: number
+  carbs?: number
+  fat?: number
+  servingSize?: string
+}
+
+export interface MealEditSuggestionDto {
+  mealId: string
+  changes: MealEditChangesDto
+  current: {
+    name: string
+    mealType: MealType
+    calories: number
+    protein: number
+    carbs: number
+    fat: number
+    servingSize: string | null
+    date: string
+  }
+}
+
 export type ChatMessageMetadata =
   | { kind: 'nutrition_card'; data: NutritionAnalysisDto }
   | { kind: 'recommendations'; data: RecommendationDto[] }
+  | { kind: 'meal_edit_suggestion'; data: MealEditSuggestionDto }
   | null
 
 export interface ChatMessageDto {

@@ -62,12 +62,16 @@ export class AiService {
     } catch (err) {
       if (err instanceof ProviderCallError) {
         if (err.reason === 'UNKNOWN') {
-          this.logger.warn(`testKey(${provider}) unclassified failure: ${err.message}`);
+          this.logger.warn(
+            `testKey(${provider}) unclassified failure: ${err.message}`,
+          );
         }
         return { ok: false, reason: err.reason };
       }
       const message = err instanceof Error ? err.message : String(err);
-      this.logger.warn(`testKey(${provider}) threw a non-provider error: ${message}`);
+      this.logger.warn(
+        `testKey(${provider}) threw a non-provider error: ${message}`,
+      );
       return { ok: false, reason: 'UNKNOWN' };
     }
   }

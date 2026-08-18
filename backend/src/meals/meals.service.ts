@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { parseDateOnly, todayDateOnly } from '../common/date.util';
+import { addDays, parseDateOnly, todayDateOnly } from '../common/date.util';
 import { CreateMealDto } from './dto/create-meal.dto';
 import { MealItemInputDto } from './dto/meal-item-input.dto';
 import { MealResponseDto } from './dto/meal-response.dto';
@@ -54,6 +54,22 @@ export class MealsService {
       where: { userId, date },
       include: { items: true },
       orderBy: { createdAt: 'asc' },
+    });
+
+    return meals.map(toMealResponseDto);
+  }
+
+  /** Last `days` calendar days (including today), most recent first — used
+   * to give the AI coach a bounded, id-bearing list of meals it may
+   * reference when the user asks to correct/edit something already logged. */
+  async findRecent(userId: string, days = 7): Promise<MealResponseDto[]> {
+    const since = addDays(todayDateOnly(), -(days - 1));
+
+    const meals = await this.prisma.meal.findMany({
+      where: { userId, date: { gte: since } },
+      include: { items: true },
+      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
+      take: 40,
     });
 
     return meals.map(toMealResponseDto);

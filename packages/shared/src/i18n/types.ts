@@ -286,6 +286,15 @@ export interface Dict {
     aiChatBanner: string
     aiRecommendationsBanner: string
     aiGoToSettings: string
+    today: string
+    yesterday: string
+    previousDay: string
+    nextDay: string
+    backToToday: string
+    mealEditSuggestionTitle: string
+    mealEditApply: string
+    mealEditApplied: string
+    mealEditFailed: string
   }
 
   // Admin Panel (Phase 2) — see shared/i18n/admin-types.ts
