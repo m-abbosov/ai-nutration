@@ -10,6 +10,28 @@ jobs:
   backend:
     name: Backend (typecheck, lint, build, test)
     runs-on: ubuntu-latest
+    # admin/admin-rbac.e2e.spec.ts boots the full Nest app against a real
+    # Postgres and depends on the AdminRole/AdminRolePermission rows from
+    # prisma/seed.ts (see that spec file's header comment) — hence the
+    # service container + migrate + seed steps below, not just typecheck.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nutriai_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriai_ci
+      JWT_SECRET: ci-test-jwt-secret
+      AI_KEY_ENCRYPTION_SECRET: ci-test-ai-key-encryption-secret-padding-value
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +53,14 @@ jobs:
 
       - name: Lint
         run: npm run lint
+        working-directory: backend
+
+      - name: Run migrations
+        run: npx prisma migrate deploy
+        working-directory: backend
+
+      - name: Seed database
+        run: npm run seed
         working-directory: backend
 
       - name: Unit tests
