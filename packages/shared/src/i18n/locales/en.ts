@@ -42,7 +42,7 @@ export const en: Dict = {
   aiCta: "Get dinner ideas",
   aiAlt: "Later",
   chartTitle: "7-day calories",
-  chartSub: "Daily target 2,000 kcal",
+  chartSub: (target) => `Daily target ${target.toLocaleString("en-US")} kcal`,
   chartConsumed: "Consumed",
   chartTarget: "Target",
   days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -359,9 +359,9 @@ export const en: Dict = {
       "Requires a ChatGPT Plus, Pro, Business, Enterprise, or Education plan — not available on the free tier.",
     mcpChatgptStep1:
       "In ChatGPT, go to Settings → Security and login, and turn on Developer mode.",
-    mcpChatgptStep2: "Go to Settings → Apps and connectors → Create.",
-    mcpChatgptStep3:
-      'Paste the URL above, name it "NutriAI", choose OAuth as the auth method, and save.',
+    mcpChatgptStep2:
+      "Go to ChatGPT Plugins and select the plus button to create a new developer-mode app.",
+    mcpChatgptStep3: 'Paste the URL above, name it "NutriAI", and save.',
     mcpChatgptStep4:
       "ChatGPT will ask you to sign in to NutriAI (same account as here) and approve access.",
     mcpChatgptStep5:

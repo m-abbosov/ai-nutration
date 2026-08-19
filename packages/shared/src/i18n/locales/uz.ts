@@ -43,7 +43,7 @@ export const uz: Dict = {
   aiCta: "Kechki ovqat g’oyalari",
   aiAlt: "Keyinroq",
   chartTitle: "7 kunlik kaloriya",
-  chartSub: "Kunlik maqsad 2 000 kcal",
+  chartSub: (target) => `Kunlik maqsad ${target.toLocaleString("ru-RU")} kcal`,
   chartConsumed: "Iste'mol",
   chartTarget: "Maqsad",
   days: ["Du", "Se", "Ch", "Pa", "Ju", "Sh", "Ya"],
@@ -365,9 +365,9 @@ export const uz: Dict = {
     mcpChatgptStep1:
       "ChatGPT'da Settings → Security and login bo'limiga o'ting va Developer mode'ni yoqing.",
     mcpChatgptStep2:
-      "Settings → Apps and connectors → Create bo'limiga o'ting.",
+      "ChatGPT Plugins bo'limiga o'ting va yangi developer-mode ilova yaratish uchun \"+\" tugmasini bosing.",
     mcpChatgptStep3:
-      "Yuqoridagi URL'ni joylashtiring, nomini \"NutriAI\" qiling, autentifikatsiya usuli sifatida OAuth'ni tanlang va saqlang.",
+      'Yuqoridagi URL\'ni joylashtiring, nomini "NutriAI" qiling va saqlang.',
     mcpChatgptStep4:
       "ChatGPT sizdan NutriAI'ga (shu yerdagi bilan bir xil akkount) kirish va ruxsat berishni so'raydi.",
     mcpChatgptStep5:

@@ -61,7 +61,7 @@ export interface Dict {
   aiCta: string;
   aiAlt: string;
   chartTitle: string;
-  chartSub: string;
+  chartSub: (target: number) => string;
   chartConsumed: string;
   chartTarget: string;
   days: string[];

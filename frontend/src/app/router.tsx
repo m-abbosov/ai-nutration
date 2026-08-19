@@ -40,6 +40,7 @@ export function AppRouter() {
       />
       <Route path="/calculators/:slug" element={<CalculatorRoute />} />
       <Route path="/oauth/consent/:uid" element={<OAuthConsentPage />} />
+      <Route path="/oauth/consent" element={<OAuthConsentPage />} />
 
       <Route
         element={

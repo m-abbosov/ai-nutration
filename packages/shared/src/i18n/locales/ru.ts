@@ -42,7 +42,7 @@ export const ru: Dict = {
   aiCta: "Идеи для ужина",
   aiAlt: "Позже",
   chartTitle: "Калории за 7 дней",
-  chartSub: "Дневная цель 2 000 ккал",
+  chartSub: (target) => `Дневная цель ${target.toLocaleString("ru-RU")} ккал`,
   chartConsumed: "Получено",
   chartTarget: "Цель",
   days: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
@@ -360,9 +360,9 @@ export const ru: Dict = {
       "Нужна подписка ChatGPT Plus, Pro, Business, Enterprise или Education — на бесплатном тарифе недоступно.",
     mcpChatgptStep1:
       "В ChatGPT откройте Settings → Security and login и включите Developer mode.",
-    mcpChatgptStep2: "Перейдите в Settings → Apps and connectors → Create.",
-    mcpChatgptStep3:
-      "Вставьте URL выше, назовите его «NutriAI», выберите OAuth как способ входа и сохраните.",
+    mcpChatgptStep2:
+      "Перейдите в ChatGPT Plugins и нажмите «+», чтобы создать новое приложение в режиме разработчика.",
+    mcpChatgptStep3: "Вставьте URL выше, назовите его «NutriAI» и сохраните.",
     mcpChatgptStep4:
       "ChatGPT попросит войти в NutriAI (тот же аккаунт, что и здесь) и разрешить доступ.",
     mcpChatgptStep5:

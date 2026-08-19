@@ -44,7 +44,7 @@ export function WeeklyChart({ data }: { data: NutritionWeeklyPointDto[] }) {
       <div className="mb-1.5 flex flex-wrap items-start gap-4">
         <div className="min-w-[180px] flex-1">
           <h2 className="m-0 text-[14px] font-semibold tracking-[-.01em]">{t.chartTitle}</h2>
-          <p className="m-0 mt-1 text-[12.5px] text-tx3">{t.chartSub}</p>
+          <p className="m-0 mt-1 text-[12.5px] text-tx3">{t.chartSub(target)}</p>
         </div>
         <div className="flex items-center gap-4 text-[11.5px] text-tx2">
           <span className="inline-flex items-center gap-1.5">

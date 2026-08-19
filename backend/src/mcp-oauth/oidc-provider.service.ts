@@ -24,16 +24,18 @@ export const MCP_SCOPE = 'mcp';
  * (Claude/ChatGPT self-register on first connect), Resource Indicators
  * (RFC 8707) bound to our one resource (`${BACKEND_URL}/mcp`).
  *
- * Login/consent UI lives on the frontend (see McpOauthInteractionController
- * for the JSON API it drives) — `oidc-provider` itself only implements the
- * OAuth protocol endpoints (/auth, /token, /reg, /.well-known/*), which are
- * mounted raw on the Express app in main.ts (bypassing Nest's `/api`
- * prefix — these paths are spec-fixed and must sit at the domain root).
+ * Login/consent UI lives on the frontend, reached via a same-origin
+ * redirect hop through McpOauthInteractionController first (see that file
+ * for why) — `oidc-provider` itself only implements the OAuth protocol
+ * endpoints (/auth, /token, /reg, /.well-known/*), which are mounted raw on
+ * the Express app in main.ts (bypassing Nest's `/api` prefix — these paths
+ * are spec-fixed and must sit at the domain root).
  */
 @Injectable()
 export class OidcProviderService {
   public readonly provider: Provider;
   public readonly resource: string;
+  public readonly frontendUrl: string;
 
   constructor(
     configService: ConfigService<EnvConfig, true>,
@@ -41,6 +43,7 @@ export class OidcProviderService {
   ) {
     const backendUrl = configService.get('BACKEND_URL', { infer: true });
     const frontendUrl = configService.get('FRONTEND_URL', { infer: true });
+    this.frontendUrl = frontendUrl;
     const configuredCookieKey = configService.get('MCP_OAUTH_COOKIE_KEYS', {
       infer: true,
     });
@@ -55,9 +58,11 @@ export class OidcProviderService {
 
       cookies: {
         keys: cookieKeys,
-        // The consent UI lives on a different origin (frontend app) than
-        // this authorization server, so its fetches to the interaction API
-        // are cross-site — these cookies MUST be sendable cross-site.
+        // Set and read only during top-level navigations on this origin
+        // (see mount-oidc-provider.ts / the interaction controller) — never
+        // needed cross-site, but `none` costs nothing extra and avoids
+        // surprises if a client's redirect chain ever bounces through an
+        // intermediate frame.
         long: { sameSite: 'none', secure: true },
         short: { sameSite: 'none', secure: true },
       },
@@ -118,8 +123,22 @@ export class OidcProviderService {
       },
 
       interactions: {
+        // Points at our OWN backend-hosted redirect endpoint, not the
+        // frontend directly — see McpOauthInteractionController.view() for
+        // why: it needs one more top-level hop on this same origin first,
+        // to read the interaction cookie reliably, before handing off to
+        // the frontend's actual consent UI.
+        //
+        // No trailing path segment beyond `:uid` — oidc-provider scopes the
+        // interaction cookie's `Path` to this exact URL's pathname (see its
+        // own actions/authorization/interactions.js), so `/login`,
+        // `/confirm`, and `/deny` — all nested one level deeper — need this
+        // to be their shared parent, or the cookie set here never matches
+        // requests to those sibling paths (confirmed in a real browser: the
+        // cookie was present on the `/view` GET but silently absent on the
+        // `/login` POST once `interactions.url` pointed at `/view` itself).
         url: async (_ctx, interaction) =>
-          `${frontendUrl}/oauth/consent/${interaction.uid}`,
+          `${backendUrl}/api/mcp-oauth/interaction/${interaction.uid}`,
       },
     });
 
