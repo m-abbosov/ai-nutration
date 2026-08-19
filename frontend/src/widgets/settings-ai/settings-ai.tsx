@@ -88,7 +88,7 @@ export function SettingsAi({ user }: { user: UserDto }) {
         </div>
 
         <div className="relative mt-4 border-t border-line pt-4">
-          <div className="max-w-[220px]">
+          <div className="w-full">
             <Label htmlFor="ai-provider">{t.app.aiProviderSelectLabel}</Label>
             <Select value={provider} onValueChange={(v) => setProvider(v as AiProvider)}>
               <SelectTrigger id="ai-provider">
