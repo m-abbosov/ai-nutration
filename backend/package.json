@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "NutriAI backend — NestJS API (Phase 1)",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "postinstall": "prisma generate",
     "build": "nest build",

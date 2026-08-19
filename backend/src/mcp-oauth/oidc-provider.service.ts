@@ -1,6 +1,10 @@
 import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+// oidc-provider ships pure ESM with no CJS build. `require()`-ing it from
+// this CommonJS-compiled file only works on Node 22+, which added support
+// for synchronously requiring an ES module — Node <22 throws
+// ERR_REQUIRE_ESM at boot. See backend/package.json's `engines.node`.
 import Provider, { errors } from 'oidc-provider';
 import { EnvConfig } from '../config/env.validation';
 import { PrismaService } from '../database/prisma.service';
