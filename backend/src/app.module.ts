@@ -16,6 +16,8 @@ import { validateEnv } from './config/env.validation';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
+import { McpModule } from './mcp/mcp.module';
+import { McpOauthModule } from './mcp-oauth/mcp-oauth.module';
 import { MealsModule } from './meals/meals.module';
 import { NutritionModule } from './nutrition/nutrition.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
@@ -37,6 +39,8 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     CalculatorsModule,
+    McpOauthModule,
+    McpModule,
     MealsModule,
     NutritionModule,
     DashboardModule,

@@ -299,6 +299,16 @@ export const ru: Dict = {
     aiBillingDialogBody: (provider) =>
       `Чтобы получить API-ключ ${provider}, нужно привязать карту прямо на платформе ${provider}. Все списания идут напрямую в ${provider} — эти деньги никогда не поступают нам. Мы используем вставленный вами ключ только для отправки запросов от вашего имени.`,
     aiBillingDialogCta: "Понятно",
+    mcpConsentTitle: (client) =>
+      `${client} хочет подключиться к вашему аккаунту NutriAI`,
+    mcpConsentBody:
+      "Он сможет добавлять и читать ваши приёмы пищи от вашего имени — это работает через вашу подписку Claude/ChatGPT, деньги нам не поступают.",
+    mcpConsentAllow: "Разрешить",
+    mcpConsentDeny: "Отклонить",
+    mcpConsentNeedLogin: "Сначала войдите в NutriAI, чтобы продолжить.",
+    mcpConsentSignIn: "Войти",
+    mcpConsentError: "Этот запрос на подключение недействителен или истёк.",
+    mcpConsentRedirecting: "Перенаправление…",
     aiSaveKey: "Сохранить",
     aiRemoveKey: "Удалить токен",
     aiNotConfigured: "Не подключено",
@@ -323,6 +333,17 @@ export const ru: Dict = {
     mealEditApply: "Применить изменения",
     mealEditApplied: "Обновлено",
     mealEditFailed: "Не удалось обновить — измените вручную",
+    mcpSettingsTitle: "Подключить Claude",
+    mcpSettingsSub:
+      "Работайте со своими данными NutriAI прямо в чате Claude, используя собственную подписку Claude — NutriAI ничего не списывает.",
+    mcpSettingsUrlLabel: "URL MCP-сервера",
+    mcpSettingsCopy: "Копировать",
+    mcpSettingsCopied: "Скопировано",
+    mcpSettingsStep1:
+      "В Claude откройте Settings → Connectors → Add custom connector.",
+    mcpSettingsStep2: "Вставьте URL выше и сохраните.",
+    mcpSettingsStep3:
+      "Claude попросит войти в NutriAI и разрешить доступ — после этого спрашивайте Claude о своих приёмах пищи и питании когда угодно.",
   },
 
   admin: {

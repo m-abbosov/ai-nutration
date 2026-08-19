@@ -248,6 +248,31 @@ model CalculatorUsageLog {
   @@map("calculator_usage_logs")
 }
 
+// Generic storage for the oidc-provider (MCP OAuth 2.1 authorization server)
+// library — one table backs every model kind it defines (Client, Grant,
+// Session, AccessToken, AuthorizationCode, RefreshToken, Interaction, ...),
+// per its documented adapter interface (payload is model-shape-agnostic on
+// our side; oidc-provider owns the shape). See backend/src/mcp-oauth/.
+model OidcModel {
+  id         String    @id
+  name       String
+  payload    Json
+  grantId    String?
+  userCode   String?
+  uid        String?
+  expiresAt  DateTime?
+  consumedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([name])
+  @@index([name, grantId])
+  @@index([name, userCode])
+  @@index([name, uid])
+  @@index([expiresAt])
+  @@map("oidc_models")
+}
+
 enum SystemLogSeverity {
   INFO
   WARNING

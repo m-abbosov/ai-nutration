@@ -282,6 +282,14 @@ export interface Dict {
     aiBillingDialogTitle: (provider: string) => string;
     aiBillingDialogBody: (provider: string) => string;
     aiBillingDialogCta: string;
+    mcpConsentTitle: (client: string) => string;
+    mcpConsentBody: string;
+    mcpConsentAllow: string;
+    mcpConsentDeny: string;
+    mcpConsentNeedLogin: string;
+    mcpConsentSignIn: string;
+    mcpConsentError: string;
+    mcpConsentRedirecting: string;
     aiSaveKey: string;
     aiRemoveKey: string;
     aiNotConfigured: string;
@@ -302,6 +310,14 @@ export interface Dict {
     mealEditApply: string;
     mealEditApplied: string;
     mealEditFailed: string;
+    mcpSettingsTitle: string;
+    mcpSettingsSub: string;
+    mcpSettingsUrlLabel: string;
+    mcpSettingsCopy: string;
+    mcpSettingsCopied: string;
+    mcpSettingsStep1: string;
+    mcpSettingsStep2: string;
+    mcpSettingsStep3: string;
   };
 
   // Admin Panel (Phase 2) — see shared/i18n/admin-types.ts

@@ -32,6 +32,15 @@ const envSchema = z.object({
 
   FRONTEND_URL: z.string().default('http://localhost:5173'),
   ADMIN_FRONTEND_URL: z.string().default('http://localhost:5174'),
+  // Own public URL — used as the MCP OAuth issuer identifier and to build
+  // the canonical MCP resource URI (`${BACKEND_URL}/mcp`) that Claude/ChatGPT
+  // connect to. See mcp-oauth/ and mcp/.
+  BACKEND_URL: z.string().default('http://localhost:3001'),
+  // Signs the MCP OAuth flow's short-lived interaction/session cookies.
+  // Optional so a fresh dev box still boots — falls back to a random value
+  // generated at process start (invalidates any in-flight OAuth attempt on
+  // restart, never a security issue since these cookies are minutes-lived).
+  MCP_OAUTH_COOKIE_KEYS: z.string().optional().default(''),
   PORT: z.string().optional().default('3001'),
 });
 

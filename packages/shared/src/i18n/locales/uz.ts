@@ -300,6 +300,15 @@ export const uz: Dict = {
     aiPaidBadge: "Pullik",
     aiBillingDialogTitle: (provider) => `${provider} — pullik API`,
     aiBillingDialogCta: "Tushunarli",
+    mcpConsentTitle: (client) => `${client} NutriAI hisobingizga ulanmoqchi`,
+    mcpConsentBody:
+      "U sizning nomingizdan ovqatlaringizni qo'sha oladi va ma'lumotlaringizni o'qiy oladi — bu o'zingizning Claude/ChatGPT obunangiz orqali ishlaydi, bizga pul chiqmaydi.",
+    mcpConsentAllow: "Ruxsat berish",
+    mcpConsentDeny: "Rad etish",
+    mcpConsentNeedLogin: "Davom etish uchun avval NutriAI'ga kiring.",
+    mcpConsentSignIn: "Kirish",
+    mcpConsentError: "Bu ulanish so'rovi noto'g'ri yoki muddati o'tgan.",
+    mcpConsentRedirecting: "Yo'naltirilmoqda…",
     aiBillingDialogBody: (provider) =>
       `${provider} API kalitini olish uchun ${provider}ning o'z tizimida kartangizni ulashingiz kerak bo'ladi. To'lov to'g'ridan-to'g'ri ${provider}ga o'tadi — bu pul bizga hech qachon kelmaydi. Biz faqat siz kiritgan kalit orqali sizning nomingizdan so'rov yuboramiz.`,
     aiSaveKey: "Saqlash",
@@ -326,6 +335,17 @@ export const uz: Dict = {
     mealEditApply: "O'zgarishlarni qo'llash",
     mealEditApplied: "Yangilandi",
     mealEditFailed: "Yangilab bo'lmadi — qo'lda tahrirlang",
+    mcpSettingsTitle: "Claude ulash",
+    mcpSettingsSub:
+      "NutriAI ma'lumotlaringiz bilan to'g'ridan-to'g'ri Claude chatida gaplashing — o'zingizning Claude obunangiz orqali, NutriAI hech narsa hisoblamaydi.",
+    mcpSettingsUrlLabel: "MCP server URL",
+    mcpSettingsCopy: "Nusxalash",
+    mcpSettingsCopied: "Nusxalandi",
+    mcpSettingsStep1:
+      "Claude'da Settings → Connectors → Add custom connector bo'limiga o'ting.",
+    mcpSettingsStep2: "Yuqoridagi URL'ni joylashtirib saqlang.",
+    mcpSettingsStep3:
+      "Claude sizdan NutriAI'ga kirish va ruxsat berishni so'raydi — shundan keyin istalgan vaqtda Claude'dan ovqatlaringiz yoki ovqatlanishingiz haqida so'rashingiz mumkin.",
   },
 
   admin: {

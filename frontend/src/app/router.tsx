@@ -9,6 +9,7 @@ import { DashboardPage } from "@/pages/dashboard/dashboard-page";
 import { LandingPage } from "@/pages/landing/landing-page";
 import { LoginPage } from "@/pages/login/login-page";
 import { MealsPage } from "@/pages/meals/meals-page";
+import { OAuthConsentPage } from "@/pages/oauth-consent/oauth-consent-page";
 import { OnboardingPage } from "@/pages/onboarding/onboarding-page";
 import { ProfilePage } from "@/pages/profile/profile-page";
 import { ProgressPage } from "@/pages/progress/progress-page";
@@ -38,6 +39,7 @@ export function AppRouter() {
         }
       />
       <Route path="/calculators/:slug" element={<CalculatorRoute />} />
+      <Route path="/oauth/consent/:uid" element={<OAuthConsentPage />} />
 
       <Route
         element={

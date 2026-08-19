@@ -299,6 +299,16 @@ export const en: Dict = {
     aiBillingDialogBody: (provider) =>
       `To get a ${provider} API key you'll need to add a card on ${provider}'s own platform. Any charges are billed directly by ${provider} — we never receive any of that money. We only use the key you paste here to make requests on your behalf.`,
     aiBillingDialogCta: "Got it",
+    mcpConsentTitle: (client) =>
+      `${client} wants to connect to your NutriAI account`,
+    mcpConsentBody:
+      "It will be able to read and log your meals and nutrition data on your behalf, using your own Claude/ChatGPT subscription — never billed to us.",
+    mcpConsentAllow: "Allow",
+    mcpConsentDeny: "Deny",
+    mcpConsentNeedLogin: "Sign in to NutriAI first to continue.",
+    mcpConsentSignIn: "Sign in",
+    mcpConsentError: "This connection request is invalid or has expired.",
+    mcpConsentRedirecting: "Redirecting…",
     aiSaveKey: "Save",
     aiRemoveKey: "Remove key",
     aiNotConfigured: "Not connected",
@@ -322,6 +332,17 @@ export const en: Dict = {
     mealEditApply: "Apply changes",
     mealEditApplied: "Updated",
     mealEditFailed: "Couldn't update — try editing it manually",
+    mcpSettingsTitle: "Connect to Claude",
+    mcpSettingsSub:
+      "Talk to your NutriAI data straight from Claude's own chat, using your own Claude subscription — nothing is billed to NutriAI.",
+    mcpSettingsUrlLabel: "MCP server URL",
+    mcpSettingsCopy: "Copy",
+    mcpSettingsCopied: "Copied",
+    mcpSettingsStep1:
+      "In Claude, go to Settings → Connectors → Add custom connector.",
+    mcpSettingsStep2: "Paste the URL above and save.",
+    mcpSettingsStep3:
+      "Claude will ask you to sign in to NutriAI and approve access — after that, ask Claude about your meals or nutrition anytime.",
   },
 
   admin: {
