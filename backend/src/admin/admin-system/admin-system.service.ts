@@ -7,7 +7,7 @@ import {
   AdminSystemLogItemDto,
   HealthStatus,
 } from './dto/admin-system.dto';
-import { FindSystemErrorsQueryDto } from './dto/find-system-errors-query.dto';
+import { FindSystemLogsQueryDto } from './dto/find-system-logs-query.dto';
 
 const AI_RECENT_WINDOW_MS = 15 * 60 * 1000;
 const AI_RECENT_SAMPLE_SIZE = 50;
@@ -65,8 +65,8 @@ export class AdminSystemService {
     };
   }
 
-  async listErrors(
-    query: FindSystemErrorsQueryDto,
+  async listLogs(
+    query: FindSystemLogsQueryDto,
   ): Promise<PaginatedDto<AdminSystemLogItemDto>> {
     const { page, pageSize, skip, take } = paginationParams(query);
 
@@ -77,6 +77,9 @@ export class AdminSystemService {
         ...(query.from ? { gte: new Date(query.from) } : {}),
         ...(query.to ? { lte: new Date(query.to) } : {}),
       };
+    }
+    if (query.search) {
+      where.message = { contains: query.search, mode: 'insensitive' };
     }
 
     const [rows, total] = await Promise.all([

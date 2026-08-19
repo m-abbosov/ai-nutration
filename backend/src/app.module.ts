@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AdminModule } from './admin/admin.module';
 import { AiModule } from './ai/ai.module';
@@ -12,6 +13,7 @@ import { FeatureFlagsModule } from './common/feature-flags/feature-flags.module'
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { MaintenanceModeGuard } from './common/guards/maintenance-mode.guard';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { SystemLogRetentionService } from './common/system-log-retention.service';
 import { validateEnv } from './config/env.validation';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DatabaseModule } from './database/database.module';
@@ -32,6 +34,7 @@ import { UsersModule } from './users/users.module';
     // Generous global default; chat-message and recommendations endpoints
     // override this with a stricter 20/min via @Throttle to cap Gemini spend.
     ThrottlerModule.forRoot([{ name: 'default', ttl: 60000, limit: 100 }]),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     FeatureFlagsModule,
     AuditModule,
@@ -54,6 +57,7 @@ import { UsersModule } from './users/users.module';
     { provide: APP_GUARD, useClass: MaintenanceModeGuard },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    SystemLogRetentionService,
   ],
 })
 export class AppModule {}

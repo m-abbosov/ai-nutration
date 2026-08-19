@@ -1,8 +1,14 @@
 import { SystemLogSeverity } from '@prisma/client';
-import { IsEnum, IsISO8601, IsOptional } from 'class-validator';
+import {
+  IsEnum,
+  IsISO8601,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { PaginationQueryDto } from '../../common/pagination.dto';
 
-export class FindSystemErrorsQueryDto extends PaginationQueryDto {
+export class FindSystemLogsQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsEnum(SystemLogSeverity)
   severity?: SystemLogSeverity;
@@ -14,4 +20,9 @@ export class FindSystemErrorsQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsISO8601()
   to?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  search?: string;
 }

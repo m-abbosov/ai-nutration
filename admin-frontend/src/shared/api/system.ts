@@ -12,12 +12,13 @@ export function useAdminSystemHealth() {
   });
 }
 
-export interface AdminSystemErrorsQuery {
+export interface AdminSystemLogsQuery {
   page: number;
   pageSize: number;
   severity?: string;
   from?: string;
   to?: string;
+  search?: string;
 }
 
 function buildQuery(params: object) {
@@ -29,10 +30,10 @@ function buildQuery(params: object) {
   return qs ? `?${qs}` : "";
 }
 
-export function useAdminSystemErrors(query: AdminSystemErrorsQuery) {
+export function useAdminSystemLogs(query: AdminSystemLogsQuery) {
   return useQuery({
-    queryKey: adminQueryKeys.systemErrors(query),
-    queryFn: () => api.get<AdminSystemLogListDto>(`/admin/system/errors${buildQuery(query)}`),
+    queryKey: adminQueryKeys.systemLogs(query),
+    queryFn: () => api.get<AdminSystemLogListDto>(`/admin/system/logs${buildQuery(query)}`),
     placeholderData: (prev) => prev,
   });
 }

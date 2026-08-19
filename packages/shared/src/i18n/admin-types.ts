@@ -290,19 +290,20 @@ export interface AdminDict {
     authStatus: string;
     aiStatus: string;
     latency: string;
-    viewErrors: string;
+    viewLogs: string;
     statusHealthy: string;
     statusWarning: string;
     statusError: string;
     statusUnknown: string;
   };
-  systemErrors: {
+  systemLogs: {
     title: string;
     subtitle: string;
     colTime: string;
     colSeverity: string;
     colMessage: string;
     filterSeverity: string;
+    searchPlaceholder: string;
     empty: string;
     showStack: string;
     hideStack: string;
@@ -367,7 +368,7 @@ export interface AdminDict {
     noUsers: string;
     noAiRequests: string;
     notEnoughData: string;
-    noSystemErrors: string;
+    noSystemLogs: string;
     noConversations: string;
   };
 }

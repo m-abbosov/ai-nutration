@@ -24,7 +24,7 @@ export function SystemPage() {
         subtitle={t.system.subtitle}
         actions={
           <AdminButton asChild variant="secondary" size="sm">
-            <Link to="/system/errors">{t.system.viewErrors}</Link>
+            <Link to="/system/logs">{t.system.viewLogs}</Link>
           </AdminButton>
         }
       />

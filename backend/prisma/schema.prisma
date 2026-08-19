@@ -279,10 +279,12 @@ enum SystemLogSeverity {
   ERROR
 }
 
-// Unhandled/unexpected server errors (5xx) captured from the global
-// exception filter — distinct from AiRequestLog, which is domain-specific
-// to provider calls. Stack traces are stored but only ever rendered to
-// admins holding SYSTEM_READ; never sent to end users.
+// General API log feed — every 4xx/5xx response (except 401, which is
+// routine token-refresh noise) captured from the global exception filter,
+// distinct from AiRequestLog, which is domain-specific to provider calls.
+// Stack traces are stored but only ever rendered to admins holding
+// SYSTEM_READ; never sent to end users. Pruned after 30 days — see
+// backend/src/common/system-log-retention.service.ts.
 model SystemLog {
   id         String            @id @default(cuid())
   severity   SystemLogSeverity

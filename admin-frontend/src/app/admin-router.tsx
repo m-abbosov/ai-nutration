@@ -21,7 +21,7 @@ const ConversationDetailPage = lazy(() =>
 );
 const AnalyticsPage = lazy(() => import("@/pages/analytics/analytics-page").then((m) => ({ default: m.AnalyticsPage })));
 const SystemPage = lazy(() => import("@/pages/system/system-page").then((m) => ({ default: m.SystemPage })));
-const SystemErrorsPage = lazy(() => import("@/pages/system/system-errors-page").then((m) => ({ default: m.SystemErrorsPage })));
+const SystemLogsPage = lazy(() => import("@/pages/system/system-logs-page").then((m) => ({ default: m.SystemLogsPage })));
 const AdminUsersPage = lazy(() => import("@/pages/admin-users/admin-users-page").then((m) => ({ default: m.AdminUsersPage })));
 const AdminUserDetailPage = lazy(() => import("@/pages/admin-users/admin-user-detail-page").then((m) => ({ default: m.AdminUserDetailPage })));
 const SettingsPage = lazy(() => import("@/pages/settings/settings-page").then((m) => ({ default: m.SettingsPage })));
@@ -133,10 +133,10 @@ export function AdminRouter() {
             }
           />
           <Route
-            path="system/errors"
+            path="system/logs"
             element={
               <RequirePagePermission permission="SYSTEM_READ">
-                <SystemErrorsPage />
+                <SystemLogsPage />
               </RequirePagePermission>
             }
           />

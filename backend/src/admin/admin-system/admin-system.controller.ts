@@ -9,7 +9,7 @@ import {
   AdminSystemHealthDto,
   AdminSystemLogItemDto,
 } from './dto/admin-system.dto';
-import { FindSystemErrorsQueryDto } from './dto/find-system-errors-query.dto';
+import { FindSystemLogsQueryDto } from './dto/find-system-logs-query.dto';
 
 @UseGuards(JwtAuthGuard, AdminAuthGuard, AdminPermissionGuard)
 @Controller('admin/system')
@@ -22,11 +22,11 @@ export class AdminSystemController {
     return this.adminSystemService.getHealth();
   }
 
-  @Get('errors')
+  @Get('logs')
   @RequirePermission('SYSTEM_READ')
-  errors(
-    @Query() query: FindSystemErrorsQueryDto,
+  logs(
+    @Query() query: FindSystemLogsQueryDto,
   ): Promise<PaginatedDto<AdminSystemLogItemDto>> {
-    return this.adminSystemService.listErrors(query);
+    return this.adminSystemService.listLogs(query);
   }
 }

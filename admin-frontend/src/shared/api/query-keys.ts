@@ -13,7 +13,7 @@ export const adminQueryKeys = {
   conversation: (id: string) => ["admin", "conversations", id] as const,
   analytics: (params: unknown) => ["admin", "analytics", params] as const,
   systemHealth: ["admin", "system", "health"] as const,
-  systemErrors: (params: unknown) => ["admin", "system", "errors", params] as const,
+  systemLogs: (params: unknown) => ["admin", "system", "logs", params] as const,
   team: ["admin", "admin-users"] as const,
   teamMember: (id: string) => ["admin", "admin-users", id] as const,
   settings: ["admin", "settings"] as const,

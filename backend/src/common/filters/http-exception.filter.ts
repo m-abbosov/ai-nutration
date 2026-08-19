@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import { SystemLogSeverity } from '@prisma/client';
 import { Request, Response } from 'express';
 import { PrismaService } from '../../database/prisma.service';
 
@@ -14,12 +15,16 @@ import { PrismaService } from '../../database/prisma.service';
  * `{ statusCode, message, error }` shape (per API_CONTRACT.md) and never
  * leaks stack traces or internal error details to the client.
  *
- * Phase 2 addition: any *unexpected* error — not a thrown `HttpException`,
- * or any 5xx regardless of type — also gets one `SystemLog` row (severity
- * `ERROR`), fired-and-forgotten so a logging hiccup never delays or breaks
- * the client-facing error response (docs/ADMIN_PANEL.md, "Existing modules
- * touched"). 4xx validation errors are intentionally never logged here —
- * that would just be noise, not a system error.
+ * Every error also gets one `SystemLog` row — `ERROR` for 5xx/unexpected,
+ * `WARNING` for other 4xx — fired-and-forgotten so a logging hiccup never
+ * delays or breaks the client-facing error response (docs/ADMIN_PANEL.md,
+ * "Existing modules touched"). This is the general admin-panel log feed
+ * (Settings → System → Logs), not just a 5xx error tracker.
+ *
+ * 401 is the one status intentionally never logged: an expired access
+ * token is routine (every client silently refreshes and retries — see
+ * packages/shared/src/api/client.ts), not signal an admin needs to see,
+ * and would otherwise dominate the log volume.
  */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -60,10 +65,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
       );
     }
 
-    const isUnexpected = !(exception instanceof HttpException) || status >= 500;
-    if (isUnexpected) {
+    if (status !== HttpStatus.UNAUTHORIZED) {
+      const severity: SystemLogSeverity = status >= 500 ? 'ERROR' : 'WARNING';
       // Fire-and-forget: never await inside catch(), never let this throw.
-      void this.writeSystemLog(exception, request, status);
+      void this.writeSystemLog(exception, request, status, severity);
     }
 
     response.status(status).json({
@@ -77,6 +82,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     exception: unknown,
     request: Request,
     status: number,
+    severity: SystemLogSeverity,
   ): Promise<void> {
     const message =
       exception instanceof Error ? exception.message : 'Unknown error';
@@ -84,7 +90,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     try {
       await this.prisma.systemLog.create({
         data: {
-          severity: 'ERROR',
+          severity,
           service: 'api',
           message: `${request.method} ${request.url}: ${message}`,
           requestId: (request.headers['x-request-id'] as string) ?? null,

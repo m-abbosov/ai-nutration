@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-import { useAdminSystemErrors } from "@/shared/api/system";
+import { useAdminSystemLogs } from "@/shared/api/system";
 import type { AdminSystemLogDto } from "@/shared/api/types";
 import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
 import { AdminHeader } from "@/shared/ui/admin-header";
@@ -14,28 +14,36 @@ import { StatusBadge, severityToneOf } from "@/shared/ui/status-badge";
 
 const PAGE_SIZE = 20;
 
-export function SystemErrorsPage() {
+export function SystemLogsPage() {
   const { t } = useAdminTranslation();
   const [page, setPage] = useState(1);
   const [severity, setSeverity] = useState("");
+  const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const { data, isLoading, isError, refetch } = useAdminSystemErrors({ page, pageSize: PAGE_SIZE, severity: severity || undefined });
+  const { data, isLoading, isError, refetch } = useAdminSystemLogs({
+    page,
+    pageSize: PAGE_SIZE,
+    severity: severity || undefined,
+    search: search || undefined,
+  });
+
+  const hasActiveFilters = !!(severity || search);
 
   const columns: DataTableColumn<AdminSystemLogDto>[] = [
     {
       key: "createdAt",
-      header: t.systemErrors.colTime,
+      header: t.systemLogs.colTime,
       render: (row) => <span className="adm-mono text-[11.5px]">{new Date(row.createdAt).toLocaleString()}</span>,
     },
     {
       key: "severity",
-      header: t.systemErrors.colSeverity,
+      header: t.systemLogs.colSeverity,
       render: (row) => <StatusBadge tone={severityToneOf(row.severity)} label={row.severity} />,
     },
     {
       key: "message",
-      header: t.systemErrors.colMessage,
+      header: t.systemLogs.colMessage,
       render: (row) => (
         <div>
           <div className="flex items-center gap-2">
@@ -51,7 +59,7 @@ export function SystemErrorsPage() {
                 style={{ color: "var(--adm-accent)" }}
               >
                 {expanded === row.id ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                {expanded === row.id ? t.systemErrors.hideStack : t.systemErrors.showStack}
+                {expanded === row.id ? t.systemLogs.hideStack : t.systemLogs.showStack}
               </button>
             )}
           </div>
@@ -60,7 +68,7 @@ export function SystemErrorsPage() {
               className="adm-mono mt-2 max-w-[70vw] overflow-x-auto rounded-[var(--adm-radius-sm)] p-2 text-[10.5px] leading-relaxed"
               style={{ background: "var(--adm-bg-inset)", color: "var(--adm-text-2)" }}
             >
-              {row.stack ?? t.systemErrors.noStack}
+              {row.stack ?? t.systemLogs.noStack}
             </pre>
           )}
         </div>
@@ -71,16 +79,23 @@ export function SystemErrorsPage() {
   return (
     <div>
       <AdminHeader
-        title={t.systemErrors.title}
-        subtitle={t.systemErrors.subtitle}
-        breadcrumbs={[{ label: t.system.title, to: "/system" }, { label: t.systemErrors.title }]}
+        title={t.systemLogs.title}
+        subtitle={t.systemLogs.subtitle}
+        breadcrumbs={[{ label: t.system.title, to: "/system" }, { label: t.systemLogs.title }]}
       />
 
       <div className="mb-4">
         <FilterBar
-          hasActiveFilters={!!severity}
+          search={search}
+          onSearchChange={(v) => {
+            setSearch(v);
+            setPage(1);
+          }}
+          searchPlaceholder={t.systemLogs.searchPlaceholder}
+          hasActiveFilters={hasActiveFilters}
           onClear={() => {
             setSeverity("");
+            setSearch("");
             setPage(1);
           }}
         >
@@ -93,7 +108,7 @@ export function SystemErrorsPage() {
           >
             <AdminSelectTrigger className="w-[160px]">
               <span className="mr-1" style={{ color: "var(--adm-text-3)" }}>
-                {t.systemErrors.filterSeverity}:
+                {t.systemLogs.filterSeverity}:
               </span>
               <AdminSelectValue />
             </AdminSelectTrigger>
@@ -119,7 +134,7 @@ export function SystemErrorsPage() {
           pageSize={PAGE_SIZE}
           onPageChange={setPage}
           loading={isLoading}
-          emptyState={<AdminEmptyState message={t.emptyStates.noSystemErrors} />}
+          emptyState={<AdminEmptyState message={t.emptyStates.noSystemLogs} />}
         />
       )}
     </div>
