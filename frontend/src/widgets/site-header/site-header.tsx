@@ -13,7 +13,7 @@ import { BurgerIcon, ChevronDownIcon } from "@/shared/ui/site-icons.tsx";
 
 import { ThemeToggle } from "@/features/theme-toggle/theme-toggle.tsx";
 
-import { CALCS, CALC_CATEGORY_COLOR, type CalculatorCategory } from "@/entities/calculator/lib/calculators.ts";
+import { CALC_CATEGORY_COLOR, CALCS, type CalculatorCategory } from "@/entities/calculator/lib/calculators.ts";
 
 const CATEGORIES: CalculatorCategory[] = ["health", "nutrition", "fitness"];
 const LANGS: Language[] = ["UZ", "RU", "EN"];
@@ -66,7 +66,7 @@ export function SiteHeader() {
 
         <nav aria-label="Main" className="ml-3.5 hidden items-center gap-0.5 lg:flex">
           <a
-            href="#top"
+            href="/"
             className="whitespace-nowrap rounded-[10px] px-3 py-2 text-[13.5px] font-medium text-tx2 transition-colors hover:bg-surf2 hover:text-tx"
           >
             {t.landing.nav.home}
