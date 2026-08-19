@@ -335,17 +335,28 @@ export const uz: Dict = {
     mealEditApply: "O'zgarishlarni qo'llash",
     mealEditApplied: "Yangilandi",
     mealEditFailed: "Yangilab bo'lmadi — qo'lda tahrirlang",
-    mcpSettingsTitle: "Claude ulash",
-    mcpSettingsSub:
-      "NutriAI ma'lumotlaringiz bilan to'g'ridan-to'g'ri Claude chatida gaplashing — o'zingizning Claude obunangiz orqali, NutriAI hech narsa hisoblamaydi.",
+    mcpSettingsSectionTitle: "AI YORDAMCHILAR",
     mcpSettingsUrlLabel: "MCP server URL",
     mcpSettingsCopy: "Nusxalash",
     mcpSettingsCopied: "Nusxalandi",
-    mcpSettingsStep1:
+    mcpClaudeTitle: "Claude ulash",
+    mcpClaudeSub:
+      "NutriAI ma'lumotlaringiz bilan to'g'ridan-to'g'ri Claude chatida gaplashing — o'zingizning Claude obunangiz orqali, NutriAI hech narsa hisoblamaydi.",
+    mcpClaudeStep1:
       "Claude'da Settings → Connectors → Add custom connector bo'limiga o'ting.",
-    mcpSettingsStep2: "Yuqoridagi URL'ni joylashtirib saqlang.",
-    mcpSettingsStep3:
+    mcpClaudeStep2: "Yuqoridagi URL'ni joylashtirib saqlang.",
+    mcpClaudeStep3:
       "Claude sizdan NutriAI'ga kirish va ruxsat berishni so'raydi — shundan keyin istalgan vaqtda Claude'dan ovqatlaringiz yoki ovqatlanishingiz haqida so'rashingiz mumkin.",
+    mcpChatgptTitle: "ChatGPT ulash",
+    mcpChatgptSub:
+      "NutriAI ma'lumotlaringiz bilan to'g'ridan-to'g'ri ChatGPT'da gaplashing — o'zingizning ChatGPT obunangiz orqali, NutriAI hech narsa hisoblamaydi.",
+    mcpChatgptStep1:
+      "ChatGPT'da Settings → Apps and connectors bo'limiga o'ting, Developer mode'ni yoqing, so'ng yangi connector qo'shing.",
+    mcpChatgptStep2: "Yuqoridagi URL'ni joylashtirib saqlang.",
+    mcpChatgptStep3:
+      "ChatGPT sizdan NutriAI'ga kirish va ruxsat berishni so'raydi — shundan keyin istalgan vaqtda ChatGPT'dan ovqatlaringiz yoki ovqatlanishingiz haqida so'rashingiz mumkin.",
+    mcpChatgptPlanNote:
+      "ChatGPT Plus, Pro, Business, Enterprise yoki Education tarifi kerak — bepul tarifda ishlamaydi.",
   },
 
   admin: {

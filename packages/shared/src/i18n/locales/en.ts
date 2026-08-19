@@ -332,17 +332,28 @@ export const en: Dict = {
     mealEditApply: "Apply changes",
     mealEditApplied: "Updated",
     mealEditFailed: "Couldn't update — try editing it manually",
-    mcpSettingsTitle: "Connect to Claude",
-    mcpSettingsSub:
-      "Talk to your NutriAI data straight from Claude's own chat, using your own Claude subscription — nothing is billed to NutriAI.",
+    mcpSettingsSectionTitle: "AI ASSISTANTS",
     mcpSettingsUrlLabel: "MCP server URL",
     mcpSettingsCopy: "Copy",
     mcpSettingsCopied: "Copied",
-    mcpSettingsStep1:
+    mcpClaudeTitle: "Connect to Claude",
+    mcpClaudeSub:
+      "Talk to your NutriAI data straight from Claude's own chat, using your own Claude subscription — nothing is billed to NutriAI.",
+    mcpClaudeStep1:
       "In Claude, go to Settings → Connectors → Add custom connector.",
-    mcpSettingsStep2: "Paste the URL above and save.",
-    mcpSettingsStep3:
+    mcpClaudeStep2: "Paste the URL above and save.",
+    mcpClaudeStep3:
       "Claude will ask you to sign in to NutriAI and approve access — after that, ask Claude about your meals or nutrition anytime.",
+    mcpChatgptTitle: "Connect to ChatGPT",
+    mcpChatgptSub:
+      "Talk to your NutriAI data straight from ChatGPT, using your own ChatGPT subscription — nothing is billed to NutriAI.",
+    mcpChatgptStep1:
+      "In ChatGPT, go to Settings → Apps and connectors, turn on Developer mode, then add a new connector.",
+    mcpChatgptStep2: "Paste the URL above and save.",
+    mcpChatgptStep3:
+      "ChatGPT will ask you to sign in to NutriAI and approve access — after that, ask ChatGPT about your meals or nutrition anytime.",
+    mcpChatgptPlanNote:
+      "Requires a ChatGPT Plus, Pro, Business, Enterprise, or Education plan — not available on the free tier.",
   },
 
   admin: {

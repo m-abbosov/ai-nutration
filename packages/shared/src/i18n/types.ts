@@ -310,14 +310,21 @@ export interface Dict {
     mealEditApply: string;
     mealEditApplied: string;
     mealEditFailed: string;
-    mcpSettingsTitle: string;
-    mcpSettingsSub: string;
+    mcpSettingsSectionTitle: string;
     mcpSettingsUrlLabel: string;
     mcpSettingsCopy: string;
     mcpSettingsCopied: string;
-    mcpSettingsStep1: string;
-    mcpSettingsStep2: string;
-    mcpSettingsStep3: string;
+    mcpClaudeTitle: string;
+    mcpClaudeSub: string;
+    mcpClaudeStep1: string;
+    mcpClaudeStep2: string;
+    mcpClaudeStep3: string;
+    mcpChatgptTitle: string;
+    mcpChatgptSub: string;
+    mcpChatgptStep1: string;
+    mcpChatgptStep2: string;
+    mcpChatgptStep3: string;
+    mcpChatgptPlanNote: string;
   };
 
   // Admin Panel (Phase 2) — see shared/i18n/admin-types.ts

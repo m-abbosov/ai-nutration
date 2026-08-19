@@ -333,17 +333,28 @@ export const ru: Dict = {
     mealEditApply: "Применить изменения",
     mealEditApplied: "Обновлено",
     mealEditFailed: "Не удалось обновить — измените вручную",
-    mcpSettingsTitle: "Подключить Claude",
-    mcpSettingsSub:
-      "Работайте со своими данными NutriAI прямо в чате Claude, используя собственную подписку Claude — NutriAI ничего не списывает.",
+    mcpSettingsSectionTitle: "AI-АССИСТЕНТЫ",
     mcpSettingsUrlLabel: "URL MCP-сервера",
     mcpSettingsCopy: "Копировать",
     mcpSettingsCopied: "Скопировано",
-    mcpSettingsStep1:
+    mcpClaudeTitle: "Подключить Claude",
+    mcpClaudeSub:
+      "Работайте со своими данными NutriAI прямо в чате Claude, используя собственную подписку Claude — NutriAI ничего не списывает.",
+    mcpClaudeStep1:
       "В Claude откройте Settings → Connectors → Add custom connector.",
-    mcpSettingsStep2: "Вставьте URL выше и сохраните.",
-    mcpSettingsStep3:
+    mcpClaudeStep2: "Вставьте URL выше и сохраните.",
+    mcpClaudeStep3:
       "Claude попросит войти в NutriAI и разрешить доступ — после этого спрашивайте Claude о своих приёмах пищи и питании когда угодно.",
+    mcpChatgptTitle: "Подключить ChatGPT",
+    mcpChatgptSub:
+      "Работайте со своими данными NutriAI прямо в ChatGPT, используя собственную подписку ChatGPT — NutriAI ничего не списывает.",
+    mcpChatgptStep1:
+      "В ChatGPT откройте Settings → Apps and connectors, включите Developer mode, затем добавьте новый коннектор.",
+    mcpChatgptStep2: "Вставьте URL выше и сохраните.",
+    mcpChatgptStep3:
+      "ChatGPT попросит войти в NutriAI и разрешить доступ — после этого спрашивайте ChatGPT о своих приёмах пищи и питании когда угодно.",
+    mcpChatgptPlanNote:
+      "Нужна подписка ChatGPT Plus, Pro, Business, Enterprise или Education — на бесплатном тарифе недоступно.",
   },
 
   admin: {
