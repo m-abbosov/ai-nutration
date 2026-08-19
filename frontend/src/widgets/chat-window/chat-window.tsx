@@ -15,6 +15,7 @@ import { ErrorState } from "@/shared/ui/state-blocks";
 import { MealEditSuggestionCard } from "@/widgets/chat-window/meal-edit-suggestion-card";
 import { NutritionResultCard } from "@/widgets/chat-window/nutrition-result-card";
 import { RecommendationsCard } from "@/widgets/chat-window/recommendations-card";
+import { WorkoutAnalysisCard } from "@/widgets/chat-window/workout-analysis-card";
 
 const AiAvatar = ({ size = 28 }: { size?: number }) => (
   <div
@@ -179,6 +180,13 @@ export function ChatWindow({ conversationId, onOpenHistory }: { conversationId?:
                           suggestion={m.metadata.data}
                           applied={addedIds.has(m.id)}
                           onApplied={() => setAddedIds((prev) => new Set(prev).add(m.id))}
+                        />
+                      )}
+                      {m.metadata?.kind === "workout_analysis" && (
+                        <WorkoutAnalysisCard
+                          data={m.metadata.data}
+                          saved={addedIds.has(m.id)}
+                          onSaved={() => setAddedIds((prev) => new Set(prev).add(m.id))}
                         />
                       )}
                     </div>

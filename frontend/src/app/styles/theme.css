@@ -21,6 +21,19 @@
   --carbT: oklch(0.79 0.13 72 / 0.15);
   --fat: oklch(0.72 0.13 18);
   --fatT: oklch(0.72 0.13 18 / 0.15);
+  /* Muscle progress score bands (0-20/21-40/41-60/61-80/81-100) — used by the
+     Fitness Tracker body map. m5 intentionally reuses the accent hue: a
+     "strong" muscle is visually the app's brand color. */
+  --m1: oklch(0.45 0.01 172);
+  --m1T: oklch(0.45 0.01 172 / 0.15);
+  --m2: oklch(0.62 0.12 40);
+  --m2T: oklch(0.62 0.12 40 / 0.15);
+  --m3: oklch(0.75 0.13 85);
+  --m3T: oklch(0.75 0.13 85 / 0.15);
+  --m4: oklch(0.74 0.13 140);
+  --m4T: oklch(0.74 0.13 140 / 0.15);
+  --m5: oklch(0.76 0.13 172);
+  --m5T: oklch(0.76 0.13 172 / 0.15);
   --sh: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 40px -24px rgba(0, 0, 0, 0.85);
   --glass: rgba(17, 21, 20, 0.76);
   color-scheme: dark;
@@ -48,6 +61,16 @@
   --carbT: oklch(0.58 0.13 62 / 0.11);
   --fat: oklch(0.55 0.15 18);
   --fatT: oklch(0.55 0.15 18 / 0.1);
+  --m1: oklch(0.78 0.01 172);
+  --m1T: oklch(0.78 0.01 172 / 0.15);
+  --m2: oklch(0.58 0.14 40);
+  --m2T: oklch(0.58 0.14 40 / 0.12);
+  --m3: oklch(0.68 0.14 85);
+  --m3T: oklch(0.68 0.14 85 / 0.12);
+  --m4: oklch(0.58 0.13 140);
+  --m4T: oklch(0.58 0.13 140 / 0.12);
+  --m5: oklch(0.56 0.115 172);
+  --m5T: oklch(0.56 0.115 172 / 0.12);
   --sh: 0 1px 2px rgba(23, 32, 28, 0.05), 0 16px 34px -20px rgba(23, 32, 28, 0.2);
   --glass: rgba(251, 250, 247, 0.8);
   color-scheme: light;
@@ -76,6 +99,16 @@
     --carbT: oklch(0.58 0.13 62 / 0.11);
     --fat: oklch(0.55 0.15 18);
     --fatT: oklch(0.55 0.15 18 / 0.1);
+    --m1: oklch(0.78 0.01 172);
+    --m1T: oklch(0.78 0.01 172 / 0.15);
+    --m2: oklch(0.58 0.14 40);
+    --m2T: oklch(0.58 0.14 40 / 0.12);
+    --m3: oklch(0.68 0.14 85);
+    --m3T: oklch(0.68 0.14 85 / 0.12);
+    --m4: oklch(0.58 0.13 140);
+    --m4T: oklch(0.58 0.13 140 / 0.12);
+    --m5: oklch(0.56 0.115 172);
+    --m5T: oklch(0.56 0.115 172 / 0.12);
     --sh: 0 1px 2px rgba(23, 32, 28, 0.05), 0 16px 34px -20px rgba(23, 32, 28, 0.2);
     --glass: rgba(251, 250, 247, 0.8);
     color-scheme: light;
@@ -103,6 +136,19 @@
   --carbT: oklch(0.79 0.13 72 / 0.15);
   --fat: oklch(0.72 0.13 18);
   --fatT: oklch(0.72 0.13 18 / 0.15);
+  /* Muscle progress score bands (0-20/21-40/41-60/61-80/81-100) — used by the
+     Fitness Tracker body map. m5 intentionally reuses the accent hue: a
+     "strong" muscle is visually the app's brand color. */
+  --m1: oklch(0.45 0.01 172);
+  --m1T: oklch(0.45 0.01 172 / 0.15);
+  --m2: oklch(0.62 0.12 40);
+  --m2T: oklch(0.62 0.12 40 / 0.15);
+  --m3: oklch(0.75 0.13 85);
+  --m3T: oklch(0.75 0.13 85 / 0.15);
+  --m4: oklch(0.74 0.13 140);
+  --m4T: oklch(0.74 0.13 140 / 0.15);
+  --m5: oklch(0.76 0.13 172);
+  --m5T: oklch(0.76 0.13 172 / 0.15);
   --sh: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 40px -24px rgba(0, 0, 0, 0.85);
   --glass: rgba(17, 21, 20, 0.76);
   color-scheme: dark;

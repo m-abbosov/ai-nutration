@@ -62,12 +62,39 @@ export const MealEditSchema = z.object({
     }),
 });
 
+/**
+ * A single exercise line extracted from free-text workout input. The AI's
+ * job is ONLY to extract the raw phrase and the sets as stated — it must
+ * NOT normalize or guess the canonical exercise name (see the workout rule
+ * in prompts.ts). Resolving `rawText` against the exercise catalog happens
+ * server-side in chat.service.ts via exercise-matcher.util.ts, so the AI
+ * schema never needs to know the catalog and stays stable as it grows.
+ */
+export const WorkoutSetSchema = z.object({
+  setNumber: z.number().int().min(1).max(50),
+  weight: z.number().min(0).max(500).nullable(),
+  weightUnit: z.enum(['KG', 'LB']).default('KG'),
+  reps: z.number().int().min(0).max(200).nullable(),
+  durationSec: z.number().int().min(0).max(7200).nullable(),
+});
+
+export const WorkoutExerciseSchema = z.object({
+  rawText: z.string().min(1).max(120),
+  sets: z.array(WorkoutSetSchema).min(1),
+});
+
+export const WorkoutAnalysisSchema = z.object({
+  exercises: z.array(WorkoutExerciseSchema).min(1),
+  notes: z.string().max(300).nullable(),
+});
+
 /** Full single-call chat response contract. */
 export const GeminiChatResponseSchema = z.object({
   reply: z.string().min(1).max(4000),
   mealAnalysis: MealAnalysisSchema.nullable(),
   recommendations: RecommendationsArraySchema.nullable(),
   mealEdit: MealEditSchema.nullable(),
+  workoutAnalysis: WorkoutAnalysisSchema.nullable(),
 });
 
 /** Recommendations-only response, forced non-null with >= 3 entries. */
@@ -79,6 +106,9 @@ export const GeminiRecommendationsResponseSchema = z.object({
 export type MealAnalysis = z.infer<typeof MealAnalysisSchema>;
 export type Recommendation = z.infer<typeof RecommendationSchema>;
 export type MealEdit = z.infer<typeof MealEditSchema>;
+export type WorkoutSet = z.infer<typeof WorkoutSetSchema>;
+export type WorkoutExerciseAnalysis = z.infer<typeof WorkoutExerciseSchema>;
+export type WorkoutAnalysis = z.infer<typeof WorkoutAnalysisSchema>;
 export type GeminiChatResponse = z.infer<typeof GeminiChatResponseSchema>;
 export type GeminiRecommendationsResponse = z.infer<
   typeof GeminiRecommendationsResponseSchema

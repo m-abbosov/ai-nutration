@@ -19,6 +19,7 @@
 import type { AdminDict } from "./admin-types";
 import type { LandingDict } from "./landing-types";
 import type { CalcPagesDict } from "./calc-pages-types";
+import type { FitnessDict } from "./fitness-types";
 
 export interface Dict {
   // T — global chrome / dashboard
@@ -27,6 +28,7 @@ export interface Dict {
   navCoach: string;
   navMeals: string;
   navProg: string;
+  navFitness: string;
   navProf: string;
   navSet: string;
   plan: string;
@@ -216,6 +218,7 @@ export interface Dict {
     chat: string;
     meals: string;
     prog: string;
+    fitness: string;
     me: string;
     hist: string;
     sheetT: string;
@@ -345,4 +348,7 @@ export interface Dict {
 
   // The 14 working /calculators/:slug pages — see shared/i18n/calc-pages-types.ts
   calcPages: CalcPagesDict;
+
+  // Fitness Tracker — see shared/i18n/fitness-types.ts
+  fitness: FitnessDict;
 }

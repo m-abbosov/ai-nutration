@@ -23,4 +23,12 @@ export const queryKeys = {
   conversations: ["chat", "conversations"] as const,
   messages: (conversationId: string) =>
     ["chat", "conversations", conversationId, "messages"] as const,
+  workouts: (days?: number) => ["workouts", days ?? "default"] as const,
+  workout: (id: string) => ["workouts", id] as const,
+  exercises: (language?: string) => ["exercises", language ?? "default"] as const,
+  muscleProgress: ["muscleProgress"] as const,
+  muscleDetail: (muscle: string) => ["muscleProgress", muscle] as const,
+  muscleTaxonomy: ["muscleTaxonomy"] as const,
+  personalRecords: ["personalRecords"] as const,
+  muscleBalance: ["muscleBalance"] as const,
 };

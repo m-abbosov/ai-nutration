@@ -17,6 +17,7 @@ import { SystemLogRetentionService } from './common/system-log-retention.service
 import { validateEnv } from './config/env.validation';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DatabaseModule } from './database/database.module';
+import { FitnessModule } from './fitness/fitness.module';
 import { HealthModule } from './health/health.module';
 import { McpModule } from './mcp/mcp.module';
 import { McpOauthModule } from './mcp-oauth/mcp-oauth.module';
@@ -47,6 +48,7 @@ import { UsersModule } from './users/users.module';
     MealsModule,
     NutritionModule,
     DashboardModule,
+    FitnessModule,
     ChatModule,
     RecommendationsModule,
     HealthModule,

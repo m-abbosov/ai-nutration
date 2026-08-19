@@ -33,6 +33,16 @@
   --color-carbT: var(--carbT);
   --color-fat: var(--fat);
   --color-fatT: var(--fatT);
+  --color-m1: var(--m1);
+  --color-m1T: var(--m1T);
+  --color-m2: var(--m2);
+  --color-m2T: var(--m2T);
+  --color-m3: var(--m3);
+  --color-m3T: var(--m3T);
+  --color-m4: var(--m4);
+  --color-m4T: var(--m4T);
+  --color-m5: var(--m5);
+  --color-m5T: var(--m5T);
   --color-glass: var(--glass);
 
   --shadow-card: var(--sh);

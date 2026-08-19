@@ -9,7 +9,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "@/app/providers/auth-provider";
 
 import { Avatar } from "@/shared/ui/avatar";
-import { CoachIcon, DashIcon, LogoMark, MealsIcon, ProfIcon, ProgIcon, SetIcon } from "@/shared/ui/nav-icons";
+import { CoachIcon, DashIcon, FitnessIcon, LogoMark, MealsIcon, ProfIcon, ProgIcon, SetIcon } from "@/shared/ui/nav-icons";
 
 import { LanguageSwitchFlyout } from "@/features/language-switch/language-switch";
 
@@ -17,6 +17,7 @@ const navItems = [
   { to: "/dashboard", labelKey: "navDash" as const, Icon: DashIcon, dot: true },
   { to: "/chat", labelKey: "navCoach" as const, Icon: CoachIcon, ai: true },
   { to: "/meals", labelKey: "navMeals" as const, Icon: MealsIcon, dot: true },
+  { to: "/fitness", labelKey: "navFitness" as const, Icon: FitnessIcon, dot: true },
   { to: "/progress", labelKey: "navProg" as const, Icon: ProgIcon, dot: true },
   { to: "/profile", labelKey: "navProf" as const, Icon: ProfIcon, dot: true },
 ];

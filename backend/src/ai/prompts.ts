@@ -102,6 +102,13 @@ no commentary outside the JSON:
       "servingSize"?: string,
       "items"?: [{ "name": string, "quantity": string, "calories": number, "protein": number, "carbs": number, "fat": number }]
     }
+  },
+  "workoutAnalysis": null | {
+    "exercises": [{
+      "rawText": string,
+      "sets": [{ "setNumber": number, "weight": number | null, "weightUnit": "KG" | "LB", "reps": number | null, "durationSec": number | null }]
+    }],
+    "notes": string | null
   }
 }
 
@@ -120,9 +127,18 @@ ${greetingRule}
   FULL replacement list of items for the meal (not a partial diff) — omitting "items" leaves the meal's
   existing items untouched. If you cannot confidently identify which logged meal the user means, leave
   "mealEdit" null and ask a clarifying question in "reply" instead.
+- If the user described a WORKOUT they did (weightlifting, resistance training, or bodyweight exercises —
+  in any language, e.g. "Bugun chest ishladim, bench press 60kg 8 ta", "Сегодня сделал жим 60 кг на 8",
+  "I did bench press 60kg x 8", "3 set shoulder press qildim"), populate "workoutAnalysis". For each
+  exercise mentioned, set "rawText" to the exercise name EXACTLY as the user phrased it (do NOT translate,
+  normalize, or guess the canonical/English exercise name — a separate matching step handles that), and
+  populate "sets" with every set stated (infer "setNumber" as 1, 2, 3... in the order given; if the user
+  gives a rep range or a single combined line like "3x10", expand it into that many set entries). Leave a
+  field null if genuinely not stated (e.g. no weight given for a bodyweight set) — never invent a number.
+  Otherwise "workoutAnalysis" must be null.
 - "reply" is always a short, natural-language, helpful answer in ${language}.
-- Exactly one of "mealAnalysis", "recommendations", "mealEdit" may be non-null at a time — never more than one.
-- All numbers are non-negative and realistic (a single meal is rarely above 2000 kcal).
+- Exactly one of "mealAnalysis", "recommendations", "mealEdit", "workoutAnalysis" may be non-null at a time — never more than one.
+- All numbers are non-negative and realistic (a single meal is rarely above 2000 kcal; a single set is rarely above 300kg or 100 reps).
 
 ${formatContext(context)}
 

@@ -11,6 +11,158 @@ export type Theme = "LIGHT" | "DARK";
 export type AiProvider = "GEMINI" | "OPENAI" | "CLAUDE" | "GROQ";
 export type AiKeyStatus = "OK" | "EXHAUSTED" | "INVALID";
 
+// ── Fitness Tracker ──────────────────────────────────────────────────────
+export type MuscleCode =
+  | "CHEST"
+  | "UPPER_CHEST"
+  | "BACK"
+  | "LATS"
+  | "TRAPS"
+  | "SHOULDERS"
+  | "FRONT_DELTS"
+  | "SIDE_DELTS"
+  | "REAR_DELTS"
+  | "BICEPS"
+  | "TRICEPS"
+  | "FOREARMS"
+  | "ABS"
+  | "OBLIQUES"
+  | "GLUTES"
+  | "QUADS"
+  | "HAMSTRINGS"
+  | "CALVES";
+export type MuscleRole = "PRIMARY" | "SECONDARY";
+export type MuscleRegion = "FRONT" | "BACK" | "BOTH";
+export type ExerciseCategory = "COMPOUND" | "ISOLATION" | "CARDIO" | "BODYWEIGHT";
+export type WeightUnit = "KG" | "LB";
+export type WorkoutSource = "MANUAL" | "AI";
+export type PRType = "MAX_WEIGHT" | "MAX_REPS" | "MAX_VOLUME" | "EST_1RM";
+
+export interface ExerciseMuscleDto {
+  muscle: MuscleCode;
+  role: MuscleRole;
+  weight: number;
+}
+
+export interface ExerciseDto {
+  id: string;
+  slug: string;
+  name: string;
+  category: ExerciseCategory;
+  primaryMuscle: MuscleCode;
+  equipment: string | null;
+  muscles: ExerciseMuscleDto[];
+}
+
+export interface ExerciseSetDto {
+  id: string;
+  setNumber: number;
+  weight: number | null;
+  weightUnit: WeightUnit;
+  reps: number | null;
+  durationSec: number | null;
+  completed: boolean;
+}
+
+export interface WorkoutExerciseDto {
+  id: string;
+  exerciseId: string;
+  exerciseSlug: string;
+  order: number;
+  sets: ExerciseSetDto[];
+}
+
+export interface WorkoutDto {
+  id: string;
+  date: string;
+  startedAt: string | null;
+  endedAt: string | null;
+  durationSec: number | null;
+  notes: string | null;
+  totalVolume: number;
+  estimatedCalories: number | null;
+  source: WorkoutSource;
+  exercises: WorkoutExerciseDto[];
+  createdAt: string;
+  newPersonalRecords: DetectedPrDto[];
+}
+
+export interface CreateWorkoutExerciseSetInput {
+  setNumber: number;
+  weight?: number | null;
+  weightUnit?: WeightUnit;
+  reps?: number | null;
+  durationSec?: number | null;
+  completed?: boolean;
+}
+
+export interface CreateWorkoutExerciseInput {
+  exerciseId: string;
+  sets: CreateWorkoutExerciseSetInput[];
+}
+
+export interface CreateWorkoutInput {
+  date?: string;
+  durationSec?: number;
+  notes?: string;
+  source?: WorkoutSource;
+  exercises: CreateWorkoutExerciseInput[];
+}
+
+export interface MuscleProgressDto {
+  muscle: MuscleCode;
+  region: MuscleRegion;
+  progressScore: number;
+  weeklySets: number;
+  weeklyVolume: number;
+  sessionsCount: number;
+  lastTrainedAt: string | null;
+}
+
+export interface MuscleDetailDto extends MuscleProgressDto {
+  thisWeekVolume: number;
+  lastWeekVolume: number;
+  volumeChangePct: number | null;
+  strengthChangePct: number | null;
+}
+
+export interface MuscleTaxonomyDto {
+  muscle: MuscleCode;
+  region: MuscleRegion;
+  sortOrder: number;
+}
+
+export interface PersonalRecordDto {
+  id: string;
+  exerciseId: string;
+  exerciseSlug: string;
+  recordType: PRType;
+  value: number;
+  weight: number | null;
+  reps: number | null;
+  achievedAt: string;
+}
+
+export interface DetectedPrDto {
+  exerciseId: string;
+  recordType: PRType;
+  value: number;
+  weight: number | null;
+  reps: number | null;
+}
+
+export interface MuscleBalanceGroupDto {
+  volume: number;
+  percentage: number;
+}
+
+export interface MuscleBalanceDto {
+  push: MuscleBalanceGroupDto;
+  pull: MuscleBalanceGroupDto;
+  legs: MuscleBalanceGroupDto;
+  core: MuscleBalanceGroupDto;
+}
+
 export interface UserDto {
   id: string;
   name: string;
@@ -156,10 +308,42 @@ export interface MealEditSuggestionDto {
   };
 }
 
+export interface WorkoutAnalysisSetDto {
+  setNumber: number;
+  weight: number | null;
+  weightUnit: WeightUnit;
+  reps: number | null;
+  durationSec: number | null;
+}
+
+export interface WorkoutAnalysisCandidateDto {
+  exerciseId: string;
+  slug: string;
+}
+
+export interface WorkoutAnalysisExerciseDto {
+  rawText: string;
+  // Set together — see backend/src/fitness/lib/exercise-matcher.util.ts:
+  // a confident match populates matchedExerciseId/Slug and leaves
+  // ambiguousCandidates empty; an ambiguous phrase (e.g. "Yelkaga max")
+  // leaves matched* null and populates ambiguousCandidates (2-5); no match
+  // leaves both empty (render a manual exercise picker for that row).
+  matchedExerciseId: string | null;
+  matchedExerciseSlug: string | null;
+  ambiguousCandidates: WorkoutAnalysisCandidateDto[];
+  sets: WorkoutAnalysisSetDto[];
+}
+
+export interface WorkoutAnalysisDto {
+  exercises: WorkoutAnalysisExerciseDto[];
+  notes: string | null;
+}
+
 export type ChatMessageMetadata =
   | { kind: "nutrition_card"; data: NutritionAnalysisDto }
   | { kind: "recommendations"; data: RecommendationDto[] }
   | { kind: "meal_edit_suggestion"; data: MealEditSuggestionDto }
+  | { kind: "workout_analysis"; data: WorkoutAnalysisDto }
   | null;
 
 export interface ChatMessageDto {

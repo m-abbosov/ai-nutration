@@ -361,10 +361,14 @@ model User {
   meals         Meal[]
   conversations Conversation[]
 
-  auditLogs           AuditLog[]            @relation("AuditLogsByAdmin")
-  updatedFeatureFlags FeatureFlag[]         @relation("FeatureFlagUpdatedBy")
-  aiRequestLogs       AiRequestLog[]        @relation("AiRequestLogsByUser")
-  calculatorUsageLogs CalculatorUsageLog[]  @relation("CalculatorUsageLogsByUser")
+  workouts                Workout[]
+  personalRecords         PersonalRecord[]
+  muscleProgressSnapshots MuscleProgressSnapshot[]
+
+  auditLogs           AuditLog[]           @relation("AuditLogsByAdmin")
+  updatedFeatureFlags FeatureFlag[]        @relation("FeatureFlagUpdatedBy")
+  aiRequestLogs       AiRequestLog[]       @relation("AiRequestLogsByUser")
+  calculatorUsageLogs CalculatorUsageLog[] @relation("CalculatorUsageLogsByUser")
 
   @@map("users")
 }
@@ -434,11 +438,254 @@ model ChatMessage {
 
   role     MessageRole
   content  String      @db.Text
-  // Structured AI payload when applicable: { kind: "nutrition_card"|"recommendations", data: {...} }
+  // Structured AI payload when applicable: { kind: "nutrition_card"|"recommendations"|"meal_edit_suggestion"|"workout_analysis", data: {...} }
   metadata Json?
 
   createdAt DateTime @default(now())
 
   @@index([conversationId, createdAt])
   @@map("chat_messages")
+}
+
+// ── Fitness Tracker ─────────────────────────────────────────────────────
+// Additive only. Raw workout/set data is the source of truth; MuscleProgressSnapshot
+// is a derived, disposable cache (recomputed deterministically, never the only copy —
+// see progress.service.ts). Display names/labels for muscles and exercises live in
+// i18n (packages/shared/src/i18n), never stored here.
+
+enum MuscleCode {
+  CHEST
+  UPPER_CHEST
+  BACK
+  LATS
+  TRAPS
+  SHOULDERS
+  FRONT_DELTS
+  SIDE_DELTS
+  REAR_DELTS
+  BICEPS
+  TRICEPS
+  FOREARMS
+  ABS
+  OBLIQUES
+  GLUTES
+  QUADS
+  HAMSTRINGS
+  CALVES
+}
+
+enum MuscleRegion {
+  FRONT
+  BACK
+  BOTH
+}
+
+enum ExerciseCategory {
+  COMPOUND
+  ISOLATION
+  CARDIO
+  BODYWEIGHT
+}
+
+enum MuscleRole {
+  PRIMARY
+  SECONDARY
+}
+
+enum WeightUnit {
+  KG
+  LB
+}
+
+enum WorkoutSource {
+  MANUAL
+  AI
+}
+
+enum PRType {
+  MAX_WEIGHT
+  MAX_REPS
+  MAX_VOLUME
+  EST_1RM
+}
+
+model MuscleGroup {
+  code      MuscleCode   @id
+  region    MuscleRegion
+  sortOrder Int
+
+  exerciseMuscles   ExerciseMuscle[]
+  progressSnapshots MuscleProgressSnapshot[]
+
+  @@map("muscle_groups")
+}
+
+model Exercise {
+  id            String           @id @default(cuid())
+  slug          String           @unique
+  category      ExerciseCategory
+  primaryMuscle MuscleCode
+  equipment     String?
+  // Reserved for a future "add your own exercise" feature; always false for
+  // catalog-seeded rows in this phase.
+  isCustom      Boolean          @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  aliases          ExerciseAlias[]
+  muscles          ExerciseMuscle[]
+  workoutExercises WorkoutExercise[]
+  personalRecords  PersonalRecord[]
+
+  @@index([primaryMuscle])
+  @@map("exercises")
+}
+
+// Multi-language synonym lookup for the AI workout parser (exercise-matcher.util.ts).
+// A separate table (not a JSON/array field on Exercise) because matching needs an
+// indexed exact lookup on (language, normalized), and one exercise has many aliases
+// per language ("shoulder press" / "overhead press" / "OHP" in English alone).
+model ExerciseAlias {
+  id         String   @id @default(cuid())
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  language   Language
+  alias      String // display form, as a user would type it, e.g. "Yelkaga max"
+  normalized String // lowercased/trimmed match key used by the matcher
+  // The canonical display name shown in the UI for this (exercise, language) —
+  // exactly one alias per (exerciseId, language) should have this set; enforced
+  // by seed-exercises.ts, not a DB constraint (Prisma has no partial unique index).
+  isPrimary  Boolean  @default(false)
+
+  @@unique([language, normalized])
+  @@index([exerciseId])
+  @@map("exercise_aliases")
+}
+
+model ExerciseMuscle {
+  id          String      @id @default(cuid())
+  exerciseId  String
+  exercise    Exercise    @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  muscle      MuscleCode
+  muscleGroup MuscleGroup @relation(fields: [muscle], references: [code])
+
+  role   MuscleRole
+  // Volume-attribution weight for muscle-progress scoring (e.g. secondary movers
+  // contribute a fraction of the set's volume to their score) — see muscle-score.util.ts.
+  weight Float      @default(1.0)
+
+  @@unique([exerciseId, muscle])
+  @@index([muscle])
+  @@map("exercise_muscles")
+}
+
+model Workout {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date        DateTime  @db.Date // local calendar day the workout belongs to
+  startedAt   DateTime?
+  endedAt     DateTime?
+  durationSec Int?
+  notes       String?
+
+  // Denormalized for fast list/dashboard rendering — recomputed from sets on every
+  // write (see fitness/workout/lib/volume.util.ts), never hand-edited independently.
+  totalVolume       Float @default(0)
+  estimatedCalories Int?
+
+  source WorkoutSource @default(MANUAL)
+
+  exercises WorkoutExercise[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, date])
+  @@map("workouts")
+}
+
+model WorkoutExercise {
+  id         String   @id @default(cuid())
+  workoutId  String
+  workout    Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseId String
+  // Restrict, not Cascade: a catalog exercise must never be deletable out from
+  // under a user's logged history.
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+
+  order Int
+
+  sets ExerciseSet[]
+
+  @@index([workoutId])
+  @@index([exerciseId])
+  @@map("workout_exercises")
+}
+
+model ExerciseSet {
+  id                String          @id @default(cuid())
+  workoutExerciseId String
+  workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+
+  setNumber   Int
+  weight      Float?
+  weightUnit  WeightUnit @default(KG)
+  reps        Int?
+  durationSec Int?
+  completed   Boolean    @default(true)
+
+  @@index([workoutExerciseId])
+  @@map("exercise_sets")
+}
+
+// Current best value per (user, exercise, recordType) — one row, upserted on every
+// workout save that beats it. History isn't kept here; it's derivable from raw sets.
+model PersonalRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  recordType PRType
+  value      Float
+  weight     Float?
+  reps       Int?
+  achievedAt DateTime
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, exerciseId, recordType])
+  @@index([userId, exerciseId])
+  @@map("personal_records")
+}
+
+// Cached output of muscle-score.util.ts, keyed per calendar day. A product
+// visualization score, not a medical measurement — see progressScore doc comment
+// in muscle-score.util.ts. Disposable: deleting a row only means the next
+// GET /fitness/progress recomputes it from raw workout/set data.
+model MuscleProgressSnapshot {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  muscle      MuscleCode
+  muscleGroup MuscleGroup @relation(fields: [muscle], references: [code])
+
+  snapshotDate  DateTime  @db.Date
+  progressScore Int
+  weeklySets    Int
+  weeklyVolume  Float
+  sessionsCount Int
+  lastTrainedAt DateTime?
+
+  computedAt DateTime @default(now())
+
+  @@unique([userId, muscle, snapshotDate])
+  @@index([userId, snapshotDate])
+  @@map("muscle_progress_snapshots")
 }

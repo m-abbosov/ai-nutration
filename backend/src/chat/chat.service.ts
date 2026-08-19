@@ -11,6 +11,7 @@ import { fallbackMessageFor } from '../ai/ai-fallback-messages';
 import { UserAiCredentialsService } from '../ai/user-ai-credentials.service';
 import { FeatureFlagsService } from '../common/feature-flags/feature-flags.service';
 import { PrismaService } from '../database/prisma.service';
+import { ExerciseService } from '../fitness/exercise/exercise.service';
 import { MealsService } from '../meals/meals.service';
 import { NutritionService } from '../nutrition/nutrition.service';
 import {
@@ -34,6 +35,7 @@ export class ChatService {
     private readonly userAiCredentials: UserAiCredentialsService,
     private readonly featureFlags: FeatureFlagsService,
     private readonly mealsService: MealsService,
+    private readonly exerciseService: ExerciseService,
   ) {}
 
   async listConversations(userId: string): Promise<ConversationResponseDto[]> {
@@ -174,6 +176,26 @@ export class ChatService {
               },
             };
           }
+        } else if (generation.data.workoutAnalysis) {
+          const exercises = await Promise.all(
+            generation.data.workoutAnalysis.exercises.map(async (ex) => {
+              const match = await this.exerciseService.matchExerciseText(
+                ex.rawText,
+                user.language,
+              );
+              return {
+                rawText: ex.rawText,
+                matchedExerciseId: match.status === 'matched' ? match.exerciseId : null,
+                matchedExerciseSlug: match.status === 'matched' ? match.slug : null,
+                ambiguousCandidates: match.status === 'ambiguous' ? match.candidates : [],
+                sets: ex.sets,
+              };
+            }),
+          );
+          metadata = {
+            kind: 'workout_analysis',
+            data: { exercises, notes: generation.data.workoutAnalysis.notes },
+          } as unknown as Prisma.InputJsonValue;
         }
         if (user.aiKeyStatus && user.aiKeyStatus !== 'OK') {
           await this.userAiCredentials.recordStatus(userId, 'OK', null);

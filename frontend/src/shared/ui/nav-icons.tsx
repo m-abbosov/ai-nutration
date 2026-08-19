@@ -44,6 +44,18 @@ export function ProgIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function FitnessIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" style={{ flex: "none", opacity: 0.9 }} {...props}>
+      <rect x="0.5" y="6" width="2.2" height="4" rx="1" fill="currentColor" opacity=".55" />
+      <rect x="13.3" y="6" width="2.2" height="4" rx="1" fill="currentColor" opacity=".55" />
+      <rect x="3.4" y="7.1" width="9.2" height="1.8" fill="currentColor" />
+      <rect x="4.4" y="4.3" width="1.9" height="7.4" rx=".95" fill="currentColor" />
+      <rect x="9.7" y="4.3" width="1.9" height="7.4" rx=".95" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function ProfIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" style={{ flex: "none", opacity: 0.9 }} {...props}>

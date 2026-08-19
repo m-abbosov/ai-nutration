@@ -22,7 +22,8 @@
     "test:watch": "jest --watch",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "seed:exercises": "ts-node prisma/seed-exercises.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

@@ -2,12 +2,13 @@ import { useTranslation } from "@nutriai/shared/i18n";
 import { cn } from "@nutriai/shared/lib/cn";
 import { NavLink } from "react-router-dom";
 
-import { CoachIcon, DashIcon, MealsIcon, ProfIcon, ProgIcon } from "@/shared/ui/nav-icons";
+import { CoachIcon, DashIcon, FitnessIcon, MealsIcon, ProfIcon, ProgIcon } from "@/shared/ui/nav-icons";
 
 const items = [
   { to: "/dashboard", key: "home" as const, Icon: DashIcon },
   { to: "/chat", key: "chat" as const, Icon: CoachIcon },
   { to: "/meals", key: "meals" as const, Icon: MealsIcon },
+  { to: "/fitness", key: "fitness" as const, Icon: FitnessIcon },
   { to: "/progress", key: "prog" as const, Icon: ProgIcon },
   { to: "/profile", key: "me" as const, Icon: ProfIcon },
 ];
