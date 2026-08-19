@@ -52,7 +52,7 @@ export function MuscleBodyMap({
   }, [tooltipData, t, lang]);
 
   return (
-    <div ref={containerRef} className="relative mx-auto aspect-[1/2] w-full max-w-[300px]">
+    <div ref={containerRef} className="relative mx-auto aspect-[750/1544] w-full max-w-[300px]">
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={view}
