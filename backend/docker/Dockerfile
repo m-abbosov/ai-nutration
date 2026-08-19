@@ -1,8 +1,15 @@
-# Build context MUST be the repo root (`docker build -f backend/Dockerfile .`)
+# Build context MUST be the repo root (`docker build -f backend/docker/Dockerfile .`)
 # — this is an npm workspaces monorepo, so `npm ci` needs every workspace's
 # package.json to resolve the root package-lock.json, even scoped to one
 # workspace via `--workspace backend` (which installs only backend's own
 # dependency subtree, not frontend/admin-frontend's).
+#
+# Deliberately NOT at backend/Dockerfile: Railway (which deploys this
+# service via Nixpacks, see backend/railway.json) always prefers a
+# Dockerfile over railway.json's builder setting if it finds one in the
+# service root — no config field can override that. A Dockerfile sitting
+# right at backend/Dockerfile silently hijacked every Railway deploy from
+# here on out (production ran a stale build for hours as a result).
 
 FROM node:22-alpine AS base
 # Prisma's query engine is generated against whatever OpenSSL version it can
