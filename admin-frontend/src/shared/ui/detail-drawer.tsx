@@ -22,11 +22,11 @@ export function DetailDrawer({
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
-          className="fixed inset-0 z-50 data-[state=open]:animate-[adm-fade_.15s_ease]"
+          className="fixed inset-0 z-50 data-[state=closed]:animate-[adm-fade-out_.15s_ease] data-[state=open]:animate-[adm-fade_.15s_ease]"
           style={{ background: "var(--adm-overlay)" }}
         />
         <DialogPrimitive.Content
-          className="fixed right-0 top-0 z-50 h-full max-w-[92vw] overflow-y-auto border-l data-[state=open]:animate-[adm-slide-in-right_.2s_ease]"
+          className="fixed right-0 top-0 z-50 h-full max-w-[92vw] overflow-y-auto border-l data-[state=closed]:animate-[adm-slide-out-right_.18s_ease] data-[state=open]:animate-[adm-slide-in-right_.2s_ease]"
           style={{ width, background: "var(--adm-surface)", borderColor: "var(--adm-border)", boxShadow: "var(--adm-shadow-lg)" }}
         >
           <div

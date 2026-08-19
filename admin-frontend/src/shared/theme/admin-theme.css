@@ -1,8 +1,13 @@
 /*
  * Admin design tokens — completely independent of `app/styles/theme.css`.
- * Every token is prefixed `--adm-*` and only ever defined under `.admin-root`,
- * never on `:root`/`html`/`body`, so it can never bleed into a `/` or `/chat`
- * render, and the user app's `--bg`/--tx/etc. tokens can never bleed in here.
+ * Every token is prefixed `--adm-*`. This is its own standalone Vite build/
+ * deployment (never shares a document with the user app's `/`/`/chat`
+ * bundle), so there's no real risk in also defining these on `:root` —
+ * which is required, not just harmless: Radix's Dialog/Popover/Select all
+ * portal their content straight to `document.body`, outside `.admin-root`'s
+ * DOM subtree, so a var defined only under `.admin-root` is unresolved for
+ * anything portaled (see admin-theme-provider.tsx for the matching
+ * `data-admin-theme` attribute this relies on being mirrored onto `<html>`).
  *
  * Aesthetic: dense, neutral, typography-driven ops-tool — cool grays, a single
  * restrained blue accent, hairline borders, small radii. Deliberately NOT the
@@ -14,6 +19,7 @@
  * as-is rather than re-deriving.
  */
 
+:root,
 .admin-root {
   color-scheme: light;
 
@@ -95,6 +101,7 @@
   min-height: 100dvh;
 }
 
+:root[data-admin-theme="dark"],
 .admin-root[data-admin-theme="dark"] {
   color-scheme: dark;
 
@@ -199,6 +206,14 @@
     opacity: 1;
   }
 }
+@keyframes adm-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 @keyframes adm-pop {
   from {
     opacity: 0;
@@ -209,11 +224,29 @@
     transform: translate(-50%, -50%) scale(1);
   }
 }
+@keyframes adm-pop-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.97);
+  }
+}
 @keyframes adm-slide-in-right {
   from {
     transform: translateX(100%);
   }
   to {
     transform: translateX(0);
+  }
+}
+@keyframes adm-slide-out-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
   }
 }

@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 
 import { cn } from "@nutriai/shared/lib/cn";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 export const AdminSelect = SelectPrimitive.Root;
 export const AdminSelectValue = SelectPrimitive.Value;
@@ -25,17 +25,40 @@ export function AdminSelectTrigger({ className, children, ...props }: ComponentP
   );
 }
 
+function AdminSelectScrollButton({
+  className,
+  Comp,
+  Icon,
+}: {
+  className?: string;
+  Comp: typeof SelectPrimitive.ScrollUpButton | typeof SelectPrimitive.ScrollDownButton;
+  Icon: typeof ChevronUp;
+}) {
+  return (
+    <Comp className={cn("flex h-5 cursor-default items-center justify-center", className)} style={{ color: "var(--adm-text-3)" }}>
+      <Icon className="h-3.5 w-3.5" />
+    </Comp>
+  );
+}
+
 export function AdminSelectContent({ className, children, ...props }: ComponentPropsWithoutRef<typeof SelectPrimitive.Content>) {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
-        className={cn("z-50 overflow-hidden rounded-[var(--adm-radius-md)] border p-1", className)}
+        className={cn(
+          "z-50 overflow-hidden rounded-[var(--adm-radius-md)] border p-1 data-[state=closed]:animate-[adm-fade-out_.1s_ease] data-[state=open]:animate-[adm-fade_.12s_ease]",
+          className,
+        )}
         style={{ background: "var(--adm-surface)", borderColor: "var(--adm-border)", boxShadow: "var(--adm-shadow-lg)" }}
         position="popper"
         sideOffset={4}
         {...props}
       >
-        <SelectPrimitive.Viewport>{children}</SelectPrimitive.Viewport>
+        <AdminSelectScrollButton Comp={SelectPrimitive.ScrollUpButton} Icon={ChevronUp} />
+        <SelectPrimitive.Viewport className="max-h-[var(--radix-select-content-available-height)] overflow-y-auto">
+          {children}
+        </SelectPrimitive.Viewport>
+        <AdminSelectScrollButton Comp={SelectPrimitive.ScrollDownButton} Icon={ChevronDown} />
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   );

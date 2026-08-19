@@ -12,12 +12,12 @@ export function AdminDialogContent({ className, children, ...props }: ComponentP
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
-        className="fixed inset-0 z-50 data-[state=open]:animate-[adm-fade_.15s_ease]"
+        className="fixed inset-0 z-50 data-[state=closed]:animate-[adm-fade-out_.12s_ease] data-[state=open]:animate-[adm-fade_.15s_ease]"
         style={{ background: "var(--adm-overlay)" }}
       />
       <DialogPrimitive.Content
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-[var(--adm-radius-lg)] border p-5 data-[state=open]:animate-[adm-pop_.15s_ease]",
+          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-[var(--adm-radius-lg)] border p-5 data-[state=closed]:animate-[adm-pop-out_.12s_ease] data-[state=open]:animate-[adm-pop_.15s_ease]",
           className,
         )}
         style={{ background: "var(--adm-surface)", borderColor: "var(--adm-border)", boxShadow: "var(--adm-shadow-lg)" }}

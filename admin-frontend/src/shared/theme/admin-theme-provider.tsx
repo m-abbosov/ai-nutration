@@ -23,15 +23,24 @@ const AdminThemeContext = createContext<AdminThemeContextValue | null>(null);
 /**
  * Scoped theme state for the admin subtree only. Deliberately does NOT touch
  * `document.documentElement.dataset.theme` (that's the Phase 1 user-app
- * theme switch) — instead it stamps `data-admin-theme` on the `.admin-root`
- * wrapper element itself, so toggling admin theme can never repaint `/` or
- * `/chat` and vice versa.
+ * theme switch, and this is a wholly separate deployment/bundle from that
+ * app, so there's no real bleed risk) — but it DOES stamp `data-admin-theme`
+ * on `<html>` in addition to the `.admin-root` wrapper: Radix's Dialog/
+ * Popover/Select all portal their content straight to `document.body`,
+ * outside `.admin-root`'s DOM subtree, so `--adm-*` tokens (see
+ * admin-theme.css, defined on `:root` + `.admin-root`) would otherwise be
+ * unresolved for anything portaled — the exact cause of the transparent-
+ * modal bug this was fixing.
  */
 export function AdminThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<AdminTheme>(readStoredTheme);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, theme);
+    document.documentElement.dataset.adminTheme = theme;
+    return () => {
+      delete document.documentElement.dataset.adminTheme;
+    };
   }, [theme]);
 
   const setTheme = useCallback((next: AdminTheme) => setThemeState(next), []);
