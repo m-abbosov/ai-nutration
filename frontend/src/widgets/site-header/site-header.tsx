@@ -54,7 +54,7 @@ export function SiteHeader() {
   return (
     <header ref={headerRef} className="sticky top-0 z-[80] border-b border-line bg-glass backdrop-blur-2xl">
       <div className="mx-auto flex max-w-[1280px] items-center gap-3.5 px-[26px] py-[13px]">
-        <a href="#top" className="flex flex-none items-center gap-2.5 text-tx">
+        <a href="/" className="flex flex-none items-center gap-2.5 text-tx">
           <span className="relative block h-[26px] w-[26px]">
             <span className="absolute inset-0 animate-halo rounded-full bg-accT" />
             <LogoMark className="relative block" />
