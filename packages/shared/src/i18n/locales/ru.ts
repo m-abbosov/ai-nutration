@@ -337,24 +337,36 @@ export const ru: Dict = {
     mcpSettingsUrlLabel: "URL MCP-сервера",
     mcpSettingsCopy: "Копировать",
     mcpSettingsCopied: "Скопировано",
+    mcpCapabilitiesTitle: "Что умеет",
+    mcpCapability1: "Записать приём пищи — опишите, что съели, своими словами",
+    mcpCapability2: "Проверить остаток калорий и макросов на сегодня",
+    mcpCapability3: "Изменить или удалить уже записанный приём пищи",
+    mcpCapability4: "Получить персональные рекомендации по питанию",
+    mcpCapability5: "Посмотреть или изменить профиль и цели",
     mcpClaudeTitle: "Подключить Claude",
     mcpClaudeSub:
       "Работайте со своими данными NutriAI прямо в чате Claude, используя собственную подписку Claude — NutriAI ничего не списывает.",
-    mcpClaudeStep1:
-      "В Claude откройте Settings → Connectors → Add custom connector.",
-    mcpClaudeStep2: "Вставьте URL выше и сохраните.",
-    mcpClaudeStep3:
-      "Claude попросит войти в NutriAI и разрешить доступ — после этого спрашивайте Claude о своих приёмах пищи и питании когда угодно.",
+    mcpClaudeStep1: "Откройте Claude, нажмите на профиль, затем Settings.",
+    mcpClaudeStep2: "Перейдите в Connectors → Add custom connector.",
+    mcpClaudeStep3: "Вставьте URL выше, назовите его «NutriAI» и сохраните.",
+    mcpClaudeStep4:
+      "Claude попросит войти в NutriAI (тот же аккаунт, что и здесь) и разрешить доступ.",
+    mcpClaudeStep5:
+      "В любом чате включите коннектор NutriAI в меню инструментов и спрашивайте Claude о своих приёмах пищи и питании.",
     mcpChatgptTitle: "Подключить ChatGPT",
     mcpChatgptSub:
       "Работайте со своими данными NutriAI прямо в ChatGPT, используя собственную подписку ChatGPT — NutriAI ничего не списывает.",
-    mcpChatgptStep1:
-      "В ChatGPT откройте Settings → Apps and connectors, включите Developer mode, затем добавьте новый коннектор.",
-    mcpChatgptStep2: "Вставьте URL выше и сохраните.",
-    mcpChatgptStep3:
-      "ChatGPT попросит войти в NutriAI и разрешить доступ — после этого спрашивайте ChatGPT о своих приёмах пищи и питании когда угодно.",
     mcpChatgptPlanNote:
       "Нужна подписка ChatGPT Plus, Pro, Business, Enterprise или Education — на бесплатном тарифе недоступно.",
+    mcpChatgptStep1:
+      "В ChatGPT откройте Settings → Security and login и включите Developer mode.",
+    mcpChatgptStep2: "Перейдите в Settings → Apps and connectors → Create.",
+    mcpChatgptStep3:
+      "Вставьте URL выше, назовите его «NutriAI», выберите OAuth как способ входа и сохраните.",
+    mcpChatgptStep4:
+      "ChatGPT попросит войти в NutriAI (тот же аккаунт, что и здесь) и разрешить доступ.",
+    mcpChatgptStep5:
+      "В любом чате включите приложение NutriAI в меню инструментов developer mode и спрашивайте ChatGPT о своих приёмах пищи и питании.",
   },
 
   admin: {

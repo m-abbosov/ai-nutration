@@ -339,24 +339,39 @@ export const uz: Dict = {
     mcpSettingsUrlLabel: "MCP server URL",
     mcpSettingsCopy: "Nusxalash",
     mcpSettingsCopied: "Nusxalandi",
+    mcpCapabilitiesTitle: "Nima qila oladi",
+    mcpCapability1:
+      "Ovqat qo'shish — nima yeganingizni o'z so'zingiz bilan yozing",
+    mcpCapability2: "Bugungi qolgan kaloriya va makrolarni tekshirish",
+    mcpCapability3: "Qo'shilgan ovqatni o'zgartirish yoki o'chirish",
+    mcpCapability4: "Shaxsiy ovqatlanish tavsiyalarini olish",
+    mcpCapability5: "Profil va maqsadlarni ko'rish yoki o'zgartirish",
     mcpClaudeTitle: "Claude ulash",
     mcpClaudeSub:
       "NutriAI ma'lumotlaringiz bilan to'g'ridan-to'g'ri Claude chatida gaplashing — o'zingizning Claude obunangiz orqali, NutriAI hech narsa hisoblamaydi.",
-    mcpClaudeStep1:
-      "Claude'da Settings → Connectors → Add custom connector bo'limiga o'ting.",
-    mcpClaudeStep2: "Yuqoridagi URL'ni joylashtirib saqlang.",
+    mcpClaudeStep1: "Claude'ni oching, profilingizga bosing, so'ng Settings.",
+    mcpClaudeStep2: "Connectors → Add custom connector bo'limiga o'ting.",
     mcpClaudeStep3:
-      "Claude sizdan NutriAI'ga kirish va ruxsat berishni so'raydi — shundan keyin istalgan vaqtda Claude'dan ovqatlaringiz yoki ovqatlanishingiz haqida so'rashingiz mumkin.",
+      'Yuqoridagi URL\'ni joylashtiring, nomini "NutriAI" qiling va saqlang.',
+    mcpClaudeStep4:
+      "Claude sizdan NutriAI'ga (shu yerdagi bilan bir xil akkount) kirish va ruxsat berishni so'raydi.",
+    mcpClaudeStep5:
+      "Istalgan chatda asboblar menyusidan NutriAI connectorini yoqing va Claude'dan ovqatlaringiz yoki ovqatlanishingiz haqida so'rang.",
     mcpChatgptTitle: "ChatGPT ulash",
     mcpChatgptSub:
       "NutriAI ma'lumotlaringiz bilan to'g'ridan-to'g'ri ChatGPT'da gaplashing — o'zingizning ChatGPT obunangiz orqali, NutriAI hech narsa hisoblamaydi.",
-    mcpChatgptStep1:
-      "ChatGPT'da Settings → Apps and connectors bo'limiga o'ting, Developer mode'ni yoqing, so'ng yangi connector qo'shing.",
-    mcpChatgptStep2: "Yuqoridagi URL'ni joylashtirib saqlang.",
-    mcpChatgptStep3:
-      "ChatGPT sizdan NutriAI'ga kirish va ruxsat berishni so'raydi — shundan keyin istalgan vaqtda ChatGPT'dan ovqatlaringiz yoki ovqatlanishingiz haqida so'rashingiz mumkin.",
     mcpChatgptPlanNote:
       "ChatGPT Plus, Pro, Business, Enterprise yoki Education tarifi kerak — bepul tarifda ishlamaydi.",
+    mcpChatgptStep1:
+      "ChatGPT'da Settings → Security and login bo'limiga o'ting va Developer mode'ni yoqing.",
+    mcpChatgptStep2:
+      "Settings → Apps and connectors → Create bo'limiga o'ting.",
+    mcpChatgptStep3:
+      "Yuqoridagi URL'ni joylashtiring, nomini \"NutriAI\" qiling, autentifikatsiya usuli sifatida OAuth'ni tanlang va saqlang.",
+    mcpChatgptStep4:
+      "ChatGPT sizdan NutriAI'ga (shu yerdagi bilan bir xil akkount) kirish va ruxsat berishni so'raydi.",
+    mcpChatgptStep5:
+      "Istalgan chatda developer mode asboblar menyusidan NutriAI ilovasini yoqing va ChatGPT'dan ovqatlaringiz yoki ovqatlanishingiz haqida so'rang.",
   },
 
   admin: {

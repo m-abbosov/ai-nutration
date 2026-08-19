@@ -11,7 +11,7 @@ const MCP_URL = `${env.apiUrl.replace(/\/api\/?$/, "")}/mcp`;
 interface ConnectorCardProps {
   title: string;
   sub: string;
-  steps: [string, string, string];
+  steps: [string, string, string, string, string];
   note?: string;
 }
 
@@ -56,23 +56,35 @@ function ConnectorCard({ title, sub, steps, note }: ConnectorCardProps) {
   );
 }
 
+const CAPABILITY_KEYS = ["mcpCapability1", "mcpCapability2", "mcpCapability3", "mcpCapability4", "mcpCapability5"] as const;
+
 export function SettingsMcp() {
   const { t } = useTranslation();
 
   return (
     <>
       <div className="mt-6 pb-[11px] font-mono text-[9.5px] tracking-[.16em] text-tx3">{t.app.mcpSettingsSectionTitle}</div>
+
+      <div className="mb-3 rounded-[18px] border border-line bg-surf p-[18px]">
+        <div className="text-[11px] font-medium text-tx3">{t.app.mcpCapabilitiesTitle}</div>
+        <ul className="m-0 mt-2 flex list-disc flex-col gap-1 pl-4 text-[12.5px] leading-[1.55] text-tx2">
+          {CAPABILITY_KEYS.map((key) => (
+            <li key={key}>{t.app[key]}</li>
+          ))}
+        </ul>
+      </div>
+
       <div className="flex flex-col gap-3">
         <ConnectorCard
           title={t.app.mcpClaudeTitle}
           sub={t.app.mcpClaudeSub}
-          steps={[t.app.mcpClaudeStep1, t.app.mcpClaudeStep2, t.app.mcpClaudeStep3]}
+          steps={[t.app.mcpClaudeStep1, t.app.mcpClaudeStep2, t.app.mcpClaudeStep3, t.app.mcpClaudeStep4, t.app.mcpClaudeStep5]}
         />
         <ConnectorCard
           title={t.app.mcpChatgptTitle}
           sub={t.app.mcpChatgptSub}
           note={t.app.mcpChatgptPlanNote}
-          steps={[t.app.mcpChatgptStep1, t.app.mcpChatgptStep2, t.app.mcpChatgptStep3]}
+          steps={[t.app.mcpChatgptStep1, t.app.mcpChatgptStep2, t.app.mcpChatgptStep3, t.app.mcpChatgptStep4, t.app.mcpChatgptStep5]}
         />
       </div>
     </>

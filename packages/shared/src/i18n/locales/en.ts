@@ -336,24 +336,36 @@ export const en: Dict = {
     mcpSettingsUrlLabel: "MCP server URL",
     mcpSettingsCopy: "Copy",
     mcpSettingsCopied: "Copied",
+    mcpCapabilitiesTitle: "What it can do",
+    mcpCapability1: "Log a meal — describe what you ate, in your own words",
+    mcpCapability2: "Check today's calories and macros remaining",
+    mcpCapability3: "Edit or delete a meal you already logged",
+    mcpCapability4: "Get personalized meal recommendations",
+    mcpCapability5: "View or update your profile and goals",
     mcpClaudeTitle: "Connect to Claude",
     mcpClaudeSub:
       "Talk to your NutriAI data straight from Claude's own chat, using your own Claude subscription — nothing is billed to NutriAI.",
-    mcpClaudeStep1:
-      "In Claude, go to Settings → Connectors → Add custom connector.",
-    mcpClaudeStep2: "Paste the URL above and save.",
-    mcpClaudeStep3:
-      "Claude will ask you to sign in to NutriAI and approve access — after that, ask Claude about your meals or nutrition anytime.",
+    mcpClaudeStep1: "Open Claude, click your profile, then Settings.",
+    mcpClaudeStep2: "Go to Connectors → Add custom connector.",
+    mcpClaudeStep3: 'Paste the URL above, name it "NutriAI", and save.',
+    mcpClaudeStep4:
+      "Claude will ask you to sign in to NutriAI (same account as here) and approve access.",
+    mcpClaudeStep5:
+      "In any chat, turn on the NutriAI connector from the tools menu, then ask Claude about your meals or nutrition.",
     mcpChatgptTitle: "Connect to ChatGPT",
     mcpChatgptSub:
       "Talk to your NutriAI data straight from ChatGPT, using your own ChatGPT subscription — nothing is billed to NutriAI.",
-    mcpChatgptStep1:
-      "In ChatGPT, go to Settings → Apps and connectors, turn on Developer mode, then add a new connector.",
-    mcpChatgptStep2: "Paste the URL above and save.",
-    mcpChatgptStep3:
-      "ChatGPT will ask you to sign in to NutriAI and approve access — after that, ask ChatGPT about your meals or nutrition anytime.",
     mcpChatgptPlanNote:
       "Requires a ChatGPT Plus, Pro, Business, Enterprise, or Education plan — not available on the free tier.",
+    mcpChatgptStep1:
+      "In ChatGPT, go to Settings → Security and login, and turn on Developer mode.",
+    mcpChatgptStep2: "Go to Settings → Apps and connectors → Create.",
+    mcpChatgptStep3:
+      'Paste the URL above, name it "NutriAI", choose OAuth as the auth method, and save.',
+    mcpChatgptStep4:
+      "ChatGPT will ask you to sign in to NutriAI (same account as here) and approve access.",
+    mcpChatgptStep5:
+      "In any chat, enable the NutriAI app from the developer-mode tools menu, then ask ChatGPT about your meals or nutrition.",
   },
 
   admin: {

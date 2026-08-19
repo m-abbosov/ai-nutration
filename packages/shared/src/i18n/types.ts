@@ -314,17 +314,27 @@ export interface Dict {
     mcpSettingsUrlLabel: string;
     mcpSettingsCopy: string;
     mcpSettingsCopied: string;
+    mcpCapabilitiesTitle: string;
+    mcpCapability1: string;
+    mcpCapability2: string;
+    mcpCapability3: string;
+    mcpCapability4: string;
+    mcpCapability5: string;
     mcpClaudeTitle: string;
     mcpClaudeSub: string;
     mcpClaudeStep1: string;
     mcpClaudeStep2: string;
     mcpClaudeStep3: string;
+    mcpClaudeStep4: string;
+    mcpClaudeStep5: string;
     mcpChatgptTitle: string;
     mcpChatgptSub: string;
+    mcpChatgptPlanNote: string;
     mcpChatgptStep1: string;
     mcpChatgptStep2: string;
     mcpChatgptStep3: string;
-    mcpChatgptPlanNote: string;
+    mcpChatgptStep4: string;
+    mcpChatgptStep5: string;
   };
 
   // Admin Panel (Phase 2) — see shared/i18n/admin-types.ts
