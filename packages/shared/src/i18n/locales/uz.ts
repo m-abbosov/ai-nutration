@@ -293,6 +293,7 @@ export const uz: Dict = {
     selectPreviousMealPh: "Ro’yxatdan tanlang (ixtiyoriy)",
     noPreviousMeals: "Oldingi ovqatlar topilmadi",
     aiApiKeyLabel: "API token",
+    aiProviderSelectLabel: "AI provayder",
     aiApiKeyPh: "API tokeningizni joylashtiring",
     aiGetKeyLink: (provider) =>
       `${provider} uchun API kalitni qayerdan olish mumkin`,
@@ -335,7 +336,6 @@ export const uz: Dict = {
     mealEditApply: "O'zgarishlarni qo'llash",
     mealEditApplied: "Yangilandi",
     mealEditFailed: "Yangilab bo'lmadi — qo'lda tahrirlang",
-    mcpSettingsSectionTitle: "AI YORDAMCHILAR",
     mcpSettingsUrlLabel: "MCP server URL",
     mcpSettingsCopy: "Nusxalash",
     mcpSettingsCopied: "Nusxalandi",

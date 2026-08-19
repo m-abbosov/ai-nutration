@@ -6,16 +6,21 @@ import { useTranslation } from "@nutriai/shared/i18n";
 import { ExternalLink } from "lucide-react";
 
 import { useRemoveAiKey, useSetAiKey } from "@/shared/api/users";
-import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
-import { AI_PROVIDER_IS_FREE, AI_PROVIDER_KEY_URL } from "@/entities/user/lib/ai-provider-links";
-import { AiBillingDialog } from "@/entities/user/ui/ai-billing-dialog";
+import { AI_PROVIDER_KEY_URL } from "@/entities/user/lib/ai-provider-links";
+import { McpCapabilitiesList, McpConnectorCard } from "@/entities/user/ui/mcp-connector-card";
 
 const PROVIDERS: AiProvider[] = ["GEMINI", "GROQ", "OPENAI", "CLAUDE"];
+
+/** Claude/ChatGPT are connected via MCP (see entities/user/ui/mcp-connector-card.tsx)
+ * — the user's own subscription, not an API key billed through NutriAI. */
+function usesMcp(provider: AiProvider): provider is "CLAUDE" | "OPENAI" {
+  return provider === "CLAUDE" || provider === "OPENAI";
+}
 
 export function SettingsAi({ user }: { user: UserDto }) {
   const { t } = useTranslation();
@@ -23,12 +28,6 @@ export function SettingsAi({ user }: { user: UserDto }) {
   const removeAiKey = useRemoveAiKey();
   const [provider, setProvider] = useState<AiProvider>(user.aiProvider ?? "GEMINI");
   const [apiKey, setApiKey] = useState("");
-  const [billingDialogProvider, setBillingDialogProvider] = useState<AiProvider | null>(null);
-
-  const handleProviderChange = (v: AiProvider) => {
-    setProvider(v);
-    if (!AI_PROVIDER_IS_FREE[v]) setBillingDialogProvider(v);
-  };
 
   const configured = !!user.aiProvider;
   const statusBadge = user.aiKeyStatus
@@ -88,53 +87,59 @@ export function SettingsAi({ user }: { user: UserDto }) {
           )}
         </div>
 
-        <div className="relative mt-4 flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:items-end">
-          <div className="min-w-0 flex-1 sm:max-w-[180px]">
-            <Label htmlFor="ai-provider">{t.app.aiApiKeyLabel}</Label>
-            <Select value={provider} onValueChange={(v) => handleProviderChange(v as AiProvider)}>
+        <div className="relative mt-4 border-t border-line pt-4">
+          <div className="max-w-[220px]">
+            <Label htmlFor="ai-provider">{t.app.aiProviderSelectLabel}</Label>
+            <Select value={provider} onValueChange={(v) => setProvider(v as AiProvider)}>
               <SelectTrigger id="ai-provider">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {PROVIDERS.map((p) => (
                   <SelectItem key={p} value={p}>
-                    <span className="flex items-center gap-2">
-                      {t.aiProviderLabel[p]}
-                      <Badge className={AI_PROVIDER_IS_FREE[p] ? undefined : "bg-fatT text-fat"}>
-                        {AI_PROVIDER_IS_FREE[p] ? t.app.aiFreeBadge : t.app.aiPaidBadge}
-                      </Badge>
-                    </span>
+                    {t.aiProviderLabel[p]}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="min-w-0 flex-1">
-            <Input
-              id="ai-key"
-              type="password"
-              autoComplete="off"
-              placeholder={t.app.aiApiKeyPh}
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-            />
-          </div>
-          <Button type="button" onClick={submit} disabled={!apiKey.trim() || setAiKey.isPending}>
-            {t.app.aiSaveKey}
-          </Button>
+
+          {usesMcp(provider) ? (
+            <div className="mt-4 flex flex-col gap-3">
+              <McpCapabilitiesList />
+              <McpConnectorCard provider={provider} />
+            </div>
+          ) : (
+            <>
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="min-w-0 flex-1">
+                  <Input
+                    id="ai-key"
+                    type="password"
+                    autoComplete="off"
+                    placeholder={t.app.aiApiKeyPh}
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                  />
+                </div>
+                <Button type="button" onClick={submit} disabled={!apiKey.trim() || setAiKey.isPending}>
+                  {t.app.aiSaveKey}
+                </Button>
+              </div>
+              <a
+                href={AI_PROVIDER_KEY_URL[provider]}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-flex items-center gap-1.5 text-[12px] text-acc hover:underline"
+              >
+                {t.app.aiGetKeyLink(t.aiProviderLabel[provider])}
+                <ExternalLink className="h-3 w-3" />
+              </a>
+              {errorMessage && <p className="mt-2 text-[12px] text-fat">{errorMessage}</p>}
+            </>
+          )}
         </div>
-        <a
-          href={AI_PROVIDER_KEY_URL[provider]}
-          target="_blank"
-          rel="noreferrer"
-          className="relative mt-2 inline-flex items-center gap-1.5 text-[12px] text-acc hover:underline"
-        >
-          {t.app.aiGetKeyLink(t.aiProviderLabel[provider])}
-          <ExternalLink className="h-3 w-3" />
-        </a>
-        {errorMessage && <p className="relative mt-2 text-[12px] text-fat">{errorMessage}</p>}
       </div>
-      {billingDialogProvider && <AiBillingDialog provider={billingDialogProvider} open onOpenChange={(o) => !o && setBillingDialogProvider(null)} />}
     </>
   );
 }

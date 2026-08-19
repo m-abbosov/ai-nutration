@@ -7,7 +7,6 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { SettingsAccount } from "@/widgets/settings-account/settings-account";
 import { SettingsAi } from "@/widgets/settings-ai/settings-ai";
 import { SettingsAppearance } from "@/widgets/settings-appearance/settings-appearance";
-import { SettingsMcp } from "@/widgets/settings-mcp/settings-mcp";
 import { SettingsNotifications } from "@/widgets/settings-notifications/settings-notifications";
 
 export function SettingsPage() {
@@ -29,7 +28,6 @@ export function SettingsPage() {
       ) : (
         <>
           <SettingsAi user={user} />
-          <SettingsMcp />
           <SettingsNotifications user={user} />
           <SettingsAccount user={user} />
         </>

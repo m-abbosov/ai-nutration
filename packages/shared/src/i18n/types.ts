@@ -275,6 +275,7 @@ export interface Dict {
     selectPreviousMealPh: string;
     noPreviousMeals: string;
     aiApiKeyLabel: string;
+    aiProviderSelectLabel: string;
     aiApiKeyPh: string;
     aiGetKeyLink: (provider: string) => string;
     aiFreeBadge: string;
@@ -310,7 +311,6 @@ export interface Dict {
     mealEditApply: string;
     mealEditApplied: string;
     mealEditFailed: string;
-    mcpSettingsSectionTitle: string;
     mcpSettingsUrlLabel: string;
     mcpSettingsCopy: string;
     mcpSettingsCopied: string;
