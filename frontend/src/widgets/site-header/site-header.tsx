@@ -13,7 +13,7 @@ import { BurgerIcon, ChevronDownIcon } from "@/shared/ui/site-icons.tsx";
 
 import { ThemeToggle } from "@/features/theme-toggle/theme-toggle.tsx";
 
-import { CALC_CATEGORY_COLOR, CALCS, type CalculatorCategory } from "@/entities/calculator/lib/calculators.ts";
+import { CALCS, CALC_CATEGORY_COLOR, type CalculatorCategory } from "@/entities/calculator/lib/calculators.ts";
 
 const CATEGORIES: CalculatorCategory[] = ["health", "nutrition", "fitness"];
 const LANGS: Language[] = ["UZ", "RU", "EN"];
@@ -52,10 +52,10 @@ export function SiteHeader() {
   };
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-[80] border-b border-line bg-glass backdrop-blur-2xl">
-      <div className="mx-auto flex max-w-[1280px] items-center gap-3.5 px-[26px] py-[13px]">
+    <header ref={headerRef} className="sticky top-0 z-80 border-b border-line bg-glass backdrop-blur-2xl">
+      <div className="mx-auto flex max-w-7xl items-center gap-3.5 px-6.5 py-3.25">
         <a href="/" className="flex flex-none items-center gap-2.5 text-tx">
-          <span className="relative block h-[26px] w-[26px]">
+          <span className="relative block h-6.5 w-6.5">
             <span className="absolute inset-0 animate-halo rounded-full bg-accT" />
             <LogoMark className="relative block" />
           </span>
@@ -87,7 +87,7 @@ export function SiteHeader() {
               <ChevronDownIcon className={cn("transition-transform", calcOpen && "rotate-180")} />
             </button>
             {calcOpen && (
-              <div className="animate-fu absolute left-[-14px] top-[calc(100%+9px)] z-[90] grid w-[min(660px,84vw)] grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-[22px] rounded-[18px] border border-line2 bg-surf2 p-5 shadow-card">
+              <div className="animate-fu absolute -left-3.5 top-[calc(100%+9px)] z-90 grid w-[min(660px,84vw)] grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-5.5 rounded-[18px] border border-line2 bg-surf2 p-5 shadow-card">
                 {groups.map((g) => (
                   <div key={g.cat}>
                     <div className="flex items-center gap-2 px-2 pb-2.5">
@@ -100,11 +100,11 @@ export function SiteHeader() {
                           key={c.id}
                           to={`/calculators/${c.id}`}
                           onClick={closeAll}
-                          className="flex items-center gap-2 rounded-[9px] px-2 py-[7px] text-[13px] text-tx2 hover:bg-surfH hover:text-tx"
+                          className="flex items-center gap-2 rounded-[9px] px-2 py-1.75 text-[13px] text-tx2 hover:bg-surfH hover:text-tx"
                         >
                           <span className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{c.name}</span>
                           {c.pop && (
-                            <span className="flex-none rounded-[5px] bg-accT px-[5px] py-[2px] font-mono text-[8.5px] tracking-[.1em] text-acc">
+                            <span className="flex-none rounded-[5px] bg-accT px-1.25 py-0.5 font-mono text-[8.5px] tracking-widest text-acc">
                               {t.landing.calc.popular}
                             </span>
                           )}
@@ -142,10 +142,10 @@ export function SiteHeader() {
             className="flex items-center gap-2 rounded-[10px] border border-line px-[11px] py-2 text-[12.5px] text-tx2 hover:bg-surf2 hover:text-tx"
           >
             <span>{langFlag[lang]}</span>
-            <span className="font-mono text-[11px] tracking-[.1em]">{lang}</span>
+            <span className="font-mono text-[11px] tracking-widest">{lang}</span>
           </button>
           {langOpen && (
-            <div className="animate-fu absolute right-0 top-[calc(100%+7px)] z-[90] w-[186px] rounded-[13px] border border-line2 bg-surf2 p-1.5 shadow-card">
+            <div className="animate-fu absolute right-0 top-[calc(100%+7px)] z-90 w-[186px] rounded-[13px] border border-line2 bg-surf2 p-1.5 shadow-card">
               {LANGS.map((l) => (
                 <button
                   key={l}
@@ -153,7 +153,7 @@ export function SiteHeader() {
                     setLang(l);
                     setLangOpen(false);
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-[9px] px-2.5 py-[9px] text-[13px] hover:bg-surfH"
+                  className="flex w-full items-center gap-2.5 rounded-[9px] px-2.5 py-2.25 text-[13px] hover:bg-surfH"
                 >
                   <span>{langFlag[l]}</span>
                   <span className="flex-1 text-left">{langName[l]}</span>
@@ -164,11 +164,11 @@ export function SiteHeader() {
           )}
         </div>
 
-        <ThemeToggle className="grid h-[34px] w-[34px] flex-none place-items-center rounded-[10px] border border-line text-tx2 hover:bg-surf2 hover:text-tx" />
+        <ThemeToggle className="grid h-8.5 w-8.5 flex-none place-items-center rounded-[10px] border border-line text-tx2 hover:bg-surf2 hover:text-tx" />
 
         {isAuthenticated ? (
           <Link to="/profile" title={t.navProf} className="flex-none">
-            <Avatar user={user} className="h-[34px] w-[34px]" textClassName="text-[13px]" />
+            <Avatar user={user} className="h-8.5 w-8.5" textClassName="text-[13px]" />
           </Link>
         ) : (
           <>
@@ -189,7 +189,7 @@ export function SiteHeader() {
         <button
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="Menu"
-          className="grid h-[34px] w-[34px] flex-none place-items-center rounded-[10px] border border-line text-tx2 lg:hidden"
+          className="grid h-8.5 w-8.5 flex-none place-items-center rounded-[10px] border border-line text-tx2 lg:hidden"
         >
           <BurgerIcon />
         </button>
