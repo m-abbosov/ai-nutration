@@ -20,7 +20,8 @@ export type AdminPermissionKey =
   | "AUDIT_LOGS_READ"
   | "USERS_DELETE"
   | "FEATURE_ACCESS_MANAGE"
-  | "FITNESS_READ";
+  | "FITNESS_READ"
+  | "FITNESS_MANAGE";
 export type AdminUserStatus = "ACTIVE" | "DISABLED";
 export type AiEndpoint = "CHAT" | "RECOMMENDATION";
 export type AiProvider = "GEMINI" | "OPENAI" | "CLAUDE" | "GROQ";
@@ -167,6 +168,78 @@ export interface AdminFitnessDto {
   categoryDistribution: { category: "COMPOUND" | "ISOLATION" | "CARDIO" | "BODYWEIGHT"; count: number; percent: number }[];
   personalRecordsCount: number;
 }
+
+export type ExerciseCategory = "COMPOUND" | "ISOLATION" | "CARDIO" | "BODYWEIGHT";
+export type MuscleCode =
+  | "CHEST"
+  | "UPPER_CHEST"
+  | "BACK"
+  | "LATS"
+  | "TRAPS"
+  | "SHOULDERS"
+  | "FRONT_DELTS"
+  | "SIDE_DELTS"
+  | "REAR_DELTS"
+  | "BICEPS"
+  | "TRICEPS"
+  | "FOREARMS"
+  | "ABS"
+  | "OBLIQUES"
+  | "GLUTES"
+  | "QUADS"
+  | "HAMSTRINGS"
+  | "CALVES";
+export type ExerciseLanguage = "EN" | "RU" | "UZ";
+
+export interface AdminExerciseListItemDto {
+  id: string;
+  slug: string;
+  name: string;
+  category: ExerciseCategory;
+  primaryMuscle: MuscleCode;
+  equipment: string | null;
+  isCustom: boolean;
+}
+
+export interface AdminExerciseAliasDto {
+  language: ExerciseLanguage;
+  alias: string;
+  isPrimary: boolean;
+}
+
+export interface AdminExerciseMuscleDto {
+  muscle: MuscleCode;
+  weight: number;
+}
+
+export interface AdminExerciseDetailDto extends AdminExerciseListItemDto {
+  aliases: AdminExerciseAliasDto[];
+  secondaryMuscles: AdminExerciseMuscleDto[];
+}
+
+export interface AdminExerciseListDto {
+  items: AdminExerciseListItemDto[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface ExerciseAliasInput {
+  language: ExerciseLanguage;
+  alias: string;
+  isPrimary?: boolean;
+}
+
+export interface CreateExerciseInput {
+  slug?: string;
+  category: ExerciseCategory;
+  primaryMuscle: MuscleCode;
+  equipment?: string | null;
+  aliases: ExerciseAliasInput[];
+  secondaryMuscles?: { muscle: MuscleCode; weight: number }[];
+}
+
+export type UpdateExerciseInput = Partial<CreateExerciseInput>;
 
 // ---------- AI ----------
 export interface AdminAiOverviewDto {

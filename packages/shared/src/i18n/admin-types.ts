@@ -9,6 +9,7 @@ export interface AdminDict {
     users: string;
     nutrition: string;
     fitness: string;
+    exercises: string;
     ai: string;
     calculators: string;
     conversations: string;
@@ -225,6 +226,62 @@ export interface AdminDict {
     colExercise: string;
     colCount: string;
     noExercises: string;
+  };
+  exercises: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    addExercise: string;
+    editExercise: string;
+    colName: string;
+    colSlug: string;
+    colCategory: string;
+    colMuscle: string;
+    colEquipment: string;
+    filterCategory: string;
+    filterMuscle: string;
+    categoryCompound: string;
+    categoryIsolation: string;
+    categoryCardio: string;
+    categoryBodyweight: string;
+    formNameEn: string;
+    formNameRu: string;
+    formNameUz: string;
+    formSlug: string;
+    formSlugHint: string;
+    formCategory: string;
+    formPrimaryMuscle: string;
+    formEquipment: string;
+    formEquipmentPlaceholder: string;
+    formSecondaryMuscles: string;
+    addSecondaryMuscle: string;
+    deleteExercise: string;
+    deleteConfirmTitle: string;
+    deleteConfirmBody: string;
+    deleteInUseError: string;
+    saveError: string;
+    noExercises: string;
+    muscles: Record<
+      | "CHEST"
+      | "UPPER_CHEST"
+      | "BACK"
+      | "LATS"
+      | "TRAPS"
+      | "SHOULDERS"
+      | "FRONT_DELTS"
+      | "SIDE_DELTS"
+      | "REAR_DELTS"
+      | "BICEPS"
+      | "TRICEPS"
+      | "FOREARMS"
+      | "ABS"
+      | "OBLIQUES"
+      | "GLUTES"
+      | "QUADS"
+      | "HAMSTRINGS"
+      | "CALVES",
+      string
+    >;
   };
   ai: {
     title: string;

@@ -41,6 +41,7 @@ const ADMIN_PERMISSIONS: Record<AdminPermissionKey, string> = {
   USERS_DELETE: 'Permanently delete a regular user account and all their data',
   FEATURE_ACCESS_MANAGE: "Grant/revoke a regular user's access to gated features (e.g. Fitness)",
   FITNESS_READ: 'View aggregate fitness (workouts/exercises) analytics',
+  FITNESS_MANAGE: 'Create, edit, and delete exercises in the fitness catalog',
 };
 
 // Permission → role seed matrix (docs/ADMIN_PANEL.md). Data, not hardcoded
@@ -56,6 +57,7 @@ const ROLE_PERMISSIONS: Record<AdminRoleName, AdminPermissionKey[]> = {
     'USERS_DISABLE',
     'NUTRITION_READ',
     'FITNESS_READ',
+    'FITNESS_MANAGE',
     'AI_READ',
     'AI_LOGS_READ',
     'CONVERSATIONS_READ',

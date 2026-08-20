@@ -8,6 +8,7 @@ import { Trophy } from "lucide-react";
 
 import { useExercises } from "@/entities/workout/api/exercises";
 import { useCreateWorkout } from "@/entities/workout/api/workouts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
 interface RowState {
   exerciseId: string | null;
@@ -127,20 +128,18 @@ export function WorkoutAnalysisCard({
               )}
 
               {!saved && (row.showPicker || unmatched) && (
-                <select
-                  value={row.exerciseId ?? ""}
-                  onChange={(e) => setRowExercise(i, e.target.value)}
-                  className="rounded-[9px] border border-line bg-surf2 px-2.5 py-1.5 text-[11.5px]"
-                >
-                  <option value="" disabled>
-                    {t.fitness.selectExercise}
-                  </option>
-                  {catalog?.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                <Select value={row.exerciseId ?? undefined} onValueChange={(v) => setRowExercise(i, v)}>
+                  <SelectTrigger className="h-8 py-1.5 text-[11.5px]">
+                    <SelectValue placeholder={t.fitness.selectExercise} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {catalog?.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             </div>
           );

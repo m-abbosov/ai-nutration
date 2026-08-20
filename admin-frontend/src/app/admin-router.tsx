@@ -14,6 +14,7 @@ const UsersPage = lazy(() => import("@/pages/users/users-page").then((m) => ({ d
 const UserDetailPage = lazy(() => import("@/pages/users/user-detail-page").then((m) => ({ default: m.UserDetailPage })));
 const NutritionPage = lazy(() => import("@/pages/nutrition/nutrition-page").then((m) => ({ default: m.NutritionPage })));
 const FitnessPage = lazy(() => import("@/pages/fitness/fitness-page").then((m) => ({ default: m.FitnessPage })));
+const ExercisesPage = lazy(() => import("@/pages/exercises/exercises-page").then((m) => ({ default: m.ExercisesPage })));
 const AiPage = lazy(() => import("@/pages/ai/ai-page").then((m) => ({ default: m.AiPage })));
 const CalculatorsPage = lazy(() => import("@/pages/calculators/calculators-page").then((m) => ({ default: m.CalculatorsPage })));
 const ConversationsPage = lazy(() => import("@/pages/conversations/conversations-page").then((m) => ({ default: m.ConversationsPage })));
@@ -85,6 +86,14 @@ export function AdminRouter() {
             element={
               <RequirePagePermission permission="FITNESS_READ">
                 <FitnessPage />
+              </RequirePagePermission>
+            }
+          />
+          <Route
+            path="exercises"
+            element={
+              <RequirePagePermission permission="FITNESS_READ">
+                <ExercisesPage />
               </RequirePagePermission>
             }
           />
