@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 
 import { cn } from "@nutriai/shared/lib/cn";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 export const Select = SelectPrimitive.Root;
 export const SelectValue = SelectPrimitive.Value;
@@ -24,6 +24,22 @@ export function SelectTrigger({ className, children, ...props }: ComponentPropsW
   );
 }
 
+function SelectScrollButton({
+  className,
+  Comp,
+  Icon,
+}: {
+  className?: string;
+  Comp: typeof SelectPrimitive.ScrollUpButton | typeof SelectPrimitive.ScrollDownButton;
+  Icon: typeof ChevronUp;
+}) {
+  return (
+    <Comp className={cn("flex h-5 cursor-default items-center justify-center text-tx3", className)}>
+      <Icon className="h-3.5 w-3.5" />
+    </Comp>
+  );
+}
+
 export function SelectContent({ className, children, ...props }: ComponentPropsWithoutRef<typeof SelectPrimitive.Content>) {
   return (
     <SelectPrimitive.Portal>
@@ -33,7 +49,11 @@ export function SelectContent({ className, children, ...props }: ComponentPropsW
         sideOffset={6}
         {...props}
       >
-        <SelectPrimitive.Viewport>{children}</SelectPrimitive.Viewport>
+        <SelectScrollButton Comp={SelectPrimitive.ScrollUpButton} Icon={ChevronUp} />
+        <SelectPrimitive.Viewport className="max-h-[var(--radix-select-content-available-height)] overflow-y-auto">
+          {children}
+        </SelectPrimitive.Viewport>
+        <SelectScrollButton Comp={SelectPrimitive.ScrollDownButton} Icon={ChevronDown} />
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   );
