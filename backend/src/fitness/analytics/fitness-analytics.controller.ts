@@ -2,12 +2,16 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { AuthenticatedUser } from '../../auth/types/authenticated-user';
+import { FEATURE_KEYS } from '../../common/feature-access/feature-access.constants';
+import { FeatureAccessGuard } from '../../common/guards/feature-access.guard';
+import { RequireFeature } from '../../common/guards/require-feature.decorator';
 import { MuscleBalanceResponseDto } from './dto/muscle-balance-response.dto';
 import { PersonalRecordResponseDto } from './dto/personal-record-response.dto';
 import { MuscleBalanceService } from './muscle-balance.service';
 import { PersonalRecordService } from './personal-record.service';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, FeatureAccessGuard)
+@RequireFeature(FEATURE_KEYS.FITNESS)
 @Controller('fitness')
 export class FitnessAnalyticsController {
   constructor(

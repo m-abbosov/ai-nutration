@@ -17,7 +17,10 @@ export type AdminPermissionKey =
   | "ADMIN_USERS_READ"
   | "ADMIN_USERS_MANAGE"
   | "SETTINGS_MANAGE"
-  | "AUDIT_LOGS_READ";
+  | "AUDIT_LOGS_READ"
+  | "USERS_DELETE"
+  | "FEATURE_ACCESS_MANAGE"
+  | "FITNESS_READ";
 export type AdminUserStatus = "ACTIVE" | "DISABLED";
 export type AiEndpoint = "CHAT" | "RECOMMENDATION";
 export type AiProvider = "GEMINI" | "OPENAI" | "CLAUDE" | "GROQ";
@@ -139,6 +142,11 @@ export interface AdminUserDetailDto {
   recentActivity: { type: "MEAL_LOGGED" | "AI_RECOMMENDATION" | "AI_REQUEST_FAILED"; label: string; createdAt: string }[];
 }
 
+export interface AdminUserFeatureDto {
+  feature: string;
+  grantedAt: string;
+}
+
 // ---------- Nutrition ----------
 export interface AdminNutritionDto {
   totals: { total: number; today: number; thisWeek: number; thisMonth: number };
@@ -148,6 +156,16 @@ export interface AdminNutritionDto {
   macroDistribution: { protein: number; carbs: number; fat: number };
   mealTypeDistribution: { mealType: MealType; count: number; percent: number }[];
   topLoggedFoods: { name: string; count: number }[];
+}
+
+// ---------- Fitness ----------
+export interface AdminFitnessDto {
+  totals: { total: number; today: number; thisWeek: number; thisMonth: number };
+  averages: { volume: number; durationMin: number; setsPerWorkout: number };
+  dailyWorkouts: SeriesPointDto[];
+  topExercises: { slug: string; count: number }[];
+  categoryDistribution: { category: "COMPOUND" | "ISOLATION" | "CARDIO" | "BODYWEIGHT"; count: number; percent: number }[];
+  personalRecordsCount: number;
 }
 
 // ---------- AI ----------

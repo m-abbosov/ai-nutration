@@ -36,4 +36,7 @@ export interface UserResponseDto {
   notifyWeekly: boolean;
   notifyAiTips: boolean;
   onboardingCompletedAt: string | null;
+  /** Gated features this user currently has access to (e.g. "FITNESS") —
+   * DB-granted plus any bootstrap-allowlisted ones. */
+  features: string[];
 }

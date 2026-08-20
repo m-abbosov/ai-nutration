@@ -1,13 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { AuditLogService } from '../../audit/audit-log.service';
 import { formatDateOnly } from '../../common/date.util';
+import { FeatureAccessService } from '../../common/feature-access/feature-access.service';
 import { toMealResponseDto } from '../../meals/meals.mapper';
 import { eachDate, currentWindow } from '../common/range.util';
 import { PaginatedDto, paginationParams } from '../common/pagination.dto';
 import { PrismaService } from '../../database/prisma.service';
 import { AdminUserDetailDto, AdminUserListItemDto } from './dto/admin-user.dto';
 import { FindAdminUsersQueryDto } from './dto/find-admin-users-query.dto';
+import { AdminUserFeatureDto } from './dto/user-feature.dto';
 
 /** Real users always have exactly one of googleId/telegramId set by the
  * auth flow that created them (loginWithGoogle/loginWithTelegram). The
@@ -46,6 +48,7 @@ export class AdminUsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly auditLogService: AuditLogService,
+    private readonly featureAccess: FeatureAccessService,
   ) {}
 
   async list(
@@ -347,5 +350,82 @@ export class AdminUsersService {
     });
 
     return { id: updated.id, status: updated.status };
+  }
+
+  /** Permanently deletes a regular user and everything owned by them (meals,
+   * workouts, chat history, ...) via the existing onDelete: Cascade FKs —
+   * irreversible, so this never touches admin accounts (managed separately
+   * via admin-team) or lets an admin delete themselves. The audit row is
+   * written BEFORE the delete since targetId is a plain string, not an FK —
+   * it deliberately outlives the deleted user as the only remaining record
+   * the account ever existed. */
+  async deleteUser(id: string, adminId: string, ipAddress: string | null): Promise<void> {
+    if (id === adminId) {
+      throw new ForbiddenException('You cannot delete your own account');
+    }
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.adminRoleId) {
+      throw new ForbiddenException('Cannot delete an admin account from here — remove their admin role first');
+    }
+
+    await this.auditLogService.record({
+      adminId,
+      action: 'USER_DELETED',
+      targetType: 'User',
+      targetId: id,
+      metadata: { name: user.name, email: user.email },
+      ipAddress,
+    });
+
+    await this.prisma.user.delete({ where: { id } });
+  }
+
+  async listFeatures(id: string): Promise<AdminUserFeatureDto[]> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    return this.featureAccess.listForUser(id);
+  }
+
+  async grantFeature(
+    id: string,
+    feature: string,
+    adminId: string,
+    ipAddress: string | null,
+  ): Promise<AdminUserFeatureDto[]> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    await this.featureAccess.grant(id, feature, adminId);
+    await this.auditLogService.record({
+      adminId,
+      action: 'USER_FEATURE_GRANTED',
+      targetType: 'User',
+      targetId: id,
+      metadata: { feature },
+      ipAddress,
+    });
+    return this.featureAccess.listForUser(id);
+  }
+
+  async revokeFeature(
+    id: string,
+    feature: string,
+    adminId: string,
+    ipAddress: string | null,
+  ): Promise<AdminUserFeatureDto[]> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    await this.featureAccess.revoke(id, feature);
+    await this.auditLogService.record({
+      adminId,
+      action: 'USER_FEATURE_REVOKED',
+      targetType: 'User',
+      targetId: id,
+      metadata: { feature },
+      ipAddress,
+    });
+    return this.featureAccess.listForUser(id);
   }
 }

@@ -1,10 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { RequireAuth, RequireAuthOnly, RequireGuest } from "@/app/providers/route-guards";
+import { RequireAuth, RequireAuthOnly, RequireFeature, RequireGuest } from "@/app/providers/route-guards";
 
 import { AuthCallbackPage } from "@/pages/auth-callback/auth-callback-page";
 import { CalculatorRoute } from "@/pages/calculator/registry";
 import { ChatPage } from "@/pages/chat/chat-page";
+import { ComingSoonPage } from "@/pages/coming-soon/coming-soon-page";
 import { DashboardPage } from "@/pages/dashboard/dashboard-page";
 import { FitnessPage } from "@/pages/fitness/fitness-page";
 import { LandingPage } from "@/pages/landing/landing-page";
@@ -54,7 +55,14 @@ export function AppRouter() {
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/chat/:conversationId" element={<ChatPage />} />
         <Route path="/meals" element={<MealsPage />} />
-        <Route path="/fitness" element={<FitnessPage />} />
+        <Route
+          path="/fitness"
+          element={
+            <RequireFeature feature="FITNESS" fallback={<ComingSoonPage />}>
+              <FitnessPage />
+            </RequireFeature>
+          }
+        />
         <Route path="/progress" element={<ProgressPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />

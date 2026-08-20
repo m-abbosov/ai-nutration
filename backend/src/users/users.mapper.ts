@@ -2,8 +2,10 @@ import { User } from '@prisma/client';
 import { UserResponseDto } from './dto/user-response.dto';
 
 /** Maps a Prisma `User` row to the public `UserDto` contract shape, never
- * exposing internal fields like refreshTokenHash/googleId/telegramId. */
-export function toUserResponseDto(user: User): UserResponseDto {
+ * exposing internal fields like refreshTokenHash/googleId/telegramId.
+ * `features` comes from FeatureAccessService (DB grants + bootstrap
+ * allowlist) — computed by the caller, not derivable from the row alone. */
+export function toUserResponseDto(user: User, features: string[]): UserResponseDto {
   return {
     id: user.id,
     name: user.name,
@@ -32,5 +34,6 @@ export function toUserResponseDto(user: User): UserResponseDto {
     onboardingCompletedAt: user.onboardingCompletedAt
       ? user.onboardingCompletedAt.toISOString()
       : null,
+    features,
   };
 }

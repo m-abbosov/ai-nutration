@@ -189,6 +189,8 @@ export interface UserDto {
   notifyWeekly: boolean;
   notifyAiTips: boolean;
   onboardingCompletedAt: string | null;
+  /** Gated features this user currently has access to (e.g. "FITNESS"). */
+  features: string[];
 }
 
 export interface MealItemDto {

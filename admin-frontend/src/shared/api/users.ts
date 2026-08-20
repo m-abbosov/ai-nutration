@@ -2,7 +2,7 @@ import { api } from "@nutriai/shared/api/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { adminQueryKeys } from "@/shared/api/query-keys";
-import type { AdminUserDetailDto, AdminUserListDto, AdminUserStatus } from "@/shared/api/types";
+import type { AdminUserDetailDto, AdminUserFeatureDto, AdminUserListDto, AdminUserStatus } from "@/shared/api/types";
 
 export interface AdminUsersQuery {
   page: number;
@@ -50,5 +50,39 @@ export function useUpdateUserStatus(id: string) {
       qc.setQueryData(adminQueryKeys.user(id), data);
       qc.invalidateQueries({ queryKey: ["admin", "users"] });
     },
+  });
+}
+
+export function useDeleteUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete<void>(`/admin/users/${id}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "users"] });
+    },
+  });
+}
+
+export function useUserFeatures(id: string | undefined) {
+  return useQuery({
+    queryKey: adminQueryKeys.userFeatures(id ?? ""),
+    queryFn: () => api.get<AdminUserFeatureDto[]>(`/admin/users/${id}/features`),
+    enabled: !!id,
+  });
+}
+
+export function useGrantUserFeature(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (feature: string) => api.post<AdminUserFeatureDto[]>(`/admin/users/${id}/features`, { feature }),
+    onSuccess: (data) => qc.setQueryData(adminQueryKeys.userFeatures(id), data),
+  });
+}
+
+export function useRevokeUserFeature(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (feature: string) => api.delete<AdminUserFeatureDto[]>(`/admin/users/${id}/features/${feature}`),
+    onSuccess: (data) => qc.setQueryData(adminQueryKeys.userFeatures(id), data),
   });
 }

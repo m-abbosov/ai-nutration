@@ -9,6 +9,8 @@ import { AiService } from '../ai/ai.service';
 import { buildAiContext } from '../ai/context.util';
 import { fallbackMessageFor } from '../ai/ai-fallback-messages';
 import { UserAiCredentialsService } from '../ai/user-ai-credentials.service';
+import { FeatureAccessService } from '../common/feature-access/feature-access.service';
+import { FEATURE_KEYS } from '../common/feature-access/feature-access.constants';
 import { FeatureFlagsService } from '../common/feature-flags/feature-flags.service';
 import { PrismaService } from '../database/prisma.service';
 import { ExerciseService } from '../fitness/exercise/exercise.service';
@@ -36,6 +38,7 @@ export class ChatService {
     private readonly featureFlags: FeatureFlagsService,
     private readonly mealsService: MealsService,
     private readonly exerciseService: ExerciseService,
+    private readonly featureAccess: FeatureAccessService,
   ) {}
 
   async listConversations(userId: string): Promise<ConversationResponseDto[]> {
@@ -176,7 +179,13 @@ export class ChatService {
               },
             };
           }
-        } else if (generation.data.workoutAnalysis) {
+        } else if (
+          generation.data.workoutAnalysis &&
+          (await this.featureAccess.hasFeature(userId, FEATURE_KEYS.FITNESS))
+        ) {
+          // Users without FITNESS access never see a workout draft — showing
+          // one they can't actually save (POST /fitness/workouts is
+          // guarded too) would just be a confusing dead end.
           const exercises = await Promise.all(
             generation.data.workoutAnalysis.exercises.map(async (ex) => {
               const match = await this.exerciseService.matchExerciseText(

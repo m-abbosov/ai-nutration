@@ -38,6 +38,9 @@ const ADMIN_PERMISSIONS: Record<AdminPermissionKey, string> = {
   ADMIN_USERS_MANAGE: "Promote users to admin and manage admins' roles/access",
   SETTINGS_MANAGE: 'Change app settings and toggle feature flags',
   AUDIT_LOGS_READ: 'View the full admin audit log',
+  USERS_DELETE: 'Permanently delete a regular user account and all their data',
+  FEATURE_ACCESS_MANAGE: "Grant/revoke a regular user's access to gated features (e.g. Fitness)",
+  FITNESS_READ: 'View aggregate fitness (workouts/exercises) analytics',
 };
 
 // Permission → role seed matrix (docs/ADMIN_PANEL.md). Data, not hardcoded
@@ -52,11 +55,13 @@ const ROLE_PERMISSIONS: Record<AdminRoleName, AdminPermissionKey[]> = {
     'USERS_UPDATE',
     'USERS_DISABLE',
     'NUTRITION_READ',
+    'FITNESS_READ',
     'AI_READ',
     'AI_LOGS_READ',
     'CONVERSATIONS_READ',
     'ANALYTICS_READ',
     'SYSTEM_READ',
+    'FEATURE_ACCESS_MANAGE',
   ],
   MODERATOR: ['DASHBOARD_READ', 'USERS_READ', 'USERS_UPDATE', 'NUTRITION_READ'],
   SUPPORT: ['DASHBOARD_READ', 'USERS_READ'],

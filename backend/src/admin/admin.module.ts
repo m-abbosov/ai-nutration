@@ -5,6 +5,7 @@ import { AdminAuthModule } from './admin-auth/admin-auth.module';
 import { AdminCalculatorsModule } from './admin-calculators/admin-calculators.module';
 import { AdminConversationsModule } from './admin-conversations/admin-conversations.module';
 import { AdminDashboardModule } from './admin-dashboard/admin-dashboard.module';
+import { AdminFitnessModule } from './admin-fitness/admin-fitness.module';
 import { AdminNutritionModule } from './admin-nutrition/admin-nutrition.module';
 import { AdminSettingsModule } from './admin-settings/admin-settings.module';
 import { AdminSystemModule } from './admin-system/admin-system.module';
@@ -21,6 +22,7 @@ import { AdminUsersModule } from './admin-users/admin-users.module';
     AdminCalculatorsModule,
     AdminConversationsModule,
     AdminNutritionModule,
+    AdminFitnessModule,
     AdminSystemModule,
     AdminTeamModule,
     AdminSettingsModule,

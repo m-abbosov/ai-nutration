@@ -34,3 +34,16 @@ export function RequireGuest({ children }: { children: ReactNode }) {
   if (isAuthenticated) return <Navigate to={isOnboarded ? "/dashboard" : "/onboarding"} replace />;
   return <>{children}</>;
 }
+
+/** Gates a route behind a granted per-user feature (see backend
+ * UserFeatureAccess) — renders `fallback` instead of `children` when the
+ * signed-in user doesn't have it. UX-only: the real boundary is server-side
+ * (FeatureAccessGuard on every fitness/* endpoint), this just avoids
+ * shipping a page the API would reject anyway. */
+export function RequireFeature({ feature, fallback, children }: { feature: string; fallback: ReactNode; children: ReactNode }) {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return <FullscreenSpinner />;
+  if (!user?.features.includes(feature)) return <>{fallback}</>;
+  return <>{children}</>;
+}

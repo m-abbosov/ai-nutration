@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 import { fmtNumber } from "@nutriai/shared/lib/format";
-import { Ban, CheckCircle2 } from "lucide-react";
+import { Ban, CheckCircle2, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { useAdminUser, useUpdateUserStatus } from "@/shared/api/users";
+import { useAdminUser, useDeleteUser, useGrantUserFeature, useRevokeUserFeature, useUpdateUserStatus, useUserFeatures } from "@/shared/api/users";
 import { useAdminTranslation } from "@/shared/i18n/use-admin-translation";
 import { IfPermission } from "@/shared/rbac/admin-auth-context";
 import { AdminHeader } from "@/shared/ui/admin-header";
@@ -16,6 +16,7 @@ import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { AdminErrorState } from "@/shared/ui/error-state";
 import { AdminSkeleton } from "@/shared/ui/skeleton";
 import { StatusBadge, userStatusToneOf } from "@/shared/ui/status-badge";
+import { AdminSwitch } from "@/shared/ui/switch";
 
 export function UserDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +24,7 @@ export function UserDetailPage() {
   const { t, lang } = useAdminTranslation();
   const { data, isLoading, isError, refetch } = useAdminUser(id);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -52,12 +54,20 @@ export function UserDetailPage() {
         title={profile.name}
         breadcrumbs={[{ label: t.users.title, to: "/users" }, { label: profile.name }]}
         actions={
-          <IfPermission permission="USERS_DISABLE">
-            <AdminButton variant={account.status === "ACTIVE" ? "outlineDestructive" : "primary"} size="sm" onClick={() => setConfirmOpen(true)}>
-              {account.status === "ACTIVE" ? <Ban className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
-              {account.status === "ACTIVE" ? t.users.disableUser : t.users.enableUser}
-            </AdminButton>
-          </IfPermission>
+          <div className="flex items-center gap-2">
+            <IfPermission permission="USERS_DISABLE">
+              <AdminButton variant={account.status === "ACTIVE" ? "outlineDestructive" : "primary"} size="sm" onClick={() => setConfirmOpen(true)}>
+                {account.status === "ACTIVE" ? <Ban className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+                {account.status === "ACTIVE" ? t.users.disableUser : t.users.enableUser}
+              </AdminButton>
+            </IfPermission>
+            <IfPermission permission="USERS_DELETE">
+              <AdminButton variant="outlineDestructive" size="sm" onClick={() => setDeleteOpen(true)}>
+                <Trash2 className="h-3.5 w-3.5" />
+                {t.users.deleteUser}
+              </AdminButton>
+            </IfPermission>
+          </div>
         }
       />
 
@@ -117,6 +127,10 @@ export function UserDetailPage() {
             <Field label={t.userDetail.avgFat} value={`${fmtNumber(nutrition.avgFat, lang)} g`} />
           </dl>
         </AdminCard>
+      </div>
+
+      <div className="mt-4">
+        <FeatureAccessCard userId={profile.id} />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -231,6 +245,12 @@ export function UserDetailPage() {
         nextStatus={nextStatus}
         onSuccess={() => navigate(`/users/${profile.id}`, { replace: true })}
       />
+      <DeleteUserConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        userId={profile.id}
+        onSuccess={() => navigate("/users", { replace: true })}
+      />
     </div>
   );
 }
@@ -282,5 +302,104 @@ function UserStatusConfirmDialog({
         })
       }
     />
+  );
+}
+
+function DeleteUserConfirmDialog({
+  open,
+  onOpenChange,
+  userId,
+  onSuccess,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  userId: string;
+  onSuccess: () => void;
+}) {
+  const { t } = useAdminTranslation();
+  const mutation = useDeleteUser();
+  return (
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t.users.deleteConfirmTitle}
+      description={t.users.deleteConfirmBody}
+      destructive
+      confirmLabel={t.users.deleteUser}
+      loading={mutation.isPending}
+      onConfirm={() =>
+        mutation.mutate(userId, {
+          onSuccess: () => {
+            onOpenChange(false);
+            onSuccess();
+          },
+        })
+      }
+    />
+  );
+}
+
+// Only one gated feature exists today (Fitness); this list is the single
+// place to extend when a new one is added — no other UI changes needed.
+const AVAILABLE_FEATURES = ["FITNESS"] as const;
+
+function FeatureAccessCard({ userId }: { userId: string }) {
+  const { t } = useAdminTranslation();
+  const { data: features, isLoading } = useUserFeatures(userId);
+  const grant = useGrantUserFeature(userId);
+  const revoke = useRevokeUserFeature(userId);
+
+  const featureLabel: Record<(typeof AVAILABLE_FEATURES)[number], string> = {
+    FITNESS: t.userDetail.featureFitness,
+  };
+
+  const grantedMap = new Map((features ?? []).map((f) => [f.feature, f.grantedAt]));
+
+  return (
+    <AdminCard>
+      <AdminCardHeader>
+        <AdminCardTitle>{t.userDetail.featureAccessSection}</AdminCardTitle>
+      </AdminCardHeader>
+      {isLoading ? (
+        <AdminSkeleton className="h-16 w-full" />
+      ) : (
+        <ul className="flex flex-col">
+          {AVAILABLE_FEATURES.map((feature) => {
+            const grantedAt = grantedMap.get(feature);
+            const pending = (grant.isPending && grant.variables === feature) || (revoke.isPending && revoke.variables === feature);
+            return (
+              <li
+                key={feature}
+                className="flex items-center justify-between gap-3 border-b py-2.5 text-[12px] last:border-b-0"
+                style={{ borderColor: "var(--adm-border)" }}
+              >
+                <div>
+                  <div className="font-medium" style={{ color: "var(--adm-text)" }}>
+                    {featureLabel[feature]}
+                  </div>
+                  {grantedAt && (
+                    <div className="mt-0.5 text-[10.5px]" style={{ color: "var(--adm-text-3)" }}>
+                      {t.userDetail.grantedOn}: {new Date(grantedAt).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+                <IfPermission
+                  permission="FEATURE_ACCESS_MANAGE"
+                  fallback={
+                    <StatusBadge tone={grantedAt ? "good" : "neutral"} label={grantedAt ? t.common.enabled : t.common.disabled} />
+                  }
+                >
+                  <AdminSwitch
+                    checked={!!grantedAt}
+                    disabled={pending}
+                    onCheckedChange={(checked) => (checked ? grant.mutate(feature) : revoke.mutate(feature))}
+                  />
+                </IfPermission>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </AdminCard>
   );
 }

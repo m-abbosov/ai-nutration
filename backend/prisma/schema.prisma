@@ -98,6 +98,9 @@ enum AdminPermissionKey {
   ADMIN_USERS_MANAGE
   SETTINGS_MANAGE
   AUDIT_LOGS_READ
+  USERS_DELETE
+  FEATURE_ACCESS_MANAGE
+  FITNESS_READ
 }
 
 enum UserStatus {
@@ -152,6 +155,9 @@ enum AuditAction {
   CONVERSATION_VIEWED
   SETTING_CHANGED
   FEATURE_FLAG_CHANGED
+  USER_DELETED
+  USER_FEATURE_GRANTED
+  USER_FEATURE_REVOKED
 }
 
 model AuditLog {
@@ -182,6 +188,27 @@ model FeatureFlag {
   updatedBy   User?   @relation("FeatureFlagUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 
   @@map("feature_flags")
+}
+
+// Per-user page/feature gating (distinct from FeatureFlag above, which is a
+// single app-wide on/off switch). Presence of a row = that user has access
+// to that feature; `feature` is a plain string key (e.g. "FITNESS"), not an
+// enum, so a new gated feature never needs a migration — see
+// common/feature-access/feature-access.constants.ts for the known keys.
+model UserFeatureAccess {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  feature   String
+  grantedAt DateTime @default(now())
+
+  grantedById String?
+  grantedBy   User?   @relation("FeatureAccessGrantedBy", fields: [grantedById], references: [id], onDelete: SetNull)
+
+  @@unique([userId, feature])
+  @@index([feature])
+  @@map("user_feature_access")
 }
 
 enum AiEndpoint {
@@ -364,6 +391,9 @@ model User {
   workouts                Workout[]
   personalRecords         PersonalRecord[]
   muscleProgressSnapshots MuscleProgressSnapshot[]
+
+  featureAccess        UserFeatureAccess[]
+  grantedFeatureAccess UserFeatureAccess[] @relation("FeatureAccessGrantedBy")
 
   auditLogs           AuditLog[]           @relation("AuditLogsByAdmin")
   updatedFeatureFlags FeatureFlag[]        @relation("FeatureFlagUpdatedBy")

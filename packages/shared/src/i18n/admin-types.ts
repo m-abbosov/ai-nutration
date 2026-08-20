@@ -8,6 +8,7 @@ export interface AdminDict {
     dashboard: string;
     users: string;
     nutrition: string;
+    fitness: string;
     ai: string;
     calculators: string;
     conversations: string;
@@ -142,6 +143,9 @@ export interface AdminDict {
     disableConfirmBody: string;
     enableConfirmTitle: string;
     enableConfirmBody: string;
+    deleteUser: string;
+    deleteConfirmTitle: string;
+    deleteConfirmBody: string;
   };
   userDetail: {
     title: string;
@@ -177,6 +181,12 @@ export interface AdminDict {
     noRecentMeals: string;
     noRecentActivity: string;
     notAvailable: string;
+    featureAccessSection: string;
+    featureFitness: string;
+    grantAccess: string;
+    revokeAccess: string;
+    grantedOn: string;
+    noFeatureAccess: string;
   };
   nutrition: {
     title: string;
@@ -197,6 +207,24 @@ export interface AdminDict {
     colFood: string;
     colCount: string;
     noFoods: string;
+  };
+  fitness: {
+    title: string;
+    subtitle: string;
+    totalWorkouts: string;
+    today: string;
+    thisWeek: string;
+    thisMonth: string;
+    avgVolume: string;
+    avgDuration: string;
+    avgSets: string;
+    personalRecords: string;
+    dailyWorkoutsTitle: string;
+    categoryDistributionTitle: string;
+    topExercisesTitle: string;
+    colExercise: string;
+    colCount: string;
+    noExercises: string;
   };
   ai: {
     title: string;

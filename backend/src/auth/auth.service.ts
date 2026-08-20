@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { createHash } from 'crypto';
+import { FeatureAccessService } from '../common/feature-access/feature-access.service';
 import { FeatureFlagsService } from '../common/feature-flags/feature-flags.service';
 import { EnvConfig } from '../config/env.validation';
 import { PrismaService } from '../database/prisma.service';
@@ -34,6 +35,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService<EnvConfig, true>,
     private readonly featureFlags: FeatureFlagsService,
+    private readonly featureAccess: FeatureAccessService,
   ) {}
 
   private async issueTokenPair(userId: string): Promise<TokenPairDto> {
@@ -69,7 +71,8 @@ export class AuthService {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { id: userId },
     });
-    return { ...tokens, user: toUserResponseDto(user) };
+    const features = await this.featureAccess.getUserFeatures(userId);
+    return { ...tokens, user: toUserResponseDto(user, features) };
   }
 
   /** Upserts a User by googleId (falling back to matching by email so a
@@ -236,6 +239,7 @@ export class AuthService {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { id: userId },
     });
-    return toUserResponseDto(user);
+    const features = await this.featureAccess.getUserFeatures(userId);
+    return toUserResponseDto(user, features);
   }
 }

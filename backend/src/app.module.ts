@@ -9,6 +9,7 @@ import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { CalculatorsModule } from './calculators/calculators.module';
 import { ChatModule } from './chat/chat.module';
+import { FeatureAccessModule } from './common/feature-access/feature-access.module';
 import { FeatureFlagsModule } from './common/feature-flags/feature-flags.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { MaintenanceModeGuard } from './common/guards/maintenance-mode.guard';
@@ -38,6 +39,7 @@ import { UsersModule } from './users/users.module';
     ScheduleModule.forRoot(),
     DatabaseModule,
     FeatureFlagsModule,
+    FeatureAccessModule,
     AuditModule,
     AiModule,
     AuthModule,

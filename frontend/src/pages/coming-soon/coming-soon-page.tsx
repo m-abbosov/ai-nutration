@@ -1,53 +1,30 @@
 import { useTranslation } from "@nutriai/shared/i18n";
 import { Sparkles } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
-
-import { Button } from "@/shared/ui/button";
-import { LogoMark } from "@/shared/ui/nav-icons";
-import { EmptyState } from "@/shared/ui/state-blocks";
-
-import { ThemeToggle } from "@/features/theme-toggle/theme-toggle";
-
-import { findCalculator } from "@/entities/calculator/lib/calculators";
 
 export function ComingSoonPage() {
   const { t } = useTranslation();
-  const { slug } = useParams<{ slug: string }>();
-  const calc = findCalculator(slug);
-  const name = calc ? t.landing.calculators[calc.id]?.name : undefined;
 
   return (
-    <div className="flex min-h-screen flex-col bg-bg">
-      <header className="border-b border-line">
-        <div className="mx-auto flex max-w-[1280px] items-center gap-2.5 px-[26px] py-[13px]">
-          <Link to="/" className="flex items-center gap-2.5 text-tx">
-            <LogoMark />
-            <span className="text-[16px] font-semibold tracking-[-.015em]">
-              AI <span className="text-acc">Nutrition</span>
-            </span>
-          </Link>
-          <div className="flex-1" />
-          <ThemeToggle />
+    <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-5 py-16 text-center">
+      <div className="relative mb-6 h-[104px] w-[104px]">
+        <div
+          className="absolute -inset-4 animate-halo rounded-full blur-[18px]"
+          style={{ background: "radial-gradient(circle, var(--accG), transparent 66%)" }}
+        />
+        <div
+          className="absolute inset-[14px] grid animate-drift place-items-center rounded-full"
+          style={{
+            background: "radial-gradient(circle at 34% 26%, var(--acc), var(--accD) 55%, var(--surf) 96%)",
+            boxShadow: "inset 0 0 18px rgba(255,255,255,.25), 0 8px 28px -8px var(--accG)",
+          }}
+        >
+          <Sparkles className="h-6 w-6 text-[#04120e]" />
         </div>
-      </header>
-
-      <main className="flex flex-1 items-center justify-center px-6 py-16">
-        <div className="w-full max-w-[420px]">
-          <EmptyState
-            icon={
-              <span className="grid h-11 w-11 place-items-center rounded-[14px] bg-accT text-acc">
-                <Sparkles className="h-5 w-5" />
-              </span>
-            }
-            message={`${name ?? t.landing.comingSoon.title} — ${t.landing.comingSoon.body}`}
-            action={
-              <Button asChild size="sm">
-                <Link to="/">{t.landing.comingSoon.backHome}</Link>
-              </Button>
-            }
-          />
-        </div>
-      </main>
+      </div>
+      <h1 className="m-0 max-w-[22ch] text-pretty font-serif text-[26px] font-normal leading-[1.2] tracking-[-.01em] md:text-[30px]">
+        {t.fitness.comingSoonTitle}
+      </h1>
+      <p className="m-0 mt-3 max-w-[44ch] text-pretty text-[13.5px] leading-[1.55] text-tx2">{t.fitness.comingSoonBody}</p>
     </div>
   );
 }

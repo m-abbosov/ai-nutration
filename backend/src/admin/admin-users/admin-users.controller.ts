@@ -1,9 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
+  Post,
   Query,
   Req,
   UseGuards,
@@ -20,6 +24,7 @@ import { AdminUsersService } from './admin-users.service';
 import { AdminUserDetailDto, AdminUserListItemDto } from './dto/admin-user.dto';
 import { FindAdminUsersQueryDto } from './dto/find-admin-users-query.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { AdminUserFeatureDto, GrantUserFeatureDto } from './dto/user-feature.dto';
 
 @UseGuards(JwtAuthGuard, AdminAuthGuard, AdminPermissionGuard)
 @Controller('admin/users')
@@ -58,5 +63,44 @@ export class AdminUsersController {
       admin.id,
       req.ip ?? null,
     );
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermission('USERS_DELETE')
+  deleteUser(
+    @Param('id') id: string,
+    @CurrentUser() admin: AuthenticatedUser,
+    @Req() req: Request,
+  ): Promise<void> {
+    return this.adminUsersService.deleteUser(id, admin.id, req.ip ?? null);
+  }
+
+  @Get(':id/features')
+  @RequirePermission('USERS_READ')
+  listFeatures(@Param('id') id: string): Promise<AdminUserFeatureDto[]> {
+    return this.adminUsersService.listFeatures(id);
+  }
+
+  @Post(':id/features')
+  @RequirePermission('FEATURE_ACCESS_MANAGE')
+  grantFeature(
+    @Param('id') id: string,
+    @Body() dto: GrantUserFeatureDto,
+    @CurrentUser() admin: AuthenticatedUser,
+    @Req() req: Request,
+  ): Promise<AdminUserFeatureDto[]> {
+    return this.adminUsersService.grantFeature(id, dto.feature, admin.id, req.ip ?? null);
+  }
+
+  @Delete(':id/features/:feature')
+  @RequirePermission('FEATURE_ACCESS_MANAGE')
+  revokeFeature(
+    @Param('id') id: string,
+    @Param('feature') feature: string,
+    @CurrentUser() admin: AuthenticatedUser,
+    @Req() req: Request,
+  ): Promise<AdminUserFeatureDto[]> {
+    return this.adminUsersService.revokeFeature(id, feature, admin.id, req.ip ?? null);
   }
 }

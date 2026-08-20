@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { Gender, User } from '@prisma/client';
 import { AiService } from '../ai/ai.service';
 import { encryptSecret, last4 } from '../ai/crypto.util';
+import { FeatureAccessService } from '../common/feature-access/feature-access.service';
 import { EnvConfig } from '../config/env.validation';
 import { PrismaService } from '../database/prisma.service';
 import { calculateCalorieTargets } from './calorie.util';
@@ -31,6 +32,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
     private readonly aiService: AiService,
     private readonly configService: ConfigService<EnvConfig, true>,
+    private readonly featureAccess: FeatureAccessService,
   ) {}
 
   async findByIdOrThrow(userId: string): Promise<User> {
@@ -41,7 +43,8 @@ export class UsersService {
 
   async getMe(userId: string): Promise<UserResponseDto> {
     const user = await this.findByIdOrThrow(userId);
-    return toUserResponseDto(user);
+    const features = await this.featureAccess.getUserFeatures(userId);
+    return toUserResponseDto(user, features);
   }
 
   async completeOnboarding(
@@ -78,7 +81,8 @@ export class UsersService {
       },
     });
 
-    return toUserResponseDto(updated);
+    const features = await this.featureAccess.getUserFeatures(userId);
+    return toUserResponseDto(updated, features);
   }
 
   async updateMe(userId: string, dto: UpdateUserDto): Promise<UserResponseDto> {
@@ -143,7 +147,8 @@ export class UsersService {
       },
     });
 
-    return toUserResponseDto(updated);
+    const features = await this.featureAccess.getUserFeatures(userId);
+    return toUserResponseDto(updated, features);
   }
 
   /** Live-tests the key against its provider before storing it, so a typo'd
@@ -176,7 +181,8 @@ export class UsersService {
       },
     });
 
-    return toUserResponseDto(updated);
+    const features = await this.featureAccess.getUserFeatures(userId);
+    return toUserResponseDto(updated, features);
   }
 
   async removeAiKey(userId: string): Promise<UserResponseDto> {
@@ -191,6 +197,7 @@ export class UsersService {
         aiKeyStatusMessage: null,
       },
     });
-    return toUserResponseDto(updated);
+    const features = await this.featureAccess.getUserFeatures(userId);
+    return toUserResponseDto(updated, features);
   }
 }

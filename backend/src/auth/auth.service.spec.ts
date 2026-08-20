@@ -33,12 +33,14 @@ describe('AuthService — resolveGoogleUser (shared by loginWithGoogle and the a
       get: jest.fn().mockReturnValue('secret'),
     };
     const featureFlags = { isEnabled: jest.fn().mockResolvedValue(true) };
+    const featureAccess = { getUserFeatures: jest.fn().mockResolvedValue([]) };
 
     const service = new AuthService(
       prisma as never,
       jwtService,
       configService as never,
       featureFlags as never,
+      featureAccess as never,
     );
     return { service, prisma };
   }

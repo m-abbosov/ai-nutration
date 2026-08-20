@@ -88,4 +88,7 @@ export interface FitnessDict {
   detailStrengthChange: string;
   detailSessions: string;
   close: string;
+
+  comingSoonTitle: string;
+  comingSoonBody: string;
 }
